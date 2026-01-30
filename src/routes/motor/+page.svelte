@@ -3,7 +3,7 @@
     import { Plus, Pencil, Trash2, Search } from "lucide-svelte";
     import { jenisMotorApi } from "$lib/api";
     import type { JenisMotor } from "$lib/types";
-    import { Card, CardBody, Button } from "$lib/components/ui";
+    import { Card, CardBody, Button, Input } from "$lib/components/ui";
     import { confirm } from "$lib/stores/confirm";
 
     let jenisMotors: JenisMotor[] = $state([]);
@@ -57,20 +57,30 @@
     <title>Jenis Motor - Rosantibike Motorent</title>
 </svelte:head>
 
-<div class="page-header">
-    <h1>Jenis Motor</h1>
-    <div class="flex gap-3">
-        <div class="flex gap-2">
-            <input
-                type="text"
-                class="px-3 py-2 bg-bg-tertiary border border-border rounded-md text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary/50"
-                placeholder="Cari motor..."
+<div
+    class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8"
+>
+    <div>
+        <h1 class="text-2xl font-bold text-text-primary">Jenis Motor</h1>
+        <p class="text-text-secondary text-sm">
+            Kelola kategori dan tipe motor yang tersedia
+        </p>
+    </div>
+    <div class="flex flex-col sm:flex-row gap-3">
+        <div class="relative min-w-[240px]">
+            <Input
+                id="search"
                 bind:value={search}
+                placeholder="Cari motor..."
                 onkeydown={(e) => e.key === "Enter" && handleSearch()}
+                class="pr-10"
             />
-            <Button variant="secondary" onclick={handleSearch}>
+            <button
+                class="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-primary transition-colors"
+                onclick={handleSearch}
+            >
                 <Search size={18} />
-            </Button>
+            </button>
         </div>
         <Button href="/motor/new" variant="primary">
             <Plus size={18} />
