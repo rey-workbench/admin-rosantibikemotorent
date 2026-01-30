@@ -1,0 +1,183 @@
+@import 'tailwindcss';
+
+@theme {
+    /* Branding Colors */
+    --color-primary: #4361EE;
+    /* Vibrant Blue from Logip */
+    --color-primary-hover: #3a53d0;
+    --color-accent: #8b5cf6;
+
+    /* Semantic Colors */
+    --color-success: #10B981;
+    /* Soft Green */
+    --color-warning: #F59E0B;
+    /* Warm Amber */
+    --color-danger: #EF4444;
+    /* Soft Red */
+    --color-info: #3B82F6;
+    /* Sky Blue */
+
+    /* Backgrounds */
+    --color-bg-primary: #F8F9FB;
+    /* Very light cool gray - Page Background */
+    --color-bg-secondary: #FFFFFF;
+    /* Pure White - Cards/Panels */
+    --color-bg-tertiary: #F3F4F6;
+    /* Gray 100 - Inputs/Hover states */
+
+    /* Typography */
+    --color-text-primary: #1F2937;
+    /* Gray 900 - Headings */
+    --color-text-secondary: #6B7280;
+    /* Gray 500 - Body */
+    --color-text-muted: #9CA3AF;
+    /* Gray 400 - Low contrast */
+
+    /* Borders & Dividers */
+    --color-border: #E5E7EB;
+    /* Gray 200 */
+    --color-input: #F3F4F6;
+    /* Gray 100 - Input background */
+
+    /* Border Radius */
+    --radius-sm: 0.5rem;
+    /* 8px */
+    --radius-md: 1rem;
+    /* 16px - Increased for softer look */
+    --radius-lg: 1.5rem;
+    /* 24px - Large cards */
+    --radius-xl: 2rem;
+    /* 32px */
+}
+
+/* Base styles */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    font-family: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* App layout */
+.app-layout {
+    @apply flex min-h-screen bg-bg-primary;
+}
+
+/* Sidebar styles */
+.sidebar {
+    @apply w-72 bg-bg-secondary flex flex-col shrink-0 h-screen sticky top-0 border-r border-transparent;
+    /* Removed border, relying on contrast or potential shadow if needed */
+    box-shadow: 1px 0 0 0 var(--color-border);
+    /* clean crisp line */
+}
+
+.sidebar-header {
+    @apply p-6 flex items-center gap-3;
+}
+
+.sidebar-logo {
+    @apply flex items-center gap-3 text-text-primary no-underline font-bold text-xl tracking-tight;
+}
+
+.sidebar-logo-icon {
+    @apply w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white shadow-lg shadow-primary/30;
+}
+
+.sidebar-nav {
+    @apply flex-1 overflow-y-auto py-6 px-4 space-y-1;
+}
+
+.nav-section {
+    @apply mb-6;
+}
+
+.nav-section-title {
+    @apply px-3 text-xs uppercase tracking-wider text-text-muted font-bold mb-3;
+}
+
+.nav-item {
+    @apply flex items-center gap-3 px-4 py-3 rounded-xl text-text-secondary no-underline transition-all duration-200 font-medium;
+}
+
+.nav-item:hover {
+    @apply bg-bg-primary text-primary;
+}
+
+.nav-item.active {
+    @apply bg-primary text-white shadow-md shadow-primary/25;
+}
+
+.nav-item.active .nav-item-icon {
+    /* Icon inherits text color */
+}
+
+.nav-item-icon {
+    @apply flex items-center justify-center;
+}
+
+/* Main content */
+.main-wrapper {
+    @apply flex flex-col flex-1 overflow-hidden h-screen;
+}
+
+.main-content {
+    @apply flex-1 overflow-y-auto p-8;
+}
+
+/* Page header */
+.page-header {
+    @apply flex items-center justify-between mb-8;
+}
+
+.page-header h1 {
+    @apply text-3xl font-bold tracking-tight text-text-primary m-0;
+}
+
+/* Loading states */
+.loading-page {
+    @apply flex items-center justify-center flex-1 h-full min-h-[400px];
+}
+
+.loading-spinner {
+    @apply w-12 h-12 border-4 border-border border-t-primary rounded-full animate-spin;
+}
+
+/* Empty state */
+.empty-state {
+    @apply flex flex-col items-center justify-center py-20 text-center bg-bg-secondary rounded-2xl border border-dashed border-border;
+}
+
+.empty-state-icon {
+    @apply text-6xl mb-6 text-text-muted opacity-50;
+}
+
+.empty-state h3 {
+    @apply text-xl font-bold mb-2 text-text-primary;
+}
+
+.empty-state p {
+    @apply text-text-secondary max-w-sm;
+}
+
+/* Utilities */
+.card-shadow {
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.02), 0 2px 4px -2px rgb(0 0 0 / 0.02);
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+}
