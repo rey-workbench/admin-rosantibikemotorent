@@ -20,6 +20,7 @@
             goto("/");
         } catch (err: any) {
             console.error("Login error:", err);
+            // Optional: Add toast error here if globally available
         } finally {
             isLoading = false;
         }
@@ -33,76 +34,67 @@
 <div
     class="min-h-screen w-full flex items-center justify-center bg-bg-primary overflow-hidden relative"
 >
-    <!-- Background Accents -->
+    <!-- Background Accents (Subtler) -->
     <div
-        class="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[100px]"
+        class="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2"
     ></div>
     <div
-        class="absolute -bottom-[10%] -right-[10%] w-[50%] h-[50%] bg-accent/5 rounded-full blur-[120px]"
+        class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-accent/5 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/3"
     ></div>
 
     <div
-        class="w-full max-w-[440px] px-6 py-12 flex flex-col items-center gap-8 relative z-10"
-        in:fly={{ y: 20, duration: 800, delay: 200 }}
+        class="w-full max-w-[480px] px-6 py-12 flex flex-col items-center gap-6 relative z-10"
+        in:fly={{ y: 15, duration: 600 }}
     >
         <!-- Logo Area -->
-        <div class="flex flex-col items-center gap-4 text-center">
+        <div class="flex flex-col items-center gap-3 text-center mb-2">
             <div
-                class="w-20 h-20 rounded-3xl bg-primary flex items-center justify-center text-white shadow-xl shadow-primary/30 rotate-3"
+                class="w-16 h-16 rounded-2xl bg-primary flex items-center justify-center text-white shadow-lg shadow-primary/20"
             >
-                <Bike size={40} strokeWidth={2.5} />
+                <Bike size={32} strokeWidth={2} />
             </div>
 
-            <div class="space-y-1">
+            <div class="space-y-0.5">
                 <h1
-                    class="text-4xl font-bold font-outfit tracking-tight text-text-primary"
+                    class="text-3xl font-bold font-outfit tracking-tight text-text-primary"
                 >
-                    <span class="text-primary italic">Rosantibike</span>
-                    <span class="text-text-muted font-normal">Motorent</span>
+                    Rosantibike
                 </h1>
                 <p
-                    class="text-text-secondary font-medium tracking-wide uppercase text-xs"
+                    class="text-text-secondary font-medium tracking-wide text-xs"
                 >
-                    Akses Portal Admin
+                    Admin Portal
                 </p>
             </div>
         </div>
 
         <!-- Login Card -->
         <div
-            class="w-full bg-white border border-border/40 shadow-2xl shadow-primary/5 rounded-[2.5rem] p-8 md:p-10 relative overflow-hidden"
+            class="w-full bg-white/80 backdrop-blur-md border border-white/60 shadow-xl shadow-primary/5 rounded-[2rem] p-8 md:p-9 relative"
         >
-            <!-- Decorative line -->
-            <div
-                class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-primary via-accent to-primary/50"
-            ></div>
-
-            <div class="mb-8">
-                <h2
-                    class="text-xl font-bold text-text-primary flex items-center gap-2"
-                >
-                    Selamat Datang Kembali <span class="animate-bounce">👋</span
-                    >
+            <div class="mb-6 text-center">
+                <h2 class="text-lg font-bold text-text-primary">
+                    Selamat Datang
                 </h2>
-                <p class="text-text-muted text-sm mt-1">
-                    Silakan masukkan kredensial Anda untuk melanjutkan
+                <p class="text-text-secondary text-sm mt-1">
+                    Masuk untuk mengelola rental
                 </p>
             </div>
 
-            <form class="flex flex-col gap-6" onsubmit={handleLogin}>
+            <form class="flex flex-col gap-5" onsubmit={handleLogin}>
                 <div class="space-y-4">
                     <div class="relative group">
                         <Input
                             id="username"
                             label="Username"
                             bind:value={username}
-                            placeholder="e.g. admin_rosanti"
+                            placeholder="username"
                             required
                             disabled={isLoading}
-                            class="transition-all duration-300"
+                            class="bg-bg-tertiary/50 border-transparent focus:bg-white transition-all pl-10"
                         />
                         <div
-                            class="absolute right-4 top-[38px] text-text-muted/50 group-focus-within:text-primary transition-colors"
+                            class="absolute left-3 top-[41px] text-text-muted group-focus-within:text-primary transition-colors pointer-events-none"
                         >
                             <ShieldCheck size={18} />
                         </div>
@@ -114,34 +106,31 @@
                             label="Password"
                             type="password"
                             bind:value={password}
-                            placeholder="••••••••"
+                            placeholder="password"
                             required
                             disabled={isLoading}
-                            class="transition-all duration-300"
+                            class="bg-bg-tertiary/50 border-transparent focus:bg-white transition-all pl-10"
                         />
                         <div
-                            class="absolute right-4 top-[38px] text-text-muted/50 group-focus-within:text-primary transition-colors"
+                            class="absolute left-3 top-[41px] text-text-muted group-focus-within:text-primary transition-colors pointer-events-none"
                         >
                             <KeyRound size={18} />
                         </div>
                     </div>
                 </div>
 
-                <div class="flex items-center justify-between text-xs px-1">
+                <div
+                    class="flex items-center justify-between text-xs px-1 mt-1"
+                >
                     <label
                         class="flex items-center gap-2 cursor-pointer text-text-secondary hover:text-text-primary transition-colors"
                     >
                         <input
                             type="checkbox"
-                            class="w-4 h-4 rounded border-border text-primary focus:ring-primary/30"
+                            class="w-3.5 h-3.5 rounded border-border text-primary focus:ring-primary/20"
                         />
                         Ingat saya
                     </label>
-                    <a
-                        href="#"
-                        class="text-primary font-semibold hover:underline"
-                        >Lupa Password?</a
-                    >
                 </div>
 
                 <Button
@@ -149,17 +138,19 @@
                     variant="primary"
                     size="lg"
                     loading={isLoading}
-                    class="w-full h-14 text-base shadow-xl shadow-primary/25 mt-4"
+                    class="w-full h-12 text-sm font-semibold shadow-lg shadow-primary/20 mt-2 rounded-xl"
                 >
-                    <LogIn size={20} />
-                    Masuk ke Dashboard
+                    {#if !isLoading}
+                        <LogIn size={18} class="mr-2" />
+                    {/if}
+                    Masuk
                 </Button>
             </form>
         </div>
 
         <!-- Footer Info -->
-        <p class="text-text-muted text-xs text-center italic">
-            &copy; {new Date().getFullYear()} Rosantibike Motorent. All Rights Reserved.
+        <p class="text-text-muted/60 text-[10px] text-center">
+            &copy; {new Date().getFullYear()} Rosantibike Motorent.
         </p>
     </div>
 </div>
@@ -167,11 +158,5 @@
 <style>
     :global(body) {
         background-color: var(--color-bg-primary);
-    }
-
-    /* Custom input override for extra premium feel */
-    :global(input) {
-        height: 3.25rem !important;
-        border-radius: 1rem !important;
     }
 </style>
