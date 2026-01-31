@@ -15,6 +15,7 @@
         LogOut,
         ChevronDown,
         ChevronRight,
+        Calendar,
     } from "lucide-svelte";
     import { authApi } from "$lib/api";
     import { authStore } from "$lib/stores/auth";
@@ -32,6 +33,7 @@
             ],
         },
         { path: "/transaksi", label: "Transaksi", icon: ClipboardList },
+        { path: "/availability", label: "Ketersediaan", icon: Calendar },
         { path: "/blog", label: "Artikel Blog", icon: FileText },
         { path: "/whatsapp", label: "WhatsApp", icon: MessageSquare },
         { path: "/queue", label: "Monitor Antrian", icon: ListOrdered },
