@@ -34,7 +34,9 @@ api.interceptors.response.use(
     (response) => {
         // Success Toast for mutations (POST, PUT, DELETE, PATCH)
         const method = response.config.method?.toUpperCase();
-        if (browser && method !== 'GET' && response.data?.message) {
+        const isWhatsapp = response.config.url?.includes('/whatsapp');
+
+        if (browser && method !== 'GET' && response.data?.message && !isWhatsapp) {
             const type = response.data.type || 'success';
             toast.add(response.data.message, type as any);
         }

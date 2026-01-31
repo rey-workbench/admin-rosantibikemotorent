@@ -1,19 +1,21 @@
 <script lang="ts">
-    import { Search, Send, User, Check, CheckCheck } from "lucide-svelte";
+    import { Search, Send, User, Check, CheckCheck, Plus } from "lucide-svelte";
 
     // Props
     let {
         contacts = [],
         onSelect = (contact: any) => {},
         onNewContact = () => {},
+        onDirectMessage = () => {},
     } = $props<{
         contacts: any[];
         onSelect: (contact: any) => void;
         onNewContact: () => void;
+        onDirectMessage: () => void;
     }>();
 
     let searchQuery = $state("");
-    let filteredContacts = $state(contacts);
+    let filteredContacts = $state<any[]>([]);
 
     $effect(() => {
         if (!searchQuery) {
@@ -56,7 +58,9 @@
     }
 </script>
 
-<div class="flex-1 flex flex-col h-full overflow-hidden bg-bg-secondary">
+<div
+    class="flex-1 flex flex-col h-full overflow-hidden bg-bg-secondary relative"
+>
     <!-- Header / New Contact Actions -->
     <div
         class="p-3 shrink-0 flex items-center justify-between border-b border-border/10 bg-bg-secondary"
@@ -84,7 +88,7 @@
 
     <!-- Chat List -->
     <div
-        class="flex-1 overflow-y-auto overflow-x-hidden scrollbar-thin hover:scrollbar-thumb-gray-300"
+        class="flex-1 overflow-y-auto overflow-x-hidden scrollbar-thin hover:scrollbar-thumb-gray-300 pb-20"
     >
         {#if filteredContacts.length > 0}
             {#each filteredContacts as contact}
@@ -177,4 +181,13 @@
             </div>
         {/if}
     </div>
+
+    <!-- Floating Action Button for Direct Message -->
+    <button
+        onclick={onDirectMessage}
+        class="absolute bottom-6 right-6 w-14 h-14 bg-primary text-white rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-105 flex items-center justify-center z-20"
+        title="Pesan Baru / Nomor Langsung"
+    >
+        <Plus size={28} />
+    </button>
 </div>

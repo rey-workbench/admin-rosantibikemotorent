@@ -4,6 +4,7 @@ import { writable, type Writable } from 'svelte/store';
 // ==================== Types ====================
 
 export interface WhatsAppMessage {
+    id: any;
     from: string;
     chatId?: string;
     body: string;

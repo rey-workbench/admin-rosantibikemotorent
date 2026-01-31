@@ -43,7 +43,29 @@
                 const targetId =
                     selectedContact?.id?._serialized || selectedContact?.phone;
                 if (targetId && data.chatId?.includes(targetId.split("@")[0])) {
-                    loadMessages(selectedContact.phone);
+                    // Update optimistic message with real ID and status
+                    // Find the optimistic message (assuming it's the last one with a temp id or we match body)
+                    const index = chatMessages.findIndex(
+                        (m) =>
+                            m.id._serialized.startsWith("temp_") &&
+                            m.body === data.body,
+                    );
+                    if (index !== -1) {
+                        const updated = { ...chatMessages[index] };
+                        updated.id = {
+                            _serialized: data.messageId,
+                            fromMe: true,
+                            user: data.chatId.split("@")[0],
+                        };
+                        updated.ack = 1; // Sent
+                        updated.t = Math.floor(Date.now() / 1000);
+                        chatMessages[index] = updated;
+                    } else {
+                        // Fallback if not found (e.g. sent from another device)
+                        // We can't fully reconstruct without fetching, but we can try or just leave it.
+                        // Better to just push if not duplicate?
+                        // For now, let's rely on loadMessages ONLY if we truly miss it, but here we try to be pure socket.
+                    }
                     loadContacts();
                 }
             }),
@@ -51,9 +73,17 @@
                 const fromId = data.from?.split("@")[0];
                 const selectedId = selectedContact?.phone;
 
+                // If message is for current chat, append it
                 if (selectedId && fromId === selectedId) {
-                    loadMessages(selectedId);
-                    whatsappApi.sendSeen(data.from);
+                    // Avoid duplicates
+                    if (
+                        !chatMessages.some(
+                            (m) => m.id._serialized === data.id._serialized,
+                        )
+                    ) {
+                        chatMessages = [...chatMessages, data];
+                        whatsappApi.sendSeen(data.from);
+                    }
                 }
 
                 if (data.type === "incoming") {
@@ -133,8 +163,8 @@
         }
     }
 
-    async function loadMessages(phone: string) {
-        isLoadingMessages = true;
+    async function loadMessages(phone: string, isBackground = false) {
+        if (!isBackground) isLoadingMessages = true;
         try {
             const res = await whatsappApi.getMessages(phone);
             chatMessages = Array.isArray(res) ? res : (res as any).data || [];
@@ -142,7 +172,7 @@
         } catch (e) {
             console.error(e);
         } finally {
-            isLoadingMessages = false;
+            if (!isBackground) isLoadingMessages = false;
         }
     }
 
@@ -152,6 +182,36 @@
             (!message && !selectedFile && !showLocationPicker)
         )
             return;
+
+        const currentMessage = message;
+        const currentFile = selectedFile;
+        // Optimistic UI Update
+        const tempId = "temp_" + Date.now();
+        const optimisticMsg = {
+            id: { _serialized: tempId, fromMe: true },
+            body: currentMessage,
+            type: currentFile
+                ? currentFile.type.startsWith("image")
+                    ? "image"
+                    : "document"
+                : "chat",
+            t: Math.floor(Date.now() / 1000),
+            fromMe: true,
+            ack: 0, // clock
+            timestamp: Math.floor(Date.now() / 1000),
+        };
+
+        if (currentFile && currentFile.type.startsWith("image/")) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                optimisticMsg.body = e.target?.result as string;
+                chatMessages = [...chatMessages, optimisticMsg];
+            };
+            reader.readAsDataURL(currentFile);
+        } else {
+            chatMessages = [...chatMessages, optimisticMsg];
+        }
+
         isSending = true;
         try {
             const to = selectedContact.phone;
@@ -179,19 +239,31 @@
                       );
                 selectedFile = null;
             } else if (message) {
-                replyMessage
-                    ? await whatsappApi.reply(
-                          to,
-                          message,
-                          replyMessage.id._serialized,
-                      )
+                const rawId = replyMessage?.id;
+                const replyId =
+                    typeof rawId === "object"
+                        ? rawId?._serialized
+                        : typeof rawId === "string"
+                          ? rawId
+                          : null;
+
+                replyId
+                    ? await whatsappApi.reply(to, message, replyId)
                     : await whatsappApi.sendMessage(to, message);
             }
             message = "";
             replyMessage = null;
+
+            // Background refresh to get real ID and status
             loadContacts();
+            // Don't full reload messages to avoid flicker, just wait for socket or do background
+            // loadMessages(to, true);
         } catch (e) {
             toast.error("Gagal mengirim");
+            // Remove optimistic message on failure?
+            chatMessages = chatMessages.filter(
+                (m) => m.id._serialized !== tempId,
+            );
         } finally {
             isSending = false;
         }
@@ -252,6 +324,46 @@
             toast.error("Gagal reset");
         }
     }
+
+    // New Chat Modal State
+    let showNewChatModal = $state(false);
+    let newChatPhone = $state("");
+
+    function handleDirectMessage() {
+        showNewChatModal = true;
+        newChatPhone = "";
+        // Focus logic could go here depending on implementation
+    }
+
+    async function submitNewChat() {
+        if (!newChatPhone) return;
+
+        let phone = newChatPhone.replace(/\D/g, "");
+
+        if (phone.startsWith("08")) {
+            phone = "62" + phone.slice(1);
+        }
+
+        if (phone.length < 10) {
+            toast.error("Nomor telepon tidak valid");
+            return;
+        }
+
+        // Create temp contact
+        const newContact = {
+            id: { _serialized: `${phone}@c.us`, user: phone },
+            phone: phone,
+            name: phone,
+            avatarColor: `bg-slate-${(parseInt(phone.slice(-1)) % 6) * 100 + 400}`,
+            lastMessageTime: Date.now() / 1000,
+            unreadCount: 0,
+        };
+
+        selectedContact = newContact;
+        currentView = "chat-detail";
+        showNewChatModal = false;
+        loadMessages(phone);
+    }
 </script>
 
 <div
@@ -266,6 +378,52 @@
                 : 'w-[400px] h-[700px] max-h-[calc(100vh-6rem)] rounded-3xl'}"
         >
             <div class="flex-1 relative flex flex-col overflow-hidden">
+                <!-- New Chat Modal Overlay -->
+                {#if showNewChatModal}
+                    <div
+                        class="absolute inset-0 bg-black/60 z-[60] flex items-center justify-center p-6"
+                        transition:fade={{ duration: 150 }}
+                    >
+                        <div
+                            class="bg-bg-secondary w-full max-w-sm rounded-2xl shadow-xl p-6 border border-border/20"
+                            transition:fly={{ y: 20, duration: 200 }}
+                        >
+                            <h3
+                                class="text-lg font-bold text-text-primary mb-2"
+                            >
+                                Mulai Chat Baru
+                            </h3>
+                            <p class="text-sm text-text-muted mb-4">
+                                Masukkan nomor WhatsApp tujuan (contoh:
+                                08123456789)
+                            </p>
+
+                            <input
+                                type="tel"
+                                bind:value={newChatPhone}
+                                class="w-full bg-bg-tertiary border border-border/10 rounded-xl px-4 py-3 text-text-primary mb-4 focus:ring-2 focus:ring-primary/50 outline-none"
+                                placeholder="Nomor Telepon..."
+                                autofocus
+                            />
+
+                            <div class="flex gap-3 justify-end">
+                                <button
+                                    class="px-4 py-2 rounded-lg text-text-muted hover:bg-bg-tertiary font-medium transition-colors"
+                                    onclick={() => (showNewChatModal = false)}
+                                >
+                                    Batal
+                                </button>
+                                <button
+                                    class="px-5 py-2 rounded-lg bg-primary text-white font-medium hover:opacity-90 transition-opacity"
+                                    onclick={submitNewChat}
+                                >
+                                    Mulai Chat
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                {/if}
+
                 {#if currentView === "chat-detail"}
                     <div
                         class="flex-1 flex flex-col h-full bg-bg-secondary"
@@ -369,6 +527,7 @@
                                         'input[placeholder*="Cari"]',
                                     )
                                     ?.focus()}
+                            onDirectMessage={handleDirectMessage}
                         />
                     </div>
                 {/if}
