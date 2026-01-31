@@ -124,10 +124,12 @@ export interface WhatsappStatus {
     session: string;
     isConnecting: boolean;
     qrCode?: string | null;
-    loadingStatus?: {
-        percent: number;
-        message: string;
-    } | null;
+    hasQrCode?: boolean;
+    message?: string;
+    loadingStatus?: { percent: number; message: string } | null;
+    retryCount?: number;
+    maxRetries?: number;
+    reconnectAttemptInProgress?: boolean;
 }
 
 // Queue types
@@ -151,4 +153,47 @@ export interface QueueJob {
     processedOn?: number;
     finishedOn?: number;
     failedReason?: string;
+}
+
+export interface WhatsappSessionStatusResponse {
+    session: string;
+    status: WhatsappConnectionStatus;
+    qrCode?: string | null;
+}
+
+export interface WhatsappContact {
+    id: string;
+    name: string;
+    shortName?: string;
+    pushname?: string;
+    type?: string;
+    isBusiness?: boolean;
+    isEnterprise?: boolean;
+    isUser?: boolean;
+    isGroup?: boolean;
+}
+
+export interface WhatsappMessage {
+    id: string;
+    body: string;
+    type: string;
+    t: number;
+    notifyName?: string;
+    from: string;
+    chatId: string;
+    author?: string;
+    self?: string;
+    ack?: number;
+    invis?: boolean;
+    isNewMsg?: boolean;
+    star?: boolean;
+    recvFresh?: boolean;
+    broadcast?: boolean;
+    forwarded?: boolean;
+    fromMe?: boolean;
+    quotedMsg?: any;
+    mentionedJidList?: string[];
+    caption?: string;
+    filename?: string;
+    mimetype?: string;
 }

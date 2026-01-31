@@ -2,14 +2,17 @@ import { io, Socket } from 'socket.io-client';
 import { writable } from 'svelte/store';
 import { browser } from '$app/environment';
 
+import type { WhatsappStatus, WhatsappConnectionStatus } from './types';
+
 // Socket connection state
 export const socketConnected = writable<boolean>(false);
 
-export const whatsappStatus = writable<{
-    status: string;
-    session?: string;
-    qrcode?: string | null;
-}>({ status: 'disconnected' });
+export const whatsappStatus = writable<WhatsappStatus>({
+    status: 'disconnected',
+    session: 'rosantibikemotorent',
+    isConnecting: false,
+    qrCode: null
+});
 
 export const queueUpdates = writable<{
     queue: string;
@@ -59,6 +62,28 @@ export function initSocket(): Socket | null {
 
     socket.on('ping', (data) => {
         console.log('[Socket.IO] Ping:', data.timestamp);
+    });
+
+    // WhatsApp Status updates
+    socket.on('whatsapp:status', (data: any) => {
+        console.log('[Socket.IO] WhatsApp Status:', data);
+        whatsappStatus.update(current => ({
+            ...current,
+            status: (data.connectionStatus as WhatsappConnectionStatus) || 'disconnected',
+            isConnecting: data.connectionStatus === 'connecting',
+            qrCode: data.hasQrCode && data.qrCode ? data.qrCode : (data.connectionStatus === 'connected' ? null : current.qrCode),
+            loadingStatus: data.message && data.connectionStatus === 'connecting' ? { percent: 0, message: data.message } : undefined
+        }));
+    });
+
+    socket.on('whatsapp:qrcode', (data: { qrCode: string }) => {
+        console.log('[Socket.IO] WhatsApp QR:', 'Received');
+        whatsappStatus.update(current => ({
+            ...current,
+            qrCode: data.qrCode,
+            status: 'connecting',
+            isConnecting: true
+        }));
     });
 
     // Queue updates

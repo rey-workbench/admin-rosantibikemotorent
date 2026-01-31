@@ -1,329 +1,398 @@
 <script lang="ts">
-    import {
-        MessageSquare,
-        X,
-        Send,
-        Phone,
-        User,
-        Loader2,
-        Search,
-        History,
-    } from "lucide-svelte";
-    import { onMount } from "svelte";
-    import { fade, fly } from "svelte/transition";
+    import { MessageSquare, X } from "lucide-svelte";
+    import { onMount, onDestroy } from "svelte";
     import { transaksiApi, whatsappApi } from "$lib/api";
-    import type { Transaksi } from "$lib/types";
     import { toast } from "$lib/stores/toast";
+    import { fade, fly, slide } from "svelte/transition";
+    import websocketService from "$lib/api/websocket";
 
+    // UI Components
+    import ChatHeader from "./ui/ChatHeader.svelte";
+    import ChatInput from "./ui/ChatInput.svelte";
+    import MessageList from "./ui/MessageList.svelte";
+    import ContactList from "./ui/ContactList.svelte";
+
+    // --- State ---
     let isOpen = $state(false);
-    let contacts: { name: string; phone: string; lastTx?: string }[] = $state(
-        [],
-    );
-    let filteredContacts: { name: string; phone: string; lastTx?: string }[] =
-        $state([]);
-    let searchQuery = $state("");
-    let selectedContact: { name: string; phone: string } | null = $state(null);
-    let manualPhone = $state("");
+    let isFullscreen = $state(false);
+    let contacts = $state<any[]>([]);
+    let chatMessages = $state<any[]>([]);
+    let currentView = $state<"main" | "chat-detail">("main");
+    let selectedContact = $state<any>(null);
     let message = $state("");
     let isSending = $state(false);
-    let isLoadingContacts = $state(false);
+    let isLoadingMessages = $state(false);
+    let replyMessage = $state<any>(null);
+    let sessionStatus = $state<string>("disconnected");
+    let sessionStatusMessage = $state<string>("");
+    let qrCode = $state<string | null>(null);
 
-    onMount(() => {
-        loadContacts();
+    // Media/Location State
+    let selectedFile = $state<File | null>(null);
+    let showLocationPicker = $state(false);
+    let locationLatitude = $state("");
+    let locationLongitude = $state("");
+
+    // --- WebSocket ---
+    let unsubscribes: (() => void)[] = [];
+
+    function setupWebSocket() {
+        // Updated logic: combine listeners or use a cleaner approach
+        unsubscribes.push(
+            websocketService.onWhatsAppMessageSent((data) => {
+                const targetId =
+                    selectedContact?.id?._serialized || selectedContact?.phone;
+                if (targetId && data.chatId?.includes(targetId.split("@")[0])) {
+                    loadMessages(selectedContact.phone);
+                    loadContacts();
+                }
+            }),
+            websocketService.onWhatsAppMessage((data) => {
+                const fromId = data.from?.split("@")[0];
+                const selectedId = selectedContact?.phone;
+
+                if (selectedId && fromId === selectedId) {
+                    loadMessages(selectedId);
+                    whatsappApi.sendSeen(data.from);
+                }
+
+                if (data.type === "incoming") {
+                    loadContacts();
+                    if (!isOpen)
+                        toast.info(`Pesan dari ${data.notifyName || fromId}`);
+                }
+            }),
+            websocketService.onWhatsAppStatus((data) => {
+                sessionStatus = data.connectionStatus;
+                sessionStatusMessage = data.message || "";
+                if (data.connectionStatus === "disconnected") {
+                    toast.warning("WhatsApp Terputus");
+                }
+            }),
+            websocketService.onWhatsAppQrCode((data) => {
+                qrCode = data.qrCode;
+                if (qrCode) sessionStatus = "connecting";
+            }),
+        );
+    }
+
+    // --- Lifecycle ---
+    onMount(async () => {
+        websocketService.connect();
+        setupWebSocket();
+        if (isOpen) {
+            loadContacts();
+            const status = await whatsappApi.getStatus();
+            sessionStatus = status.status;
+            if (status.qrCode) qrCode = status.qrCode;
+        }
     });
 
-    // Load contacts from transactions
+    onDestroy(() => unsubscribes.forEach((un) => un()));
+
+    // --- Actions ---
     async function loadContacts() {
-        isLoadingContacts = true;
         try {
-            // Fetch both Active transactions and History to get a complete contact list
-            const [activeRes, historyRes] = await Promise.all([
-                transaksiApi.getAll({ limit: 100 }),
-                transaksiApi.getHistory({ limit: 100 }),
+            const [chats, activeRes] = await Promise.all([
+                whatsappApi.getChats(),
+                transaksiApi.getAll({ limit: 500 }),
             ]);
 
-            const uniqueContacts = new Map();
+            const customerMap = new Map();
+            (activeRes.data || []).forEach((t: any) => {
+                if (t.noWhatsapp) customerMap.set(t.noWhatsapp, t.namaPenyewa);
+            });
 
-            const processTransaction = (t: Transaksi) => {
-                // Check multiple possible phone fields just in case, though noWhatsapp is the standard
-                const phone = t.noWhatsapp;
-                if (phone && t.namaPenyewa && !uniqueContacts.has(phone)) {
-                    uniqueContacts.set(phone, {
-                        name: t.namaPenyewa,
-                        phone: phone,
-                        lastTx: t.createdAt,
-                    });
-                }
-            };
+            contacts = chats.map((chat: any) => {
+                const phone = chat.id.user;
+                const dbName =
+                    customerMap.get(phone) ||
+                    customerMap.get("0" + phone.slice(2)) ||
+                    customerMap.get("62" + phone.slice(1));
+                const name =
+                    dbName || chat.name || chat.contact?.pushname || phone;
 
-            (activeRes.data || []).forEach(processTransaction);
-            (historyRes.data || []).forEach(processTransaction);
-
-            contacts = Array.from(uniqueContacts.values());
-            filteredContacts = contacts;
+                return {
+                    ...chat,
+                    phone,
+                    name,
+                    avatarColor: `bg-slate-${(phone.slice(-1) % 6) * 100 + 400}`, // Simple deterministic color
+                    lastMessagePreview: chat.typing
+                        ? "Sedang mengetik..."
+                        : chat.lastMessage?.body ||
+                          chat.lastMessage?.type ||
+                          "",
+                    lastMessageTime: chat.t,
+                    lastMessageFromMe: chat.lastMessage?.fromMe,
+                    lastMessageStatus:
+                        chat.lastMessage?.ack >= 3 ? "read" : "sent",
+                };
+            });
         } catch (e) {
-            console.error("Failed to load contacts", e);
-        } finally {
-            isLoadingContacts = false;
+            console.error(e);
         }
     }
 
-    function toggleChat() {
-        isOpen = !isOpen;
-        if (isOpen) loadContacts();
-    }
-
-    function selectContact(contact: { name: string; phone: string }) {
-        selectedContact = contact;
-        // Strip non-numeric chars for display/sending logic if needed,
-        // but assuming API handles generic formats or we clean it before send
-        manualPhone = contact.phone;
-    }
-
-    function clearSelection() {
-        selectedContact = null;
-        manualPhone = "";
+    async function loadMessages(phone: string) {
+        isLoadingMessages = true;
+        try {
+            const res = await whatsappApi.getMessages(phone);
+            chatMessages = Array.isArray(res) ? res : (res as any).data || [];
+            await whatsappApi.sendSeen(phone);
+        } catch (e) {
+            console.error(e);
+        } finally {
+            isLoadingMessages = false;
+        }
     }
 
     async function handleSend() {
-        if (!manualPhone || !message) {
-            toast.error("Please provide a phone number and message");
+        if (
+            !selectedContact?.phone ||
+            (!message && !selectedFile && !showLocationPicker)
+        )
             return;
-        }
-
         isSending = true;
         try {
-            await whatsappApi.sendMessage(manualPhone, message);
-            toast.success("Message sent successfully!");
+            const to = selectedContact.phone;
+            if (showLocationPicker && locationLatitude && locationLongitude) {
+                await whatsappApi.sendLocation(
+                    to,
+                    locationLatitude,
+                    locationLongitude,
+                    "",
+                );
+                showLocationPicker = false;
+            } else if (selectedFile) {
+                const base64 = await new Promise<string>((r) => {
+                    const reader = new FileReader();
+                    reader.onload = () => r(reader.result as string);
+                    reader.readAsDataURL(selectedFile!);
+                });
+                selectedFile.type.startsWith("image/")
+                    ? await whatsappApi.sendImage(to, base64, message)
+                    : await whatsappApi.sendFile(
+                          to,
+                          base64,
+                          selectedFile.name,
+                          message,
+                      );
+                selectedFile = null;
+            } else if (message) {
+                replyMessage
+                    ? await whatsappApi.reply(
+                          to,
+                          message,
+                          replyMessage.id._serialized,
+                      )
+                    : await whatsappApi.sendMessage(to, message);
+            }
             message = "";
-            // Optional: Close or stay open?
+            replyMessage = null;
+            loadContacts();
         } catch (e) {
-            console.error(e);
-            toast.error("Failed to send message");
+            toast.error("Gagal mengirim");
         } finally {
             isSending = false;
         }
     }
 
-    $effect(() => {
-        if (!searchQuery) {
-            filteredContacts = contacts;
-        } else {
-            const q = searchQuery.toLowerCase();
-            filteredContacts = contacts.filter(
-                (c) => c.name.toLowerCase().includes(q) || c.phone.includes(q),
-            );
+    async function handleSendSticker(file: File) {
+        if (!selectedContact?.phone) return;
+        isSending = true;
+        try {
+            const to = selectedContact.phone;
+            const base64 = await new Promise<string>((r) => {
+                const reader = new FileReader();
+                reader.onload = () => r(reader.result as string);
+                reader.readAsDataURL(file);
+            });
+            await whatsappApi.sendImageAsSticker(to, base64);
+            toast.success("Sticker terkirim");
+        } catch (e) {
+            toast.error("Gagal mengirim sticker");
+        } finally {
+            isSending = false;
         }
-    });
+    }
+
+    async function handleSendContact(name: string, number: string) {
+        if (!selectedContact?.phone) return;
+        isSending = true;
+        try {
+            const to = selectedContact.phone;
+            await whatsappApi.sendContactVcard(to, number, name);
+            toast.success("Kontak terkirim");
+        } catch (e) {
+            toast.error("Gagal mengirim kontak");
+        } finally {
+            isSending = false;
+        }
+    }
+
+    async function handleLogout() {
+        if (!confirm("Yakin ingin logout dari WhatsApp?")) return;
+        try {
+            await whatsappApi.logout();
+            toast.success("Berhasil logout");
+            isOpen = false;
+        } catch (e) {
+            toast.error("Gagal logout");
+        }
+    }
+
+    async function handleReset() {
+        if (!confirm("Reset koneksi WhatsApp? Ini akan membersihkan sesi."))
+            return;
+        try {
+            await whatsappApi.resetSession();
+            toast.success("Sesi sedang direset...");
+            loadContacts();
+        } catch (e) {
+            toast.error("Gagal reset");
+        }
+    }
 </script>
 
-<div class="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-4">
+<div
+    class="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-4 font-sans"
+>
     {#if isOpen}
         <div
             transition:fly={{ y: 20, duration: 300 }}
-            class="bg-white rounded-2xl shadow-2xl border border-gray-100 w-[350px] md:w-[400px] overflow-hidden flex flex-col max-h-[600px]"
+            class="bg-bg-secondary shadow-2xl overflow-hidden flex flex-col transition-all border border-border/50
+             {isFullscreen
+                ? 'fixed inset-4 rounded-3xl'
+                : 'w-[400px] h-[700px] max-h-[calc(100vh-6rem)] rounded-3xl'}"
         >
-            <!-- Header -->
-            <div
-                class="bg-primary px-4 py-3 flex items-center justify-between text-white shrink-0"
-            >
-                <div class="flex items-center gap-2">
-                    <MessageSquare size={20} />
-                    <span class="font-bold">WhatsApp Chat</span>
-                </div>
-                <button
-                    onclick={toggleChat}
-                    class="hover:bg-white/20 p-1.5 rounded-full transition-colors"
-                >
-                    <X size={18} />
-                </button>
-            </div>
-
-            <!-- Content -->
-            <div class="flex-1 overflow-y-auto bg-gray-50 flex flex-col">
-                <!-- Recipient Selector -->
-                <div
-                    class="p-4 bg-white border-b border-gray-100 space-y-3 shrink-0"
-                >
-                    <label
-                        class="text-xs font-semibold text-gray-500 uppercase tracking-wider block"
+            <div class="flex-1 relative flex flex-col overflow-hidden">
+                {#if currentView === "chat-detail"}
+                    <div
+                        class="flex-1 flex flex-col h-full bg-bg-secondary"
+                        transition:slide={{ axis: "x", duration: 300 }}
                     >
-                        To:
-                    </label>
-
-                    {#if selectedContact}
-                        <div
-                            class="flex items-center gap-2 bg-blue-50 p-2 rounded-lg border border-blue-100"
-                        >
+                        <ChatHeader
+                            title={selectedContact.name}
+                            {isFullscreen}
+                            {sessionStatus}
+                            showBack={true}
+                            contact={selectedContact}
+                            onBack={() => {
+                                currentView = "main";
+                                selectedContact = null;
+                            }}
+                            onToggleFullscreen={() =>
+                                (isFullscreen = !isFullscreen)}
+                            onClose={() => (isOpen = false)}
+                            onLogout={handleLogout}
+                            onReset={handleReset}
+                        />
+                        <MessageList
+                            messages={chatMessages}
+                            isLoading={isLoadingMessages}
+                            {selectedContact}
+                            onReply={(m) => (replyMessage = m)}
+                        />
+                        <ChatInput
+                            bind:message
+                            bind:isSending
+                            bind:selectedFile
+                            bind:showLocationPicker
+                            bind:locationLatitude
+                            bind:locationLongitude
+                            {replyMessage}
+                            onSend={handleSend}
+                            onSendSticker={handleSendSticker}
+                            onSendContact={handleSendContact}
+                            onCancelReply={() => (replyMessage = null)}
+                            onTyping={(t) =>
+                                t
+                                    ? whatsappApi.startTyping(
+                                          selectedContact.phone,
+                                      )
+                                    : whatsappApi.stopTyping(
+                                          selectedContact.phone,
+                                      )}
+                        />
+                    </div>
+                {:else}
+                    <div
+                        class="flex-1 flex flex-col h-full bg-bg-secondary"
+                        in:fade
+                    >
+                        <ChatHeader
+                            title="WhatsApp Admin"
+                            {isFullscreen}
+                            {sessionStatus}
+                            onToggleFullscreen={() =>
+                                (isFullscreen = !isFullscreen)}
+                            onClose={() => (isOpen = false)}
+                            onLogout={handleLogout}
+                            onReset={handleReset}
+                        />
+                        {#if sessionStatus !== "connected" && qrCode}
                             <div
-                                class="w-8 h-8 rounded-full bg-blue-200 flex items-center justify-center text-blue-700 font-bold shrink-0"
+                                class="absolute inset-0 bg-white/95 dark:bg-bg-secondary/95 z-[100] flex flex-col items-center justify-center p-8 text-center"
+                                transition:fade
                             >
-                                {selectedContact.name.charAt(0)}
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <p
-                                    class="text-sm font-bold text-gray-900 truncate"
+                                <div
+                                    class="bg-white p-4 rounded-3xl shadow-2xl mb-6"
                                 >
-                                    {selectedContact.name}
+                                    <img
+                                        src={qrCode}
+                                        alt="WhatsApp QR Code"
+                                        class="w-64 h-64"
+                                    />
+                                </div>
+                                <h3
+                                    class="text-xl font-bold text-text-primary mb-2"
+                                >
+                                    Scan QR Code
+                                </h3>
+                                <p class="text-sm text-text-muted max-w-xs">
+                                    Buka WhatsApp di ponsel Anda, bukax
+                                    Pengaturan > Perangkat Tertaut, dan scan
+                                    kode ini.
                                 </p>
-                                <p class="text-xs text-gray-500">
-                                    {selectedContact.phone}
-                                </p>
-                            </div>
-                            <button
-                                onclick={clearSelection}
-                                class="text-gray-400 hover:text-red-500 p-1"
-                            >
-                                <X size={16} />
-                            </button>
-                        </div>
-                    {:else}
-                        <!-- Search/Input Mode -->
-                        <div class="relative">
-                            <Search
-                                class="absolute left-3 top-3 text-gray-400"
-                                size={16}
-                            />
-                            <input
-                                type="text"
-                                bind:value={searchQuery}
-                                placeholder="Search client..."
-                                class="w-full pl-9 pr-4 py-2.5 bg-gray-100 rounded-xl text-sm border-transparent focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none"
-                            />
-                        </div>
-
-                        <!-- Manual Input Fallback -->
-                        <div class="flex flex-col gap-1 mt-2">
-                            <span class="text-[10px] text-gray-400 text-right"
-                                >Or type number manually below</span
-                            >
-                        </div>
-                    {/if}
-
-                    <!-- Manual Phone Input (Always visible/editable if not strictly selecting object) -->
-                    {#if !selectedContact}
-                        <div class="flex items-center gap-2">
-                            <div
-                                class="bg-gray-100 p-2 rounded-lg text-gray-500"
-                            >
-                                <Phone size={18} />
-                            </div>
-                            <input
-                                type="text"
-                                bind:value={manualPhone}
-                                placeholder="e.g. 628123456789"
-                                class="flex-1 bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm focus:border-primary focus:ring-2 focus:ring-primary/10 outline-none transition-all"
-                            />
-                        </div>
-                    {/if}
-                </div>
-
-                <!-- Contact List (Only if no contact selected) -->
-                {#if !selectedContact}
-                    <div class="flex-1 overflow-y-auto p-2">
-                        <p
-                            class="px-2 py-1 text-xs text-gray-400 font-medium sticky top-0 bg-gray-50 z-10"
-                        >
-                            Recent Contacts
-                        </p>
-                        {#if isLoadingContacts}
-                            <div class="p-4 text-center">
-                                <Loader2
-                                    class="animate-spin mx-auto text-primary"
-                                    size={20}
-                                />
-                            </div>
-                        {:else}
-                            <div class="space-y-1">
-                                {#each filteredContacts as contact}
-                                    <button
-                                        onclick={() => selectContact(contact)}
-                                        class="w-full text-left flex items-center gap-3 p-2 hover:bg-white hover:shadow-sm rounded-xl transition-all group"
-                                    >
-                                        <div
-                                            class="w-10 h-10 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-sm group-hover:bg-primary group-hover:text-white transition-colors"
-                                        >
-                                            {contact.name.charAt(0)}
-                                        </div>
-                                        <div class="flex-1 min-w-0">
-                                            <p
-                                                class="text-sm font-semibold text-gray-700"
-                                            >
-                                                {contact.name}
-                                            </p>
-                                            <p class="text-xs text-gray-500">
-                                                {contact.phone}
-                                            </p>
-                                        </div>
-                                        <div class="text-xs text-gray-300">
-                                            <History size={14} />
-                                        </div>
-                                    </button>
-                                {/each}
-                                {#if filteredContacts.length === 0}
-                                    <p
-                                        class="text-center text-gray-400 text-sm py-4"
-                                    >
-                                        No contacts found
-                                    </p>
-                                {/if}
                             </div>
                         {/if}
-                    </div>
-                {/if}
-
-                <!-- Message Input Area (Only if phone is set or contact selected) -->
-                {#if selectedContact || manualPhone.length > 5}
-                    <div
-                        transition:fade
-                        class="p-4 bg-white mt-auto border-t border-gray-100 flex flex-col gap-3"
-                    >
-                        <textarea
-                            bind:value={message}
-                            placeholder="Type a message..."
-                            class="w-full bg-gray-50 rounded-xl p-3 text-sm focus:bg-white focus:ring-2 focus:ring-primary/20 outline-none resize-none h-24 border border-gray-200"
-                        ></textarea>
-                        <div class="flex justify-end">
-                            <button
-                                onclick={handleSend}
-                                disabled={isSending || !message.trim()}
-                                class="bg-primary text-white px-5 py-2.5 rounded-xl font-bold text-sm flex items-center gap-2 hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-primary/20 transition-all active:scale-95"
-                            >
-                                {#if isSending}
-                                    <Loader2 size={18} class="animate-spin" />
-                                    <span>Sending...</span>
-                                {:else}
-                                    <span>Send</span>
-                                    <Send size={18} />
-                                {/if}
-                            </button>
-                        </div>
-                    </div>
-                {/if}
-
-                {#if !selectedContact && manualPhone.length <= 5}
-                    <div
-                        class="flex-1 flex flex-col items-center justify-center text-gray-400 p-8 text-center opacity-60"
-                    >
-                        <MessageSquare size={48} class="mb-2" />
-                        <p class="text-sm">
-                            Select a contact or enter a number to start chatting
-                        </p>
+                        <ContactList
+                            {contacts}
+                            onSelect={(c) => {
+                                selectedContact = c;
+                                currentView = "chat-detail";
+                                loadMessages(c.phone);
+                            }}
+                            onNewContact={() =>
+                                document
+                                    .querySelector<HTMLInputElement>(
+                                        'input[placeholder*="Cari"]',
+                                    )
+                                    ?.focus()}
+                        />
                     </div>
                 {/if}
             </div>
         </div>
     {/if}
 
-    <!-- FAB Trigger -->
     <button
-        onclick={toggleChat}
-        class="w-14 h-14 bg-[#25D366] hover:bg-[#20bd5a] text-white rounded-full shadow-xl flex items-center justify-center transition-all hover:scale-110 active:scale-95 group"
+        onclick={() => {
+            isOpen = !isOpen;
+            if (isOpen) loadContacts();
+        }}
+        class="w-14 h-14 rounded-full shadow-2xl transition-all duration-300 hover:scale-110 flex items-center justify-center z-50
+            {isOpen
+            ? 'bg-bg-secondary text-text-primary rotate-90'
+            : 'bg-[#25D366] text-white hover:rotate-12'}"
     >
         {#if isOpen}
-            <X size={28} />
+            <X size={26} />
         {:else}
             <MessageSquare size={28} class="fill-current" />
+            <span
+                class="absolute top-0 right-0 h-3 w-3 bg-red-500 rounded-full border-2 border-white"
+            ></span>
         {/if}
     </button>
 </div>

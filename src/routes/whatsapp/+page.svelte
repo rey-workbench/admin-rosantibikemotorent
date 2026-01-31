@@ -2,7 +2,7 @@
     import { onMount, onDestroy } from "svelte";
     import { RefreshCw, Power, Send, QrCode } from "lucide-svelte";
     import { whatsappApi } from "$lib/api";
-    import { socketConnected } from "$lib/socket";
+    import { socketConnected, whatsappStatus } from "$lib/socket";
     import { toast } from "$lib/stores/toast";
     import type { WhatsappStatus, WhatsappConnectionStatus } from "$lib/types";
     import {
@@ -27,6 +27,21 @@
     onMount(async () => {
         await loadStatus();
         interval = setInterval(loadStatus, 5000);
+    });
+
+    // Sync with WebSocket store
+    $effect(() => {
+        if ($whatsappStatus && $whatsappStatus.status !== "disconnected") {
+            // Only update if we have a meaningful status update from socket
+            // or if we were waiting for connection
+            status = $whatsappStatus;
+
+            if ($whatsappStatus.qrCode) {
+                qrCode = $whatsappStatus.qrCode;
+            } else if ($whatsappStatus.status === "connected") {
+                qrCode = null;
+            }
+        }
     });
 
     onDestroy(() => {
@@ -183,21 +198,18 @@
                         <p class="font-semibold">{status.session}</p>
                     </div>
 
-                    {#if status.loadingStatus}
-                        <div class="mb-4">
-                            <div class="flex justify-between text-sm mb-1">
-                                <span>{status.loadingStatus.message}</span>
-                                <span>{status.loadingStatus.percent}%</span>
-                            </div>
-                            <div
-                                class="bg-bg-tertiary rounded-full h-2 overflow-hidden"
+                    {#if status.message}
+                        <div
+                            class="mb-4 p-3 bg-bg-surface rounded-md border border-border-color"
+                        >
+                            <p
+                                class="text-sm font-medium {status.status ===
+                                'error'
+                                    ? 'text-danger-500'
+                                    : 'text-text-primary'}"
                             >
-                                <div
-                                    class="bg-primary h-full transition-all duration-300"
-                                    style="width: {status.loadingStatus
-                                        .percent}%"
-                                ></div>
-                            </div>
+                                {status.message}
+                            </p>
                         </div>
                     {/if}
 
@@ -251,12 +263,15 @@
                                 <div
                                     class="loading-spinner w-10 h-10 border-2"
                                 ></div>
-                                <p class="text-primary font-medium">
-                                    Membuka Browser...
+                                <p class="text-primary font-medium text-center">
+                                    {status.message || "Membuka Browser..."}
                                 </p>
-                                <p class="text-text-muted text-xs px-8">
-                                    Menyiapkan lingkungan WhatsApp Web (60-90
-                                    detik untuk scan pertama)
+                                <p
+                                    class="text-text-muted text-xs px-8 text-center"
+                                >
+                                    {status.message
+                                        ? ""
+                                        : "Menyiapkan lingkungan WhatsApp Web (60-90 detik untuk scan pertama)"}
                                 </p>
                             </div>
                         {:else}
