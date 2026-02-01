@@ -75,7 +75,7 @@
 </script>
 
 <aside
-    class="w-64 bg-[#F8F9FB] flex flex-col shrink-0 h-screen sticky top-0 border-r border-transparent shadow-sm z-20"
+    class="w-64 bg-[#F8F9FB] max-[768px]:hidden min-[769px]:flex flex-col shrink-0 h-screen sticky top-0 border-r border-transparent shadow-sm z-20"
 >
     <div class="p-8 pb-4">
         <a
@@ -93,6 +93,7 @@
 
     <nav class="flex-1 overflow-y-auto px-4 py-4 space-y-1 scrollbar-hide">
         {#each navItems as item}
+            {@const Icon = item.icon}
             {#if item.children}
                 <div class="flex flex-col">
                     <button
@@ -103,8 +104,7 @@
                             : 'text-text-secondary hover:text-primary hover:bg-bg-tertiary'}"
                     >
                         <div class="flex items-center gap-3">
-                            <svelte:component
-                                this={item.icon}
+                            <Icon
                                 size={20}
                                 class={isParentActive(item)
                                     ? "stroke-[2.5px]"
@@ -125,6 +125,7 @@
                             transition:slide={{ duration: 200 }}
                         >
                             {#each item.children as child}
+                                {@const ChildIcon = child.icon}
                                 <a
                                     href={child.path}
                                     class="flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200 text-sm font-medium relative group
@@ -132,8 +133,7 @@
                                         ? 'text-primary bg-primary/5'
                                         : 'text-text-secondary hover:text-primary hover:bg-bg-tertiary'}"
                                 >
-                                    <svelte:component
-                                        this={child.icon}
+                                    <ChildIcon
                                         size={18}
                                         class={isActive(child.path)
                                             ? "stroke-[2.5px]"
@@ -159,8 +159,7 @@
                         ? 'text-primary bg-primary/5'
                         : 'text-text-secondary hover:text-primary hover:bg-bg-tertiary'}"
                 >
-                    <svelte:component
-                        this={item.icon}
+                    <Icon
                         size={20}
                         class={isActive(item.path)
                             ? "stroke-[2.5px]"

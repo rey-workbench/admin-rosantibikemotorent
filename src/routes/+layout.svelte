@@ -4,6 +4,7 @@
     import { goto } from "$app/navigation";
     import { page } from "$app/stores";
     import Sidebar from "$lib/components/layout/Sidebar.svelte";
+    import BottomNav from "$lib/components/layout/BottomNav.svelte";
     import ChatWidget from "$lib/components/chat/ChatWidget.svelte";
     import { Toast, ConfirmModal } from "$lib/components/ui";
     import { authStore } from "$lib/stores/auth";
@@ -81,7 +82,7 @@
         <!-- Main Content Area -->
         <main class="flex-1 flex flex-col min-w-0 overflow-hidden relative">
             <div class="flex-1 overflow-y-auto scroll-smooth">
-                <div class="p-6 md:p-8 w-full">
+                <div class="p-6 md:p-8 w-full pb-24 md:pb-8">
                     {@render children()}
                 </div>
             </div>
@@ -89,5 +90,8 @@
 
         <!-- Chat Widget Overlay -->
         <ChatWidget />
+
+        <!-- Mobile Bottom Navigation -->
+        <BottomNav />
     </div>
 {/if}

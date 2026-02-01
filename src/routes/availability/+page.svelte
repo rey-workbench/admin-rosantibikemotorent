@@ -65,15 +65,7 @@
                 .split("T")[0];
 
             let params: any = { startDate, endDate };
-            if (unitTypeFilter) params.jenisId = unitTypeFilter; // Note: API might expect unitId or jenisId, check backend logic.
-            // Based on service logic: 'jenisId' is supported filter if passed.
-            // Wait, api checkAvailability uses { unitId, ... }, but controller uses CheckAvailabilityDto which has jenisId.
-            // Let's pass jenisId as custom param or ensure API definition supports it.
-
-            // Actually, let's fix the API call if needed. unitMotorApi.checkAvailability definition says { unitId? }.
-            // But controller uses CheckAvailabilityDto { jenisId? }.
-            // I will cast params to any to bypass strict check if needed, or update the API definition separately.
-
+            if (unitTypeFilter) params.jenisId = unitTypeFilter;
             availabilityData = await unitMotorApi.checkAvailability(
                 params as any,
             );
@@ -312,14 +304,21 @@
                                         class="border-b border-r border-border/50 p-1 relative h-[60px]"
                                     >
                                         <div
-                                            class="w-full h-full rounded transition-all duration-200
+                                            class="w-full h-full rounded transition-all duration-200 outline-none focus:ring-2 focus:ring-primary/50
                                             {isAvailable
                                                 ? 'bg-green-500/10 hover:bg-green-500/20'
                                                 : 'bg-red-500/10 hover:bg-red-500/20 cursor-help'}"
+                                            role="button"
+                                            tabindex="0"
                                             onmouseenter={(e) =>
                                                 handleMouseEnter(e, status)}
                                             onmousemove={handleMouseMove}
                                             onmouseleave={handleMouseLeave}
+                                            onfocus={(e) =>
+                                                handleMouseEnter(
+                                                    e as any,
+                                                    status,
+                                                )}
                                         >
                                             {#if !isAvailable}
                                                 <div

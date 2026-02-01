@@ -367,7 +367,7 @@
 </script>
 
 <div
-    class="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-4 font-sans"
+    class="fixed bottom-20 md:bottom-6 right-6 z-50 flex flex-col items-end gap-4 font-sans"
 >
     {#if isOpen}
         <div
