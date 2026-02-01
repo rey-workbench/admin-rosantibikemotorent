@@ -26,8 +26,21 @@
 	},
 	"dependencies": {
 		"@tanstack/svelte-query": "^6.0.18",
+		"@tiptap/core": "^3.18.0",
+		"@tiptap/extension-color": "^3.18.0",
+		"@tiptap/extension-font-family": "^3.18.0",
+		"@tiptap/extension-highlight": "^3.18.0",
+		"@tiptap/extension-image": "^3.18.0",
+		"@tiptap/extension-link": "^3.18.0",
+		"@tiptap/extension-text-align": "^3.18.0",
+		"@tiptap/extension-text-style": "^3.18.0",
+		"@tiptap/extension-underline": "^3.18.0",
+		"@tiptap/extension-youtube": "^3.18.0",
+		"@tiptap/pm": "^3.18.0",
+		"@tiptap/starter-kit": "^3.18.0",
 		"axios": "^1.13.4",
 		"date-fns": "^4.1.0",
+		"flowbite-typography": "^1.0.5",
 		"lucide-svelte": "^0.563.0",
 		"socket.io-client": "^4.8.3"
 	}

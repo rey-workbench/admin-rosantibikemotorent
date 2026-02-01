@@ -10,8 +10,8 @@
         Button,
         Input,
         Select,
-        Textarea,
         FileUpload,
+        RichTextEditor,
     } from "$lib/components/ui";
 
     let judul = $state("");
@@ -25,6 +25,7 @@
 
     let kategoris: BlogKategori[] = $state([]);
     let isSaving = $state(false);
+    let isCommitted = $state(false);
 
     onMount(async () => {
         try {
@@ -59,6 +60,7 @@
             if (imageFile) formData.append("file", imageFile);
 
             await blogApi.create(formData);
+            isCommitted = true;
             goto("/blog");
         } finally {
             isSaving = false;
@@ -115,14 +117,13 @@
                     options={statusOptions}
                 />
 
-                <Textarea
+                <RichTextEditor
                     id="konten"
                     label="Konten"
                     bind:value={konten}
                     placeholder="Tulis konten artikel..."
-                    rows={12}
-                    required
                     class="md:col-span-2"
+                    parentCommit={isCommitted}
                 />
 
                 <Input

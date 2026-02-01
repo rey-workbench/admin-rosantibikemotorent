@@ -13,3 +13,4 @@ export { default as Textarea } from './Textarea.svelte';
 export { default as FileUpload } from './FileUpload.svelte';
 export { default as Toast } from './Toast.svelte';
 export { default as ConfirmModal } from './ConfirmModal.svelte';
+export { default as RichTextEditor } from './RichTextEditor.svelte';

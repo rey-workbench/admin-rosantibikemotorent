@@ -33,4 +33,16 @@ export const blogApi = {
     delete: async (id: string): Promise<void> => {
         await api.delete(`/blog/${id}`);
     },
+    uploadImage: async (file: File, blogId?: string): Promise<string> => {
+        const formData = new FormData();
+        formData.append('file', file);
+        const { data } = await api.post('/blog/upload', formData, {
+            params: { blogId },
+            headers: { 'Content-Type': 'multipart/form-data' },
+        });
+        return data.data.url;
+    },
+    deleteImage: async (url: string): Promise<void> => {
+        await api.delete('/blog/upload', { data: { url } });
+    },
 };
