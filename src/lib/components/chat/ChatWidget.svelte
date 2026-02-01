@@ -61,10 +61,6 @@
                         updated.t = Math.floor(Date.now() / 1000);
                         chatMessages[index] = updated;
                     } else {
-                        // Fallback if not found (e.g. sent from another device)
-                        // We can't fully reconstruct without fetching, but we can try or just leave it.
-                        // Better to just push if not duplicate?
-                        // For now, let's rely on loadMessages ONLY if we truly miss it, but here we try to be pure socket.
                     }
                     loadContacts();
                 }
@@ -133,31 +129,43 @@
                 if (t.noWhatsapp) customerMap.set(t.noWhatsapp, t.namaPenyewa);
             });
 
-            contacts = chats.map((chat: any) => {
-                const phone = chat.id.user;
-                const dbName =
-                    customerMap.get(phone) ||
-                    customerMap.get("0" + phone.slice(2)) ||
-                    customerMap.get("62" + phone.slice(1));
-                const name =
-                    dbName || chat.name || chat.contact?.pushname || phone;
+            contacts = chats
+                .filter((chat: any) => chat.id.user !== "0") // Filter "ghost" numbers
+                .map((chat: any) => {
+                    const phone = chat.id.user;
+                    const dbName =
+                        customerMap.get(phone) ||
+                        customerMap.get("0" + phone.slice(2)) ||
+                        customerMap.get("62" + phone.slice(1));
 
-                return {
-                    ...chat,
-                    phone,
-                    name,
-                    avatarColor: `bg-slate-${(phone.slice(-1) % 6) * 100 + 400}`, // Simple deterministic color
-                    lastMessagePreview: chat.typing
-                        ? "Sedang mengetik..."
-                        : chat.lastMessage?.body ||
-                          chat.lastMessage?.type ||
-                          "",
-                    lastMessageTime: chat.t,
-                    lastMessageFromMe: chat.lastMessage?.fromMe,
-                    lastMessageStatus:
-                        chat.lastMessage?.ack >= 3 ? "read" : "sent",
-                };
-            });
+                    // Priority: Saved Contact Name (WA) > Database Name > Pushname > Formatted Name > Phone
+                    const name =
+                        chat.contact?.name ||
+                        dbName ||
+                        chat.name ||
+                        chat.contact?.pushname ||
+                        chat.contact?.formattedName ||
+                        phone;
+
+                    return {
+                        ...chat,
+                        phone,
+                        name,
+                        profilePicUrl:
+                            chat.contact?.profilePicThumbObj?.img ||
+                            chat.contact?.profilePicThumbObj?.eurl,
+                        avatarColor: `bg-slate-${(phone.slice(-1) % 6) * 100 + 400}`, // Simple deterministic color
+                        lastMessagePreview: chat.typing
+                            ? "Sedang mengetik..."
+                            : chat.lastMessage?.body ||
+                              chat.lastMessage?.type ||
+                              "",
+                        lastMessageTime: chat.t,
+                        lastMessageFromMe: chat.lastMessage?.fromMe,
+                        lastMessageStatus:
+                            chat.lastMessage?.ack >= 3 ? "read" : "sent",
+                    };
+                });
         } catch (e) {
             console.error(e);
         }
@@ -367,7 +375,7 @@
 </script>
 
 <div
-    class="fixed bottom-20 md:bottom-6 right-6 z-50 flex flex-col items-end gap-4 font-sans"
+    class="chat-widget fixed bottom-20 md:bottom-6 right-6 z-50 flex flex-col items-end gap-4 font-sans"
 >
     {#if isOpen}
         <div

@@ -14,6 +14,7 @@
         Input,
     } from "$lib/components/ui";
     import { confirm } from "$lib/stores/confirm";
+    import WhatsAppTemplates from "./components/WhatsAppTemplates.svelte";
 
     let status: WhatsappStatus | null = $state(null);
     let qrCode: string | null = $state(null);
@@ -23,6 +24,7 @@
     let phone = $state("");
     let message = $state("");
     let interval: ReturnType<typeof setInterval>;
+    let activeTab = $state("connection"); // 'connection' | 'templates'
 
     onMount(async () => {
         await loadStatus();
@@ -168,153 +170,187 @@
             <Badge variant="success" text="Real-time" />
         {/if}
     </div>
-    <Button variant="secondary" onclick={loadStatus}>
-        <RefreshCw size={18} />
-        Refresh
-    </Button>
+    <div class="flex gap-2">
+        <div
+            class="flex p-1 bg-bg-surface border border-border-color rounded-lg"
+        >
+            <button
+                class="px-4 py-1.5 text-sm font-medium rounded-md transition-colors {activeTab ===
+                'connection'
+                    ? 'bg-primary text-white shadow-sm'
+                    : 'text-text-muted hover:text-text-primary'}"
+                onclick={() => (activeTab = "connection")}
+            >
+                Koneksi
+            </button>
+            <button
+                class="px-4 py-1.5 text-sm font-medium rounded-md transition-colors {activeTab ===
+                'templates'
+                    ? 'bg-primary text-white shadow-sm'
+                    : 'text-text-muted hover:text-text-primary'}"
+                onclick={() => (activeTab = "templates")}
+            >
+                Templates
+            </button>
+        </div>
+        <Button variant="secondary" onclick={loadStatus}>
+            <RefreshCw size={18} />
+            Refresh
+        </Button>
+    </div>
 </div>
 
-{#if isLoading}
-    <div class="loading-page">
-        <div class="loading-spinner"></div>
-    </div>
-{:else}
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- Status Card -->
-        <Card>
-            <CardHeader class="flex justify-between items-center">
-                <span class="font-semibold">Status Koneksi</span>
-                {#if status}
-                    <Badge
-                        variant={getStatusVariant(status.status)}
-                        text={status.status.toUpperCase()}
-                    />
-                {/if}
-            </CardHeader>
-            <CardBody>
-                {#if status}
-                    <div class="mb-4">
-                        <p class="text-text-muted text-sm">Session</p>
-                        <p class="font-semibold">{status.session}</p>
-                    </div>
-
-                    {#if status.message}
-                        <div
-                            class="mb-4 p-3 bg-bg-surface rounded-md border border-border-color"
-                        >
-                            <p
-                                class="text-sm font-medium {status.status ===
-                                'error'
-                                    ? 'text-danger-500'
-                                    : 'text-text-primary'}"
-                            >
-                                {status.message}
-                            </p>
-                        </div>
-                    {/if}
-
-                    <div class="flex gap-2">
-                        <Button
-                            variant="primary"
-                            onclick={getQrCode}
-                            disabled={status.status === "connected"}
-                            loading={isLoadingQr}
-                        >
-                            <QrCode size={18} />
-                            Get QR
-                        </Button>
-                        {#if status.status === "connected"}
-                            <Button variant="danger" onclick={handleLogout}>
-                                <Power size={18} />
-                                Logout
-                            </Button>
-                        {:else}
-                            <Button variant="warning" onclick={handleReset}>
-                                <RefreshCw size={18} />
-                                Reset Sesi
-                            </Button>
-                        {/if}
-                    </div>
-                {/if}
-            </CardBody>
-        </Card>
-
-        <!-- QR Code Card -->
-        <Card>
-            <CardHeader>
-                <span class="font-semibold">QR Code</span>
-            </CardHeader>
-            <CardBody class="text-center">
-                {#if qrCode}
-                    <div class="bg-white p-4 rounded-lg inline-block">
-                        <img
-                            src={qrCode}
-                            alt="WhatsApp QR Code"
-                            class="max-w-[250px]"
+{#if activeTab === "connection"}
+    {#if isLoading}
+        <div class="loading-page">
+            <div class="loading-spinner"></div>
+        </div>
+    {:else}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Status Card -->
+            <Card>
+                <CardHeader class="flex justify-between items-center">
+                    <span class="font-semibold">Status Koneksi</span>
+                    {#if status}
+                        <Badge
+                            variant={getStatusVariant(status.status)}
+                            text={status.status.toUpperCase()}
                         />
-                    </div>
-                    <p class="text-text-muted text-sm mt-2">
-                        Scan dengan WhatsApp di HP Anda
-                    </p>
-                {:else}
-                    <div class="py-8">
-                        {#if status?.isConnecting && !qrCode}
-                            <div class="flex flex-col items-center gap-3">
-                                <div
-                                    class="loading-spinner w-10 h-10 border-2"
-                                ></div>
-                                <p class="text-primary font-medium text-center">
-                                    {status.message || "Membuka Browser..."}
-                                </p>
+                    {/if}
+                </CardHeader>
+                <CardBody>
+                    {#if status}
+                        <div class="mb-4">
+                            <p class="text-text-muted text-sm">Session</p>
+                            <p class="font-semibold">{status.session}</p>
+                        </div>
+
+                        {#if status.message}
+                            <div
+                                class="mb-4 p-3 bg-bg-surface rounded-md border border-border-color"
+                            >
                                 <p
-                                    class="text-text-muted text-xs px-8 text-center"
+                                    class="text-sm font-medium {status.status ===
+                                    'error'
+                                        ? 'text-danger-500'
+                                        : 'text-text-primary'}"
                                 >
-                                    {status.message
-                                        ? ""
-                                        : "Menyiapkan lingkungan WhatsApp Web (60-90 detik untuk scan pertama)"}
+                                    {status.message}
                                 </p>
                             </div>
-                        {:else}
-                            <QrCode
-                                size={48}
-                                class="text-text-muted opacity-30 mx-auto mb-4"
-                            />
-                            <p class="text-text-muted">
-                                Klik "Get QR" untuk menampilkan QR Code
-                            </p>
                         {/if}
-                    </div>
-                {/if}
+
+                        <div class="flex gap-2">
+                            <Button
+                                variant="primary"
+                                onclick={getQrCode}
+                                disabled={status.status === "connected"}
+                                loading={isLoadingQr}
+                            >
+                                <QrCode size={18} />
+                                Get QR
+                            </Button>
+                            {#if status.status === "connected"}
+                                <Button variant="danger" onclick={handleLogout}>
+                                    <Power size={18} />
+                                    Logout
+                                </Button>
+                            {:else}
+                                <Button variant="warning" onclick={handleReset}>
+                                    <RefreshCw size={18} />
+                                    Reset Sesi
+                                </Button>
+                            {/if}
+                        </div>
+                    {/if}
+                </CardBody>
+            </Card>
+
+            <!-- QR Code Card -->
+            <Card>
+                <CardHeader>
+                    <span class="font-semibold">QR Code</span>
+                </CardHeader>
+                <CardBody class="text-center">
+                    {#if qrCode}
+                        <div class="bg-white p-4 rounded-lg inline-block">
+                            <img
+                                src={qrCode}
+                                alt="WhatsApp QR Code"
+                                class="max-w-[250px]"
+                            />
+                        </div>
+                        <p class="text-text-muted text-sm mt-2">
+                            Scan dengan WhatsApp di HP Anda
+                        </p>
+                    {:else}
+                        <div class="py-8">
+                            {#if status?.isConnecting && !qrCode}
+                                <div class="flex flex-col items-center gap-3">
+                                    <div
+                                        class="loading-spinner w-10 h-10 border-2"
+                                    ></div>
+                                    <p
+                                        class="text-primary font-medium text-center"
+                                    >
+                                        {status.message || "Membuka Browser..."}
+                                    </p>
+                                    <p
+                                        class="text-text-muted text-xs px-8 text-center"
+                                    >
+                                        {status.message
+                                            ? ""
+                                            : "Menyiapkan lingkungan WhatsApp Web (60-90 detik untuk scan pertama)"}
+                                    </p>
+                                </div>
+                            {:else}
+                                <QrCode
+                                    size={48}
+                                    class="text-text-muted opacity-30 mx-auto mb-4"
+                                />
+                                <p class="text-text-muted">
+                                    Klik "Get QR" untuk menampilkan QR Code
+                                </p>
+                            {/if}
+                        </div>
+                    {/if}
+                </CardBody>
+            </Card>
+        </div>
+
+        <!-- Send Message Card -->
+        <Card class="mt-4">
+            <CardHeader>
+                <span class="font-semibold">Kirim Pesan (Test)</span>
+            </CardHeader>
+            <CardBody>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <Input
+                        id="phone"
+                        label="Nomor Telepon"
+                        bind:value={phone}
+                        placeholder="628xxxxxxxxxx"
+                    />
+                    <Input
+                        id="message"
+                        label="Pesan"
+                        bind:value={message}
+                        placeholder="Ketik pesan..."
+                    />
+                </div>
+                <Button
+                    variant="primary"
+                    onclick={handleSend}
+                    loading={isSending}
+                >
+                    <Send size={18} />
+                    <span class="ml-2"
+                        >{isSending ? "Mengirim..." : "Kirim Pesan"}</span
+                    >
+                </Button>
             </CardBody>
         </Card>
-    </div>
-
-    <!-- Send Message Card -->
-    <Card class="mt-4">
-        <CardHeader>
-            <span class="font-semibold">Kirim Pesan (Test)</span>
-        </CardHeader>
-        <CardBody>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <Input
-                    id="phone"
-                    label="Nomor Telepon"
-                    bind:value={phone}
-                    placeholder="628xxxxxxxxxx"
-                />
-                <Input
-                    id="message"
-                    label="Pesan"
-                    bind:value={message}
-                    placeholder="Ketik pesan..."
-                />
-            </div>
-            <Button variant="primary" onclick={handleSend} loading={isSending}>
-                <Send size={18} />
-                <span class="ml-2"
-                    >{isSending ? "Mengirim..." : "Kirim Pesan"}</span
-                >
-            </Button>
-        </CardBody>
-    </Card>
+    {/if}
+{:else if activeTab === "templates"}
+    <WhatsAppTemplates />
 {/if}

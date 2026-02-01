@@ -123,5 +123,21 @@ export const whatsappApi = {
     setChatState: async (to: string, state: number): Promise<unknown> => {
         const { data } = await api.post('/whatsapp/set-chat-state', { chatId: to, state });
         return data.data || data;
+    },
+    // Templates
+    getAllTemplates: async (): Promise<any[]> => {
+        const { data } = await api.get('/whatsapp/templates');
+        return data.data || data;
+    },
+    getTemplate: async (key: string): Promise<any> => {
+        const { data } = await api.get(`/whatsapp/templates/${key}`);
+        return data.data || data;
+    },
+    upsertTemplate: async (key: string, dto: { title?: string; content: string; category?: string }): Promise<any> => {
+        const { data } = await api.put(`/whatsapp/templates/${key}`, dto);
+        return data.data || data;
+    },
+    deleteTemplate: async (key: string): Promise<void> => {
+        await api.delete(`/whatsapp/templates/${key}`);
     }
 };

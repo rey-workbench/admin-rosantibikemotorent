@@ -43,7 +43,15 @@
             </button>
         {/if}
         <div class="flex items-center gap-3">
-            {#if contact?.avatarColor}
+            {#if contact?.profilePicUrl}
+                <div class="w-9 h-9 rounded-full overflow-hidden shadow-sm">
+                    <img
+                        src={contact.profilePicUrl}
+                        alt=""
+                        class="w-full h-full object-cover"
+                    />
+                </div>
+            {:else if contact?.avatarColor}
                 <div
                     class="w-9 h-9 rounded-full {contact.avatarColor} flex items-center justify-center text-white font-bold text-sm shadow-sm"
                 >

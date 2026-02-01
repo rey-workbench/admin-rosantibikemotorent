@@ -181,3 +181,174 @@ body {
     scrollbar-width: none;
     /* Firefox */
 }
+
+@media print {
+    @page {
+        size: A5 portrait;
+        margin: 10mm;
+    }
+
+    /* Hide Sidebars, Navigations, and Widgets */
+    .sidebar,
+    .bottom-nav,
+    .chat-widget,
+    button:not(.print-visible),
+    .page-header {
+        display: none !important;
+    }
+
+    /* Reset Layout Containers Completely */
+    html,
+    body {
+        background: white !important;
+        background-color: white !important;
+    }
+
+    /* Force all containers to be transparent except the root white */
+    body *,
+    .app-layout,
+    .main-wrapper,
+    .main-content,
+    main,
+    section,
+    div {
+        background-color: transparent !important;
+        background-image: none !important;
+        box-shadow: none !important;
+    }
+
+    .app-layout,
+    .main-wrapper,
+    .main-content {
+        height: auto !important;
+        min-height: 0 !important;
+        overflow: visible !important;
+        display: block !important;
+        position: static !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+    }
+
+    /* Target the invoice wrapper and ensure it behaves */
+    .max-w-4xl {
+        max-width: none !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* Prevent scrollbars from utility classes */
+    .overflow-x-auto,
+    .overflow-y-auto {
+        overflow: visible !important;
+    }
+
+    /* Enforce Professional Grayscale */
+    * {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    /* Target text colors specifically to avoid overriding background lines if needed */
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    p,
+    span,
+    div,
+    td,
+    th,
+    li,
+    a {
+        color: #000 !important;
+    }
+
+    /* Adjust font sizes for A5 */
+    body {
+        font-size: 9pt;
+        font-family: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif !important;
+    }
+
+    h1 {
+        font-size: 18pt !important;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    h2 {
+        font-size: 12pt !important;
+    }
+
+    /* Compact Layout spacing */
+    .print\:no-gap {
+        gap: 0 !important;
+    }
+
+    .mb-12 {
+        margin-bottom: 1rem !important;
+    }
+
+    .mb-8 {
+        margin-bottom: 0.75rem !important;
+    }
+
+    .mb-6 {
+        margin-bottom: 0.5rem !important;
+    }
+
+    .p-8,
+    .p-12 {
+        padding: 0 !important;
+    }
+
+    .gap-8 {
+        gap: 1rem !important;
+    }
+
+    /* Table adjustments */
+    table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+    }
+
+    table th {
+        font-size: 8pt !important;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border-bottom: 2px solid #000 !important;
+        padding: 4px 0 !important;
+        text-align: left;
+    }
+
+    table td {
+        padding: 6px 0 !important;
+        border-bottom: 1px solid #ddd !important;
+        /* Lighter border saves ink */
+        font-size: 9pt !important;
+    }
+
+    table tr:last-child td {
+        border-bottom: none !important;
+    }
+
+    /* Hide QRIS background/images if decorative, keep important ones */
+    img {
+        filter: grayscale(100%);
+    }
+
+    /* Reset global badges to look like plain text or minimal outlines */
+    .badge {
+        border: 1px solid #000 !important;
+        padding: 1px 6px !important;
+        color: #000 !important;
+        background: transparent !important;
+        font-weight: bold;
+        text-transform: uppercase;
+        border-radius: 4px !important;
+    }
+}

@@ -76,6 +76,7 @@ export interface Transaksi {
     tanggalSelesai: string;
     jamMulai: string;
     jamSelesai: string;
+    durasiHari: number;
     helm: number;
     jasHujan: number;
     totalBiaya: number;

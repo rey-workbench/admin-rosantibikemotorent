@@ -5,15 +5,12 @@
     import { id as idLocale } from "date-fns/locale";
     import { transaksiApi } from "$lib/api";
     import type { Transaksi, StatusTransaksi } from "$lib/types";
-    import { Card, CardBody, Button, Badge, Modal } from "$lib/components/ui";
+    import { Card, CardBody, Button, Badge } from "$lib/components/ui";
     import { confirm } from "$lib/stores/confirm";
 
     let transaksis: Transaksi[] = $state([]);
     let isLoading = $state(true);
     let statusFilter = $state<StatusTransaksi | "">("");
-    let selectedTransaksi = $state<
-        (Transaksi & { qrisBase64?: string }) | null
-    >(null);
 
     onMount(async () => {
         await loadData();
@@ -34,20 +31,13 @@
         }
     }
 
-    async function handleViewDetail(id: string) {
-        try {
-            selectedTransaksi = await transaksiApi.getById(id);
-        } catch (error) {
-            console.error("Error loading detail:", error);
-        }
-    }
-
     async function handleSelesai(id: string) {
         const ok = await confirm.show({
             title: "Selesaikan Sewa",
             message: "Apakah Anda yakin ingin menyelesaikan transaksi ini?",
             type: "success",
             confirmText: "Ya, Selesai",
+            cancelText: "Batal",
         });
 
         if (!ok) return;
@@ -55,7 +45,6 @@
         try {
             await transaksiApi.selesaiSewa(id);
             await loadData();
-            selectedTransaksi = null;
         } catch (error) {
             console.error("Error completing transaksi:", error);
         }
@@ -68,6 +57,7 @@
                 "Apakah Anda yakin ingin menghapus transaksi ini? Data yang dihapus tidak dapat dikembalikan.",
             type: "danger",
             confirmText: "Hapus Sekarang",
+            cancelText: "Batal",
         });
 
         if (!ok) return;
@@ -98,10 +88,6 @@
             DIBATALKAN: "default",
         };
         return variants[status] || "default";
-    }
-
-    function closeModal() {
-        selectedTransaksi = null;
     }
 
     $effect(() => {
@@ -221,8 +207,7 @@
                                         <Button
                                             variant="secondary"
                                             size="sm"
-                                            onclick={() =>
-                                                handleViewDetail(t.id)}
+                                            href={`/transaksi/${t.id}`}
                                         >
                                             <Eye size={16} />
                                         </Button>
@@ -253,84 +238,3 @@
         </CardBody>
     </Card>
 {/if}
-
-<Modal
-    open={!!selectedTransaksi}
-    title="Detail Transaksi"
-    onclose={closeModal}
-    size="lg"
->
-    {#if selectedTransaksi}
-        <div class="grid grid-cols-2 gap-4 mb-4">
-            <div>
-                <p class="text-text-muted text-sm">Nama Penyewa</p>
-                <p class="font-semibold">{selectedTransaksi.namaPenyewa}</p>
-            </div>
-            <div>
-                <p class="text-text-muted text-sm">No. HP</p>
-                <p class="font-semibold">{selectedTransaksi.noWhatsapp}</p>
-            </div>
-            <div>
-                <p class="text-text-muted text-sm">No. KTP</p>
-                <p class="font-semibold">{selectedTransaksi.noKTP || "-"}</p>
-            </div>
-            <div>
-                <p class="text-text-muted text-sm">Motor</p>
-                <p class="font-semibold">
-                    {selectedTransaksi.unitMotor?.platNomor || "-"}
-                </p>
-            </div>
-            <div>
-                <p class="text-text-muted text-sm">Tanggal Mulai</p>
-                <p class="font-semibold">
-                    {formatDate(selectedTransaksi.tanggalMulai)}
-                    {selectedTransaksi.jamMulai}
-                </p>
-            </div>
-            <div>
-                <p class="text-text-muted text-sm">Tanggal Selesai</p>
-                <p class="font-semibold">
-                    {formatDate(selectedTransaksi.tanggalSelesai)}
-                    {selectedTransaksi.jamSelesai}
-                </p>
-            </div>
-            <div>
-                <p class="text-text-muted text-sm">Helm</p>
-                <p class="font-semibold">{selectedTransaksi.helm} pcs</p>
-            </div>
-            <div>
-                <p class="text-text-muted text-sm">Jas Hujan</p>
-                <p class="font-semibold">{selectedTransaksi.jasHujan} pcs</p>
-            </div>
-        </div>
-
-        <div class="bg-bg-tertiary p-4 rounded-lg mb-4">
-            <div class="flex justify-between items-center">
-                <span class="text-text-muted">Total Biaya</span>
-                <span class="font-semibold text-xl">
-                    Rp {selectedTransaksi.totalBiaya?.toLocaleString("id-ID")}
-                </span>
-            </div>
-            <div class="flex justify-between items-center mt-2">
-                <span class="text-text-muted">Status</span>
-                <Badge
-                    variant={getStatusVariant(selectedTransaksi.status)}
-                    text={selectedTransaksi.status}
-                />
-            </div>
-        </div>
-
-        {#if selectedTransaksi.qrisBase64}
-            <div class="text-center bg-white p-4 rounded-lg">
-                <p class="text-sm mb-2 text-gray-700">
-                    Scan untuk bayar via QRIS
-                </p>
-                <img
-                    src={selectedTransaksi.qrisBase64}
-                    alt="QRIS"
-                    class="max-w-[200px] mx-auto"
-                />
-            </div>
-        {/if}
-    {/if}
-</Modal>
