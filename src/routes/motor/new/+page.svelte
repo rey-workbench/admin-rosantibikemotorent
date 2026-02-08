@@ -102,8 +102,8 @@
                 />
 
                 <div class="flex flex-col gap-3">
-                    <label class="text-sm font-medium text-text-secondary"
-                        >Gambar Motor</label
+                    <span class="text-sm font-medium text-text-secondary"
+                        >Gambar Motor</span
                     >
 
                     <div
