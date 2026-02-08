@@ -2,7 +2,7 @@
     import { goto } from "$app/navigation";
     import { onMount } from "svelte";
     import { page } from "$app/state";
-    import { ArrowLeft, Save } from "lucide-svelte";
+    import { ArrowLeft, Save, Link, Upload as UploadIcon } from "lucide-svelte";
     import { jenisMotorApi } from "$lib/api";
     import type { JenisMotor } from "$lib/types";
     import {
@@ -17,7 +17,10 @@
     let merk = $state("");
     let model = $state("");
     let cc = $state<number | "">("");
+
+    let uploadType = $state<"file" | "url">("file");
     let imageFile: File | null = $state(null);
+    let imageUrl = $state("");
     let imagePreview = $state("");
 
     let isLoading = $state(true);
@@ -32,6 +35,10 @@
             model = motor.model;
             cc = motor.cc;
             imagePreview = motor.gambar || "";
+            if (motor.gambar && motor.gambar.startsWith("http")) {
+                uploadType = "url";
+                imageUrl = motor.gambar;
+            }
         } catch (err) {
             console.error("Error loading motor:", err);
         } finally {
@@ -44,6 +51,12 @@
         imagePreview = URL.createObjectURL(file);
     }
 
+    function handleUrlChange() {
+        if (uploadType === "url") {
+            imagePreview = imageUrl;
+        }
+    }
+
     async function handleSubmit(e: Event) {
         e.preventDefault();
         isSaving = true;
@@ -53,10 +66,17 @@
             formData.append("merk", merk);
             formData.append("model", model);
             formData.append("cc", String(cc));
-            if (imageFile) formData.append("file", imageFile);
+
+            if (uploadType === "file" && imageFile) {
+                formData.append("file", imageFile);
+            } else if (uploadType === "url" && imageUrl) {
+                formData.append("gambar", imageUrl);
+            }
 
             await jenisMotorApi.update(motorId, formData);
             goto("/motor");
+        } catch (err) {
+            console.error("Error updating motor:", err);
         } finally {
             isSaving = false;
         }
@@ -84,7 +104,7 @@
     <Card>
         <CardBody>
             <form class="flex flex-col gap-5" onsubmit={handleSubmit}>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-6">
                     <Input
                         id="merk"
                         label="Merk"
@@ -111,11 +131,73 @@
                         required
                     />
 
-                    <FileUpload
-                        label="Gambar Motor"
-                        preview={imagePreview}
-                        onchange={handleImageChange}
-                    />
+                    <div class="flex flex-col gap-3">
+                        <label class="text-sm font-medium text-text-secondary"
+                            >Gambar Motor</label
+                        >
+
+                        <div
+                            class="flex gap-2 p-1 bg-background-alt rounded-lg w-fit mb-2"
+                        >
+                            <button
+                                type="button"
+                                class="flex items-center gap-2 px-4 py-1.5 rounded-md text-sm transition-all {uploadType ===
+                                'file'
+                                    ? 'bg-surface shadow-sm text-primary font-medium'
+                                    : 'text-text-muted hover:text-text-secondary'}"
+                                onclick={() => (uploadType = "file")}
+                            >
+                                <UploadIcon size={14} />
+                                File Upload
+                            </button>
+                            <button
+                                type="button"
+                                class="flex items-center gap-2 px-4 py-1.5 rounded-md text-sm transition-all {uploadType ===
+                                'url'
+                                    ? 'bg-surface shadow-sm text-primary font-medium'
+                                    : 'text-text-muted hover:text-text-secondary'}"
+                                onclick={() => (uploadType = "url")}
+                            >
+                                <Link size={14} />
+                                URL Link
+                            </button>
+                        </div>
+
+                        {#if uploadType === "file"}
+                            <FileUpload
+                                label=""
+                                preview={imagePreview}
+                                onchange={handleImageChange}
+                            />
+                        {:else}
+                            <div class="flex flex-col gap-4">
+                                <Input
+                                    id="imageUrl"
+                                    label=""
+                                    bind:value={imageUrl}
+                                    oninput={handleUrlChange}
+                                    placeholder="https://example.com/image.jpg"
+                                />
+                                {#if imageUrl}
+                                    <div
+                                        class="border-2 border-dashed border-border rounded-lg p-6 text-center"
+                                    >
+                                        <img
+                                            src={imageUrl}
+                                            alt="Preview"
+                                            class="max-w-[200px] max-h-[150px] object-cover rounded-md mx-auto"
+                                            onerror={(e) => {
+                                                (
+                                                    e.target as HTMLImageElement
+                                                ).src =
+                                                    "https://placehold.co/600x400?text=Invalid+URL";
+                                            }}
+                                        />
+                                    </div>
+                                {/if}
+                            </div>
+                        {/if}
+                    </div>
                 </div>
 
                 <div class="flex justify-end gap-3 pt-4 border-t border-border">
@@ -129,3 +211,12 @@
         </CardBody>
     </Card>
 {/if}
+
+<style>
+    .bg-background-alt {
+        background-color: var(--background-alt, rgba(0, 0, 0, 0.05));
+    }
+    .bg-surface {
+        background-color: var(--surface, #fff);
+    }
+</style>
