@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { Plus, Eye, Trash2, Check } from "lucide-svelte";
+    import { Plus, Eye, Trash2, Check, ClipboardList } from "lucide-svelte";
     import { format } from "date-fns";
     import { id as idLocale } from "date-fns/locale";
     import { transaksiApi } from "$lib/api";
@@ -128,7 +128,9 @@
     </div>
 {:else if transaksis.length === 0}
     <div class="empty-state">
-        <div class="empty-state-icon">📋</div>
+        <div class="empty-state-icon">
+            <ClipboardList size={48} />
+        </div>
         <h3>Belum Ada Transaksi</h3>
         <p>Buat transaksi baru untuk memulai</p>
         <Button href="/transaksi/new" variant="primary" class="mt-4">

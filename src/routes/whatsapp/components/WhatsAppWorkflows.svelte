@@ -2,7 +2,8 @@
   import { onMount, untrack } from "svelte";
   import {
     Plus, Save, Trash2, Edit2, Zap, LayoutGrid, Terminal, HelpCircle, 
-    LayoutTemplate, MessageSquare, ListTree
+    LayoutTemplate, MessageSquare, ListTree,
+    Bike, DollarSign, FileText, Search, CreditCard, Landmark, RefreshCw
   } from "lucide-svelte";
   import { 
     SvelteFlow, 
@@ -31,13 +32,13 @@
   };
 
   const systemActions = [
-    { value: "action_motor_list", label: "🏍️ Katalog Motor Tersedia" },
-    { value: "action_motor_pricing", label: "💰 Cek Harga Sewa" },
-    { value: "action_booking_info", label: "📝 Panduan Pemesanan" },
-    { value: "action_booking_status", label: "🔍 Cek Status Pesanan" },
-    { value: "action_transaction_info", label: "💳 Info Transaksi Aktif" },
-    { value: "action_payment_instructions", label: "🏦 Instruksi Bayar DP" },
-    { value: "action_extension_info", label: "🔄 Cara Perpanjang Sewa" },
+    { value: "action_motor_list", label: "Katalog Motor Tersedia", icon: Bike },
+    { value: "action_motor_pricing", label: "Cek Harga Sewa", icon: DollarSign },
+    { value: "action_booking_info", label: "Panduan Pemesanan", icon: FileText },
+    { value: "action_booking_status", label: "Cek Status Pesanan", icon: Search },
+    { value: "action_transaction_info", label: "Info Transaksi Aktif", icon: CreditCard },
+    { value: "action_payment_instructions", label: "Instruksi Bayar DP", icon: Landmark },
+    { value: "action_extension_info", label: "Cara Perpanjang Sewa", icon: RefreshCw },
   ];
 
   // ─── State ──────────────────────────────────────────────────────────────────
@@ -193,12 +194,15 @@
     isSaving = true;
     try {
       // Map Flow nodes back to backend format
-      const finalNodes = nodes.map(n => {
+      const finalNodes = nodes.map((n) => {
         let type = n.type;
         if (n.type === "trigger") {
-          type = n.data.trigger === "keyword" ? "trigger_keyword" : "trigger_fallback";
+          type =
+            (n.data as any).trigger === "keyword"
+              ? "trigger_keyword"
+              : "trigger_fallback";
         } else {
-          type = n.data.type;
+          type = (n.data as any).type as string;
         }
 
         return {
@@ -206,17 +210,17 @@
           type,
           data: (n.data as any).data || {},
           keyword: (n.data as any).keyword as string | undefined,
-          position: n.position
+          position: n.position,
         };
       });
 
       const dto = {
         name: flowMeta.name,
-        trigger: triggerNode.data.trigger,
-        keyword: (triggerNode.data as any).keyword,
+        trigger: (triggerNode.data as any).trigger as string,
+        keyword: (triggerNode.data as any).keyword as string,
         isActive: flowMeta.isActive,
         nodes: finalNodes,
-        edges: edges.map(e => ({ ...e, animated: true }))
+        edges: edges.map((e) => ({ ...e, animated: true })),
       };
 
       await whatsappApi.upsertWorkflow(selectedId, dto);

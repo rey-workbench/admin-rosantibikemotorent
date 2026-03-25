@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { Plus, Pencil, Trash2, Search } from "lucide-svelte";
+    import { Plus, Pencil, Trash2, Search, Bike } from "lucide-svelte";
     import { jenisMotorApi } from "$lib/api";
     import type { JenisMotor } from "$lib/types";
     import { Card, CardBody, Button, Input } from "$lib/components/ui";
@@ -95,7 +95,9 @@
     </div>
 {:else if jenisMotors.length === 0}
     <div class="empty-state">
-        <div class="empty-state-icon">🏍️</div>
+        <div class="empty-state-icon">
+            <Bike size={48} />
+        </div>
         <h3>Belum Ada Jenis Motor</h3>
         <p>Tambahkan jenis motor pertama Anda</p>
         <Button href="/motor/new" variant="primary" class="mt-4">

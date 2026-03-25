@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { Plus, Pencil, Trash2 } from "lucide-svelte";
+    import { Plus, Pencil, Trash2, FileText } from "lucide-svelte";
     import { blogApi } from "$lib/api";
     import type { BlogPost } from "$lib/types";
     import { Card, CardBody, Button, Badge } from "$lib/components/ui";
@@ -88,7 +88,9 @@
     </div>
 {:else if blogs.length === 0}
     <div class="empty-state">
-        <div class="empty-state-icon">📝</div>
+        <div class="empty-state-icon">
+            <FileText size={48} />
+        </div>
         <h3>Belum Ada Artikel</h3>
         <p>Tulis artikel pertama Anda</p>
         <Button href="/blog/new" variant="primary" class="mt-4">
@@ -145,7 +147,7 @@
                                         <div
                                             class="w-20 h-12 bg-bg-tertiary rounded flex items-center justify-center"
                                         >
-                                            📝
+                                            <FileText size={20} class="text-text-muted" />
                                         </div>
                                     {/if}
                                 </td>

@@ -78,9 +78,12 @@
                         ? "Anda"
                         : replyMessage.sender?.pushname || "Kontak"}
                 </div>
-                <div class="text-xs text-text-muted truncate">
+                <div class="text-xs text-text-muted truncate flex items-center gap-1">
+                    {#if !replyMessage.body && replyMessage.type === "image"}
+                        <Image size={12} />
+                    {/if}
                     {replyMessage.body ||
-                        (replyMessage.type === "image" ? "📷 Foto" : "Pesan")}
+                        (replyMessage.type === "image" ? "Foto" : "Pesan")}
                 </div>
             </div>
             <button

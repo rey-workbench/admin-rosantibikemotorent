@@ -8,6 +8,7 @@
         CheckCheck,
         FileText,
         Play,
+        Image,
     } from "lucide-svelte";
 
     let {
@@ -140,10 +141,13 @@
                                         ? "Anda"
                                         : selectedContact?.name || "Kontak"}
                                 </div>
-                                <div class="truncate text-text-muted/80">
+                                <div class="truncate text-text-muted/80 flex items-center gap-1">
+                                    {#if !msg.quotedMsg.body && msg.quotedMsg.type === "image"}
+                                        <Image size={10} />
+                                    {/if}
                                     {msg.quotedMsg.body ||
                                         (msg.quotedMsg.type === "image"
-                                            ? "📷 Foto"
+                                            ? "Foto"
                                             : "Pesan")}
                                 </div>
                             </div>
@@ -231,7 +235,7 @@
                         <!-- Text Body & Caption -->
                         {#if (msg.body && msg.type !== "image" && msg.type !== "video" && msg.type !== "sticker") || msg.caption}
                             <p
-                                class="whitespace-pre-wrap leading-tight break-words {msg
+                                class="whitespace-pre-wrap leading-tight wrap-break-word {msg
                                     .body?.length < 50
                                     ? 'text-sm'
                                     : 'text-[13px]'}"

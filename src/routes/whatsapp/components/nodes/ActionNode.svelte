@@ -128,7 +128,12 @@
           <ChevronDown size={14} class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
         </div>
         <div class="p-2.5 bg-emerald-50/50 rounded-lg border border-emerald-100 flex items-start gap-2">
-          <Zap size={12} class="text-emerald-500 mt-0.5 shrink-0" />
+          {#if (data.systemActions as any[]).find(a => a.value === data.type)?.icon}
+            {@const DynamicIcon = (data.systemActions as any[]).find(a => a.value === data.type).icon}
+            <DynamicIcon size={12} class="text-emerald-500 mt-0.5 shrink-0" />
+          {:else}
+            <Zap size={12} class="text-emerald-500 mt-0.5 shrink-0" />
+          {/if}
           <p class="text-[9px] text-emerald-700 leading-relaxed font-medium">Automatic system response for specialized data handling.</p>
         </div>
       </div>

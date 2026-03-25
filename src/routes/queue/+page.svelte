@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { RefreshCw, Trash2, Play, Pause } from "lucide-svelte";
+    import { RefreshCw, Trash2, Play, Pause, ListOrdered } from "lucide-svelte";
     import { queueApi } from "$lib/api";
     import { queueUpdates, socketConnected } from "$lib/socket";
     import {
@@ -116,7 +116,9 @@
     </Card>
 {:else if queues.length === 0}
     <div class="empty-state">
-        <div class="empty-state-icon">📭</div>
+        <div class="empty-state-icon">
+            <ListOrdered size={48} />
+        </div>
         <h3>Tidak Ada Queue</h3>
         <p>Tidak ada antrian yang aktif saat ini</p>
     </div>
