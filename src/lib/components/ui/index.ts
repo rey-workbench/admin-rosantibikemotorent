@@ -9,6 +9,7 @@ export { default as Badge } from './Badge.svelte';
 export { default as Alert } from './Alert.svelte';
 export { default as Input } from './Input.svelte';
 export { default as Select } from './Select.svelte';
+export { default as Select2 } from "./Select2.svelte"; // Add this
 export { default as Textarea } from './Textarea.svelte';
 export { default as FileUpload } from './FileUpload.svelte';
 export { default as Toast } from './Toast.svelte';

@@ -139,5 +139,27 @@ export const whatsappApi = {
     },
     deleteTemplate: async (key: string): Promise<void> => {
         await api.delete(`/whatsapp/templates/${key}`);
+    },
+
+    // Workflows
+    getAllWorkflows: async (): Promise<any[]> => {
+        const { data } = await api.get('/whatsapp/workflows');
+        return data.data || data;
+    },
+    getWorkflow: async (id: string): Promise<any> => {
+        const { data } = await api.get(`/whatsapp/workflows/${id}`);
+        return data.data || data;
+    },
+    upsertWorkflow: async (id: string | null, dto: { name: string; trigger: string; keyword?: string; nodes: any; edges: any; isActive?: boolean }): Promise<any> => {
+        if (id) {
+            const { data } = await api.put(`/whatsapp/workflows/${id}`, dto);
+            return data.data || data;
+        } else {
+            const { data } = await api.post(`/whatsapp/workflows`, dto);
+            return data.data || data;
+        }
+    },
+    deleteWorkflow: async (id: string): Promise<void> => {
+        await api.delete(`/whatsapp/workflows/${id}`);
     }
 };

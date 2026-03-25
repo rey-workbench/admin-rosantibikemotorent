@@ -23,7 +23,7 @@ export const queueUpdates = writable<{
 
 let socket: Socket | null = null;
 
-const SOCKET_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3000';
+const SOCKET_URL = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:3030';
 
 export function initSocket(): Socket | null {
     if (!browser) return null;

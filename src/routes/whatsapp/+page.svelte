@@ -15,6 +15,7 @@
     } from "$lib/components/ui";
     import { confirm } from "$lib/stores/confirm";
     import WhatsAppTemplates from "./components/WhatsAppTemplates.svelte";
+    import WhatsAppWorkflows from "./components/WhatsAppWorkflows.svelte";
 
     let status: WhatsappStatus | null = $state(null);
     let qrCode: string | null = $state(null);
@@ -192,6 +193,15 @@
             >
                 Templates
             </button>
+            <button
+                class="px-4 py-1.5 text-sm font-medium rounded-md transition-colors {activeTab ===
+                'workflows'
+                    ? 'bg-primary text-white shadow-sm'
+                    : 'text-text-muted hover:text-text-primary'}"
+                onclick={() => (activeTab = "workflows")}
+            >
+                Workflows
+            </button>
         </div>
         <Button variant="secondary" onclick={loadStatus}>
             <RefreshCw size={18} />
@@ -353,4 +363,6 @@
     {/if}
 {:else if activeTab === "templates"}
     <WhatsAppTemplates />
+{:else if activeTab === "workflows"}
+    <WhatsAppWorkflows />
 {/if}

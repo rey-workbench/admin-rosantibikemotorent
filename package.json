@@ -38,6 +38,7 @@
 		"@tiptap/extension-youtube": "^3.18.0",
 		"@tiptap/pm": "^3.18.0",
 		"@tiptap/starter-kit": "^3.18.0",
+		"@xyflow/svelte": "^1.5.1",
 		"axios": "^1.13.4",
 		"date-fns": "^4.1.0",
 		"flowbite-typography": "^1.0.5",

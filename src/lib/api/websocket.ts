@@ -100,7 +100,7 @@ class WebSocketService {
             return;
         }
 
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3030';
 
         this.socket = io(`${apiUrl}/realtime`, {
             transports: ['websocket', 'polling'],
