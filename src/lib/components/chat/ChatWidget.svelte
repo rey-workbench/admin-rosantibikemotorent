@@ -175,10 +175,18 @@
         if (!isBackground) isLoadingMessages = true;
         try {
             const res = await whatsappApi.getMessages(phone);
-            chatMessages = Array.isArray(res) ? res : (res as any).data || [];
+            // Handle both array response and wrapped data property
+            const messagesData = Array.isArray(res) 
+                ? res 
+                : (res && typeof res === 'object' && 'data' in res) 
+                    ? (res as any).data 
+                    : [];
+            
+            chatMessages = Array.isArray(messagesData) ? messagesData : [];
             await whatsappApi.sendSeen(phone);
         } catch (e) {
-            console.error(e);
+            console.error("[ChatWidget] Error loading messages:", e);
+            chatMessages = [];
         } finally {
             if (!isBackground) isLoadingMessages = false;
         }
