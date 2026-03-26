@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount, onDestroy } from "svelte";
+  import { onMount } from "svelte";
   import { RefreshCw, Power, Send, QrCode } from "lucide-svelte";
   import { whatsappApi } from "$lib/api";
   import { socketConnected, whatsappStatus } from "$lib/api/websocket";
@@ -24,19 +24,14 @@
   let isLoadingQr = $state(false);
   let phone = $state("");
   let message = $state("");
-  let interval: ReturnType<typeof setInterval>;
   let activeTab = $state("connection"); // 'connection' | 'templates'
 
   onMount(async () => {
     await loadStatus();
-    interval = setInterval(loadStatus, 5000);
   });
 
-  // Sync with WebSocket store
   $effect(() => {
-    if ($whatsappStatus && $whatsappStatus.status !== "disconnected") {
-      // Only update if we have a meaningful status update from socket
-      // or if we were waiting for connection
+    if ($whatsappStatus) {
       status = $whatsappStatus;
 
       if ($whatsappStatus.qrCode) {
@@ -45,10 +40,6 @@
         qrCode = null;
       }
     }
-  });
-
-  onDestroy(() => {
-    if (interval) clearInterval(interval);
   });
 
   async function loadStatus() {

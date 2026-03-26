@@ -113,6 +113,11 @@ class WebSocketService {
 
         this.setupEventListeners();
         this.isInitialized = true;
+
+        // Cleanup on hard refresh/unload to prevent zombie processes
+        if (browser) {
+            window.addEventListener('beforeunload', () => this.disconnect());
+        }
     }
 
     disconnect(): void {
