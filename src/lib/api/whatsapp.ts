@@ -16,11 +16,15 @@ export const whatsappApi = {
         return data.data || data;
     },
     startSession: async (): Promise<unknown> => {
-        const { data } = await api.post('/whatsapp/start-all');
+        const { data } = await api.post('/whatsapp/admin/start-all');
+        return data.data || data;
+    },
+    connect: async (): Promise<unknown> => {
+        const { data } = await api.post('/whatsapp/admin/start-all');
         return data.data || data;
     },
     resetSession: async (): Promise<unknown> => {
-        const { data } = await api.get('/whatsapp/reset-session');
+        const { data } = await api.get('/whatsapp/admin/reset-session');
         return data.data || data;
     },
     logout: async (): Promise<void> => {

@@ -26,6 +26,8 @@
     let sessionStatus = $state<string>("disconnected");
     let sessionStatusMessage = $state<string>("");
     let qrCode = $state<string | null>(null);
+    let qrAttemptInfo = $state<string>(""); // e.g. "1/3"
+    let isRequestingQr = $state(false);
 
     // Media/Location State
     let selectedFile = $state<File | null>(null);
@@ -91,8 +93,16 @@
             websocketService.onWhatsAppStatus((data) => {
                 sessionStatus = data.connectionStatus;
                 sessionStatusMessage = data.message || "";
+                // Extract attempt info from message like "QR Code Ready (2/3)"
+                const match = data.message?.match(/(\d+\/\d+)/);
+                if (match) qrAttemptInfo = match[1];
                 if (data.connectionStatus === "disconnected") {
                     toast.warning("WhatsApp Terputus");
+                }
+                if (data.connectionStatus === "qr_timeout") {
+                    qrCode = null;
+                    qrAttemptInfo = "";
+                    toast.warning("QR Code tidak di-scan. Klik tombol untuk mencoba lagi.");
                 }
             }),
             websocketService.onWhatsAppQrCode((data) => {
@@ -504,19 +514,59 @@
                             onLogout={handleLogout}
                             onReset={handleReset}
                         />
-                        {#if sessionStatus !== "connected" && qrCode}
+                        {#if sessionStatus === "qr_timeout"}
+                            <div
+                                class="absolute inset-0 bg-white/95 dark:bg-bg-secondary/95 z-[100] flex flex-col items-center justify-center p-8 text-center"
+                                transition:fade
+                            >
+                                <div class="text-5xl mb-4">⏱️</div>
+                                <h3 class="text-xl font-bold text-text-primary mb-2">
+                                    QR Code Kadaluarsa
+                                </h3>
+                                <p class="text-sm text-text-muted max-w-xs mb-6">
+                                    QR Code tidak di-scan dalam 3 percobaan. Klik tombol di bawah untuk meminta QR baru.
+                                </p>
+                                <button
+                                    class="px-6 py-3 rounded-xl bg-[#25D366] text-white font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-2"
+                                    onclick={async () => {
+                                        isRequestingQr = true;
+                                        try {
+                                            await whatsappApi.connect();
+                                            sessionStatus = "connecting";
+                                            toast.info("Meminta QR Code baru...");
+                                        } catch {
+                                            toast.error("Gagal meminta QR Code");
+                                        } finally {
+                                            isRequestingQr = false;
+                                        }
+                                    }}
+                                    disabled={isRequestingQr}
+                                >
+                                    {#if isRequestingQr}
+                                        <span class="animate-spin">⟳</span> Memuat...
+                                    {:else}
+                                        🔄 Minta QR Baru
+                                    {/if}
+                                </button>
+                            </div>
+                        {:else if sessionStatus !== "connected" && qrCode}
                             <div
                                 class="absolute inset-0 bg-white/95 dark:bg-bg-secondary/95 z-[100] flex flex-col items-center justify-center p-8 text-center"
                                 transition:fade
                             >
                                 <div
-                                    class="bg-white p-4 rounded-3xl shadow-2xl mb-6"
+                                    class="bg-white p-4 rounded-3xl shadow-2xl mb-6 relative"
                                 >
                                     <img
                                         src={qrCode}
                                         alt="WhatsApp QR Code"
                                         class="w-64 h-64"
                                     />
+                                    {#if qrAttemptInfo}
+                                        <span class="absolute -top-2 -right-2 bg-orange-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                                            {qrAttemptInfo}
+                                        </span>
+                                    {/if}
                                 </div>
                                 <h3
                                     class="text-xl font-bold text-text-primary mb-2"
@@ -524,8 +574,8 @@
                                     Scan QR Code
                                 </h3>
                                 <p class="text-sm text-text-muted max-w-xs">
-                                    Buka WhatsApp di ponsel Anda, bukax
-                                    Pengaturan > Perangkat Tertaut, dan scan
+                                    Buka WhatsApp di ponsel Anda, buka
+                                    Pengaturan &gt; Perangkat Tertaut, dan scan
                                     kode ini.
                                 </p>
                             </div>

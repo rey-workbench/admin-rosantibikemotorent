@@ -25,7 +25,7 @@ export interface WhatsAppMessageSent {
 }
 
 export interface WhatsAppStatus {
-    connectionStatus: 'connected' | 'connecting' | 'disconnected' | 'error';
+    connectionStatus: 'connected' | 'connecting' | 'disconnected' | 'error' | 'qr_timeout';
     hasQrCode?: boolean;
     message?: string;
     timestamp: Date;
