@@ -183,7 +183,14 @@ class WebSocketService {
             this.whatsappStatusHandlers.forEach(handler => handler(mappedStatus));
         });
 
-        this.socket.on('whatsapp:qrcode', (data: WhatsAppQrCode) => {
+        this.socket.on('whatsapp:qrcode', (data: any) => {
+            const qrCode = typeof data === 'string' ? data : data?.qrCode;
+            whatsappStatus.update(state => ({
+                ...state,
+                qrCode,
+                hasQrCode: !!qrCode,
+                status: qrCode ? 'connecting' : (state.status === 'connecting' ? 'connecting' : state.status)
+            }));
             this.whatsappQrCodeHandlers.forEach(handler => handler(data));
         });
 
