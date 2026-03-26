@@ -2,7 +2,7 @@
     import { onMount } from "svelte";
     import { RefreshCw, Trash2, Play, Pause, ListOrdered } from "lucide-svelte";
     import { queueApi } from "$lib/api";
-    import { queueUpdates, socketConnected } from "$lib/socket";
+    import { queueUpdates, socketConnected } from "$lib/api/websocket";
     import {
         Card,
         CardBody,

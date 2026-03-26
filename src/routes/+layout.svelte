@@ -9,16 +9,16 @@
     import { Toast, ConfirmModal } from "$lib/components/ui";
     import { authStore } from "$lib/stores/auth";
     import { confirm } from "$lib/stores/confirm";
-    import { initSocket, disconnectSocket } from "$lib/socket";
+    import websocketService from "$lib/api/websocket";
 
     let { children } = $props();
 
     onMount(() => {
-        initSocket();
+        websocketService.connect();
     });
 
     onDestroy(() => {
-        disconnectSocket();
+        websocketService.disconnect();
     });
 
     $effect(() => {

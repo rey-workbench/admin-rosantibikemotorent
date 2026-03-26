@@ -118,7 +118,7 @@ export interface BlogTag {
 }
 
 // WhatsApp types
-export type WhatsappConnectionStatus = 'connected' | 'connecting' | 'disconnected' | 'error';
+export type WhatsappConnectionStatus = 'connected' | 'connecting' | 'disconnected' | 'error' | 'qr_timeout';
 
 export interface WhatsappStatus {
     status: WhatsappConnectionStatus;
@@ -131,6 +131,7 @@ export interface WhatsappStatus {
     retryCount?: number;
     maxRetries?: number;
     reconnectAttemptInProgress?: boolean;
+    timestamp?: Date;
 }
 
 // Queue types

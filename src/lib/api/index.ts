@@ -10,12 +10,4 @@ export * from './redis';
 
 // WebSocket Service
 export { default as websocketService } from './websocket';
-export type {
-    WhatsAppMessage,
-    WhatsAppMessageSent,
-    WhatsAppStatus,
-    WhatsAppQrCode,
-    QueueUpdate,
-    HttpComplete,
-    ConnectionState
-} from './websocket';
+export * from './websocket';

@@ -3,5 +3,17 @@ import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-	plugins: [tailwindcss(), sveltekit()]
+    plugins: [tailwindcss(), sveltekit()],
+    server: {
+        // Gunakan IP langsung agar tidak kena delay DNS Windows/Mac
+        host: '127.0.0.1', 
+        watch: {
+            // Jangan pantau folder bot WA atau folder build
+            ignored: ['**/node_modules/**', '**/dist/**', '**/tokens/**', '**/static/**']
+        }
+    },
+    // Optimasi agar browser tidak "bengong" saat pertama dibuka
+    optimizeDeps: {
+        include: ['lucide-svelte', 'clsx', 'tailwind-merge'] // Tambahkan library UI rentalmu di sini
+    }
 });
