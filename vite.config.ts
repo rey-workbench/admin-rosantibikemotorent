@@ -6,7 +6,7 @@ export default defineConfig({
     plugins: [tailwindcss(), sveltekit()],
     server: {
         // Gunakan IP langsung agar tidak kena delay DNS Windows/Mac
-        host: '127.0.0.1', 
+        host: 'localhost', 
         watch: {
             // Jangan pantau folder bot WA atau folder build
             ignored: ['**/node_modules/**', '**/dist/**', '**/tokens/**', '**/static/**']

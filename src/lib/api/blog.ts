@@ -8,7 +8,7 @@ export const blogApi = {
     },
     getById: async (id: string): Promise<BlogPost> => {
         const { data } = await api.get(`/blog/${id}`);
-        return data.data || data;
+        return data.data;
     },
     getKategori: async (): Promise<BlogKategori[]> => {
         const { data } = await api.get('/blog/kategori');
@@ -22,13 +22,13 @@ export const blogApi = {
         const { data } = await api.post('/blog', blog, {
             headers: { 'Content-Type': 'multipart/form-data' },
         });
-        return data.data || data;
+        return data.data;
     },
     update: async (id: string, blog: FormData): Promise<BlogPost> => {
         const { data } = await api.patch(`/blog/${id}`, blog, {
             headers: { 'Content-Type': 'multipart/form-data' },
         });
-        return data.data || data;
+        return data.data;
     },
     delete: async (id: string): Promise<void> => {
         await api.delete(`/blog/${id}`);
