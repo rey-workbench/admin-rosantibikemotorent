@@ -69,6 +69,7 @@ class WebSocketService {
             'http://localhost:3030';
 
         console.log('Connecting to:', `${apiUrl}/realtime`);
+        alert('WS URL: ' + apiUrl);
 
         this.socket = io(`${apiUrl}/realtime`, {
             transports: ['websocket'],
