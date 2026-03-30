@@ -11,6 +11,7 @@
   let merk = $state("");
   let model = $state("");
   let cc = $state<number | "">("");
+  let hargaSewa = $state<number | "">("");
   let uploadType = $state<"file" | "url">("file");
   let imageFile: File | null = $state(null);
   let imageUrl = $state("");
@@ -26,6 +27,7 @@
       merk = motor.merk;
       model = motor.model;
       cc = motor.cc;
+      hargaSewa = motor.hargaSewa || "";
       imagePreview = motor.gambar || "";
       if (motor.gambar?.startsWith("http")) {
         uploadType = "url";
@@ -54,6 +56,7 @@
       formData.append("merk", merk);
       formData.append("model", model);
       formData.append("cc", String(cc));
+      formData.append("hargaSewa", String(hargaSewa));
       if (uploadType === "file" && imageFile)
         formData.append("file", imageFile);
       else if (uploadType === "url" && imageUrl)
@@ -96,6 +99,15 @@
       bind:value={cc}
       placeholder="110, 125, 155, dll"
       min={50}
+      required
+    />
+    <Input
+      id="hargaSewa"
+      label="Harga Sewa / Hari"
+      type="number"
+      bind:value={hargaSewa}
+      placeholder="100000"
+      min={0}
       required
     />
 

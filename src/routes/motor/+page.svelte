@@ -15,6 +15,7 @@
         { key: "merk", label: "Merk" },
         { key: "model", label: "Model" },
         { key: "cc", label: "CC" },
+        { key: "harga", label: "Harga Sewa" },
         { key: "aksi", label: "Aksi", class: "w-24" },
     ];
 
@@ -123,6 +124,7 @@
                         <td class="px-4 py-3 font-semibold text-sm">{motor.merk}</td>
                         <td class="px-4 py-3 text-sm">{motor.model}</td>
                         <td class="px-4 py-3 text-sm">{motor.cc} cc</td>
+                        <td class="px-4 py-3 text-sm">Rp {motor.hargaSewa?.toLocaleString("id-ID") || 0}</td>
                         <td class="px-4 py-3">
                             <div class="flex gap-2">
                                 <Button href="/motor/{motor.id}/edit" variant="secondary" size="sm">

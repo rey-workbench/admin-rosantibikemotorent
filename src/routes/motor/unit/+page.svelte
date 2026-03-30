@@ -20,6 +20,23 @@
   let units: UnitMotor[] = $state([]);
   let isLoading = $state(true);
 
+  let groupedUnits = $derived.by(() => {
+    const groups: Record<string, { jenis: any; units: UnitMotor[] }> = {};
+    for (const unit of units) {
+      const key = unit.jenis?.id || "unknown";
+      if (!groups[key]) {
+        groups[key] = {
+          jenis: unit.jenis,
+          units: [],
+        };
+      }
+      groups[key].units.push(unit);
+    }
+    return Object.values(groups).sort((a, b) => 
+      `${a.jenis?.merk || ""} ${a.jenis?.model || ""}`.localeCompare(`${b.jenis?.merk || ""} ${b.jenis?.model || ""}`)
+    );
+  });
+
   const columns = [
     { key: "plat", label: "Plat Nomor" },
     { key: "jenis", label: "Jenis Motor" },
@@ -92,47 +109,62 @@
     {/snippet}
   </EmptyState>
 {:else}
-  <Card>
-    <CardBody class="p-0">
-      <DataTable {columns}>
-        {#each units as unit}
-          <tr
-            class="border-b border-border hover:bg-bg-tertiary/20 transition-colors"
-          >
-            <td class="px-4 py-3 font-semibold text-sm">{unit.platNomor}</td>
-            <td class="px-4 py-3 text-sm"
-              >{unit.jenis?.merk} {unit.jenis?.model}</td
-            >
-            <td class="px-4 py-3 text-sm"
-              >{formatCurrency(unit.hargaSewa || 0)}</td
-            >
-            <td class="px-4 py-3">
-              <Badge
-                variant={MOTOR_STATUS_VARIANTS[unit.status] || "info"}
-                text={unit.status}
-              />
-            </td>
-            <td class="px-4 py-3">
-              <div class="flex gap-2">
-                <Button
-                  href="/motor/unit/{unit.id}/edit"
-                  variant="secondary"
-                  size="sm"
+  {#each groupedUnits as group}
+    <div class="mb-6">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-lg font-bold text-text-primary">
+          {group.jenis?.merk} {group.jenis?.model}
+          <span class="text-sm font-normal text-text-muted ml-2">
+            ({group.units.length} unit)
+          </span>
+        </h2>
+        <span class="text-sm text-text-secondary">
+          {formatCurrency(group.jenis?.hargaSewa || 0)}/hari
+        </span>
+      </div>
+      <Card>
+        <CardBody class="p-0">
+          <DataTable {columns}>
+            {#each group.units as unit}
+              <tr
+                class="border-b border-border hover:bg-bg-tertiary/20 transition-colors"
+              >
+                <td class="px-4 py-3 font-semibold text-sm">{unit.platNomor}</td>
+                <td class="px-4 py-3 text-sm"
+                  >{unit.jenis?.merk} {unit.jenis?.model}</td
                 >
-                  <Pencil size={16} />
-                </Button>
-                <Button
-                  variant="danger"
-                  size="sm"
-                  onclick={() => handleDelete(unit.id)}
+                <td class="px-4 py-3 text-sm"
+                  >{formatCurrency(unit.jenis?.hargaSewa || 0)}</td
                 >
-                  <Trash2 size={16} />
-                </Button>
-              </div>
-            </td>
-          </tr>
-        {/each}
-      </DataTable>
-    </CardBody>
-  </Card>
+                <td class="px-4 py-3">
+                  <Badge
+                    variant={MOTOR_STATUS_VARIANTS[unit.status] || "info"}
+                    text={unit.status}
+                  />
+                </td>
+                <td class="px-4 py-3">
+                  <div class="flex gap-2">
+                    <Button
+                      href="/motor/unit/{unit.id}/edit"
+                      variant="secondary"
+                      size="sm"
+                    >
+                      <Pencil size={16} />
+                    </Button>
+                    <Button
+                      variant="danger"
+                      size="sm"
+                      onclick={() => handleDelete(unit.id)}
+                    >
+                      <Trash2 size={16} />
+                    </Button>
+                  </div>
+                </td>
+              </tr>
+            {/each}
+          </DataTable>
+        </CardBody>
+      </Card>
+    </div>
+  {/each}
 {/if}

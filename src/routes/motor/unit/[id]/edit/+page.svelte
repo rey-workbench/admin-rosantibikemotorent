@@ -9,7 +9,6 @@
   let unit: UnitMotor | null = $state(null);
   let platNomor = $state("");
   let jenisId = $state("");
-  let hargaSewa = $state<number | "">("");
   let status = $state("TERSEDIA");
   let jenisMotors: JenisMotor[] = $state([]);
   let isLoading = $state(true);
@@ -27,7 +26,6 @@
       jenisMotors = jenisRes.data || [];
       platNomor = unit.platNomor;
       jenisId = unit.jenisId || "";
-      hargaSewa = unit.hargaSewa || "";
       status = unit.status;
     } catch (err) {
       console.error(err);
@@ -43,7 +41,6 @@
       await unitMotorApi.update(unitId, {
         platNomor,
         jenisId,
-        hargaSewa: Number(hargaSewa),
         status: status as UnitMotor["status"],
       });
       goto("/motor/unit");
@@ -78,15 +75,6 @@
         label: `${j.merk} ${j.model}`,
       }))}
       placeholder="Pilih Jenis Motor"
-      required
-    />
-    <Input
-      id="harga"
-      label="Harga Sewa (Rp)"
-      type="number"
-      bind:value={hargaSewa}
-      placeholder="100000"
-      min={0}
       required
     />
     <Select

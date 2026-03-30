@@ -229,13 +229,13 @@
               <td
                 class="py-3 print:py-2 text-right text-gray-900 print:text-black text-sm print:text-xs"
               >
-                {formatRupiah(transaction.unitMotor?.hargaSewa || 0)}
+                {formatRupiah(transaction.unitMotor?.jenis?.hargaSewa || 0)}
               </td>
               <td
                 class="py-3 print:py-2 text-right font-bold text-gray-900 print:text-black text-sm print:text-xs"
               >
                 {formatRupiah(
-                  (transaction.unitMotor?.hargaSewa || 0) *
+                  (transaction.unitMotor?.jenis?.hargaSewa || 0) *
                     transaction.durasiHari,
                 )}
               </td>
