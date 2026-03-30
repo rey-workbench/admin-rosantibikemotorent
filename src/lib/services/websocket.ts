@@ -68,6 +68,8 @@ class WebSocketService {
             import.meta.env.VITE_API_URL?.replace('/api', '') ||
             'http://localhost:3030';
 
+        console.log('Connecting to:', `${apiUrl}/realtime`);
+
         this.socket = io(`${apiUrl}/realtime`, {
             transports: ['websocket'],
             reconnection: true,
