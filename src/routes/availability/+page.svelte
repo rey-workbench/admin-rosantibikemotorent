@@ -11,18 +11,18 @@
     } from "lucide-svelte";
     import { PageHeader } from "$lib/components/layout";
 
-    let currentDate = new Date();
-    let currentMonth = currentDate.getMonth();
-    let currentYear = currentDate.getFullYear();
-    let unitTypeFilter = "";
-    let isLoading = false;
-    let availabilityData: any = null;
-    let brands: { id: string; merk: string }[] = [];
-    let error = "";
+    let currentDate = $state(new Date());
+    let currentMonth = $state(currentDate.getMonth());
+    let currentYear = $state(currentDate.getFullYear());
+    let unitTypeFilter = $state("");
+    let isLoading = $state(false);
+    let availabilityData = $state<any>(null);
+    let brands = $state<{ id: string; merk: string }[]>([]);
+    let error = $state("");
 
     // Generate days for the selected month
-    $: daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-    $: monthDays = Array.from({ length: daysInMonth }, (_, i) => {
+    let daysInMonth = $derived(new Date(currentYear, currentMonth + 1, 0).getDate());
+    let monthDays = $derived(Array.from({ length: daysInMonth }, (_, i) => {
         const d = new Date(currentYear, currentMonth, i + 1);
         return {
             date: d,
@@ -30,15 +30,15 @@
             dayNum: i + 1,
             isToday: d.toDateString() === new Date().toDateString(),
         };
-    });
+    }));
 
-    $: monthLabel = new Date(currentYear, currentMonth).toLocaleDateString(
+    let monthLabel = $derived(new Date(currentYear, currentMonth).toLocaleDateString(
         "id-ID",
         {
             month: "long",
             year: "numeric",
         },
-    );
+    ));
 
     onMount(async () => {
         await loadBrands();
@@ -103,8 +103,8 @@
     }
 
     // Tooltip Logic
-    let hoveredBooking: any = null;
-    let tooltipPosition = { x: 0, y: 0 };
+    let hoveredBooking = $state<any>(null);
+    let tooltipPosition = $state({ x: 0, y: 0 });
 
     function handleMouseEnter(event: MouseEvent, status: any) {
         if (!status.isAvailable && status.booking) {
