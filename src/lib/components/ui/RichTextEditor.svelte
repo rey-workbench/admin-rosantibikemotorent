@@ -23,7 +23,7 @@
     } = $props();
 
     let editorElement: HTMLDivElement;
-    let editor: Editor;
+    let editor = $state<Editor>();
 
     // URL Modal State
     let showUrlModal = $state(false);

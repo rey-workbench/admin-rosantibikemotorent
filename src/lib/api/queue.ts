@@ -20,6 +20,12 @@ export const queueApi = {
     removeJob: async (queueName: string, jobId: string): Promise<void> => {
         await api.delete(`/debug/queue/${queueName}/jobs/${jobId}`);
     },
+    cancelJob: async (queueName: string, jobId: string, reason?: string): Promise<{ ok: boolean; mode: string; state: string; reason: string }> => {
+        const { data } = await api.post(`/debug/queue/${queueName}/jobs/${jobId}/cancel`, {
+            reason,
+        });
+        return data.data;
+    },
     cleanQueue: async (queueName: string, status: string = 'completed'): Promise<void> => {
         await api.delete(`/debug/queue/${queueName}/clean`, { params: { status } });
     },

@@ -1,201 +1,46 @@
-// API Response types
-export interface ApiResponse<T> {
-    statusCode: number;
-    success: boolean;
+export * from './api';
+export * from './auth';
+export * from './motor';
+export * from './transaksi';
+export * from './blog';
+export * from './whatsapp';
+export * from './queue';
+
+export type ToastType = 'success' | 'error' | 'info' | 'warning';
+
+export interface ToastMessage {
+    id: string;
     message: string;
-    data?: T;
+    type: ToastType;
 }
 
-export interface PaginationMeta {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-}
-
-// Auth types
-export interface Admin {
-    id: string;
-    username: string;
-    nama: string;
-    email?: string;
-    createdAt?: string;
-}
-
-export interface LoginCredentials {
-    username: string;
-    password: string;
-}
-
-export interface AuthResponse {
-    admin: Admin;
-    token: string;
+export interface ConfirmOptions {
+    title: string;
     message: string;
+    type?: 'info' | 'warning' | 'danger' | 'success';
+    confirmText?: string;
+    cancelText?: string;
 }
 
-// Jenis Motor types
-export interface JenisMotor {
-    id: string;
-    merk: string;
-    model: string;
-    cc: number;
-    gambar?: string;
-    slug: string;
-    createdAt: string;
-    updatedAt: string;
+export interface ConfirmState extends ConfirmOptions {
+    open: boolean;
+    resolve: (value: boolean) => void;
 }
 
-// Unit Motor types
-export type StatusMotor = 'TERSEDIA' | 'DISEWA' | 'PERBAIKAN' | 'DIPESAN' | 'OVERDUE';
-
-export interface UnitMotor {
-    id: string;
-    platNomor: string;
-    jenisId: string;
-    jenis?: JenisMotor;
-    jenisMotor?: JenisMotor;
-    status: StatusMotor;
-    hargaSewa: number;
-    tahunPembuatan?: number;
-    slug: string;
-    createdAt: string;
-    updatedAt: string;
+export interface ConnectionState {
+    isConnected: boolean;
+    socketId: string | null;
+    reconnectAttempt: number;
 }
 
-// Transaksi types
-export type StatusTransaksi = 'PENDING' | 'AKTIF' | 'SELESAI' | 'OVERDUE' | 'DIBATALKAN';
+export interface HttpComplete {
+    requestId: string;
+    timestamp: Date;
+    result: unknown;
+}
 
-export interface Transaksi {
+export interface DendaNotification {
     id: string;
     namaPenyewa: string;
-    noWhatsapp: string;
-    noKTP?: string;
-    unitId: string;
-    unitMotor?: UnitMotor;
-    tanggalMulai: string;
-    tanggalSelesai: string;
-    jamMulai: string;
-    jamSelesai: string;
-    durasiHari: number;
-    helm: number;
-    jasHujan: number;
-    totalBiaya: number;
-    status: StatusTransaksi;
-    createdAt: string;
-    updatedAt: string;
-}
-
-// Blog types
-export type StatusArtikel = 'DRAFT' | 'TERBIT';
-
-export interface BlogPost {
-    id: string;
-    judul: string;
-    slug: string;
-    konten: string;
-    thumbnail?: string;
-    featuredImage?: string;
-    status: StatusArtikel;
-    kategoriId?: string;
-    kategori?: BlogKategori;
-    tags?: BlogTag[];
-    metaTitle?: string;
-    metaDescription?: string;
-    createdAt: string;
-    updatedAt: string;
-}
-
-export interface BlogKategori {
-    id: string;
-    nama: string;
-    slug: string;
-}
-
-export interface BlogTag {
-    id: string;
-    nama: string;
-    slug: string;
-}
-
-// WhatsApp types
-export type WhatsappConnectionStatus = 'connected' | 'connecting' | 'disconnected' | 'error' | 'qr_timeout';
-
-export interface WhatsappStatus {
-    status: WhatsappConnectionStatus;
-    session: string;
-    isConnecting: boolean;
-    qrCode?: string | null;
-    hasQrCode?: boolean;
-    message?: string;
-    loadingStatus?: { percent: number; message: string } | null;
-    retryCount?: number;
-    maxRetries?: number;
-    reconnectAttemptInProgress?: boolean;
-    timestamp?: Date;
-}
-
-// Queue types
-export interface QueueStatus {
-    name: string;
-    waiting: number;
-    active: number;
-    completed: number;
-    failed: number;
-    delayed: number;
-    paused: boolean;
-}
-
-export interface QueueJob {
-    id: string;
-    name: string;
-    data: Record<string, unknown>;
-    status: string;
-    progress?: number;
-    timestamp: number;
-    processedOn?: number;
-    finishedOn?: number;
-    failedReason?: string;
-}
-
-export interface WhatsappSessionStatusResponse {
-    session: string;
-    status: WhatsappConnectionStatus;
-    qrCode?: string | null;
-}
-
-export interface WhatsappContact {
-    id: string;
-    name: string;
-    shortName?: string;
-    pushname?: string;
-    type?: string;
-    isBusiness?: boolean;
-    isEnterprise?: boolean;
-    isUser?: boolean;
-    isGroup?: boolean;
-}
-
-export interface WhatsappMessage {
-    id: string;
-    body: string;
-    type: string;
-    t: number;
-    notifyName?: string;
-    from: string;
-    chatId: string;
-    author?: string;
-    self?: string;
-    ack?: number;
-    invis?: boolean;
-    isNewMsg?: boolean;
-    star?: boolean;
-    recvFresh?: boolean;
-    broadcast?: boolean;
-    forwarded?: boolean;
-    fromMe?: boolean;
-    quotedMsg?: any;
-    mentionedJidList?: string[];
-    caption?: string;
-    filename?: string;
-    mimetype?: string;
+    biayaDenda: number;
 }

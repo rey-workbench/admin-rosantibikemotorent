@@ -2,7 +2,8 @@
   import { onMount } from "svelte";
   import { RefreshCw, Power, Send, QrCode } from "lucide-svelte";
   import { whatsappApi } from "$lib/api";
-  import { socketConnected, whatsappStatus } from "$lib/api/websocket";
+  import { socketConnected, whatsappStatus, transaksiNotifications } from "$lib/services/websocket";
+  import websocketService from "$lib/services/websocket";
   import { toast } from "$lib/stores/toast";
   import type { WhatsappStatus, WhatsappConnectionStatus } from "$lib/types";
   import {
@@ -16,6 +17,7 @@
   import { confirm } from "$lib/stores/confirm";
   import WhatsAppTemplates from "./components/WhatsAppTemplates.svelte";
   import WhatsAppWorkflows from "./components/WhatsAppWorkflows.svelte";
+  import WhatsAppChatWidget from "./components/WhatsAppChatWidget.svelte";
 
   let status: WhatsappStatus | null = $state(null);
   let qrCode: string | null = $state(null);
@@ -26,8 +28,17 @@
   let message = $state("");
   let activeTab = $state("connection"); // 'connection' | 'templates'
 
-  onMount(async () => {
-    await loadStatus();
+  onMount(() => {
+    loadStatus();
+    
+    // Subscribe to real-time transaksi notifications
+    const unsubscribe = websocketService.onTransaksiCreated((transaksi) => {
+      toast.success(`Booking baru: ${transaksi.namaPenyewa} - ${transaksi.unitMotor.platNomor}`);
+    });
+
+    return () => {
+      unsubscribe();
+    };
   });
 
   $effect(() => {
@@ -339,3 +350,6 @@
 {:else if activeTab === "workflows"}
   <WhatsAppWorkflows />
 {/if}
+
+<!-- WhatsApp Chat Widget (floating) -->
+<WhatsAppChatWidget />

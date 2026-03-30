@@ -4,7 +4,7 @@
   import { transaksiApi, whatsappApi } from "$lib/api";
   import { toast } from "$lib/stores/toast";
   import { fade, fly, slide } from "svelte/transition";
-  import websocketService from "$lib/api/websocket";
+  import websocketService from "$lib/services/websocket";
 
   // UI Components
   import ChatHeader from "./ui/ChatHeader.svelte";
@@ -410,7 +410,6 @@
                 bind:value={newChatPhone}
                 class="w-full bg-bg-tertiary border border-border/10 rounded-xl px-4 py-3 text-text-primary mb-4 focus:ring-2 focus:ring-primary/50 outline-none"
                 placeholder="Nomor Telepon..."
-                autofocus
               />
 
               <div class="flex gap-3 justify-end">

@@ -2,7 +2,7 @@
     import { onMount } from "svelte";
     import { RefreshCw, Trash2, Play, Pause, ListOrdered } from "lucide-svelte";
     import { queueApi } from "$lib/api";
-    import { queueUpdates, socketConnected } from "$lib/api/websocket";
+    import websocketService, { queueUpdates, socketConnected } from "$lib/services/websocket";
     import {
         Card,
         CardBody,
@@ -26,21 +26,8 @@
     let isLoading = $state(true);
     let error = $state("");
 
-    onMount(() => {
-        loadData();
-
-        // Subscribe to real-time queue updates
-        const unsubscribe = queueUpdates.subscribe((update) => {
-            if (update) {
-                loadData(); // Refresh on queue update
-            }
-        });
-
-        return () => unsubscribe();
-    });
-
-    async function loadData() {
-        isLoading = true;
+    async function loadData(showLoading = true) {
+        if (showLoading) isLoading = true;
         error = "";
         try {
             const res = await queueApi.getStatus();
@@ -49,9 +36,26 @@
             error = err.response?.data?.message || "Gagal memuat status queue";
             console.error("Error loading queues:", err);
         } finally {
-            isLoading = false;
+            if (showLoading) isLoading = false;
         }
     }
+
+    onMount(() => {
+        // Hubungkan websocket jika belum terhubung
+        websocketService.connect();
+        
+        loadData(true);
+
+        // Subscribe to real-time queue updates
+        const unsubscribe = queueUpdates.subscribe((update) => {
+            if (update) {
+                console.log("[Queue] Update received:", update);
+                loadData(false); // Silent refresh
+            }
+        });
+
+        return () => unsubscribe();
+    });
 
     async function handlePauseResume(queueName: string, isPaused: boolean) {
         try {
