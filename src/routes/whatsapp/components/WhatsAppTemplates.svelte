@@ -22,6 +22,7 @@
     let isSaving = false;
 
     // Form State
+    let formId = "";
     let formKey = "";
     let formTitle = "";
     let formContent = "";
@@ -46,6 +47,7 @@
 
     function openCreateModal() {
         isEditing = false;
+        formId = "";
         formKey = "";
         formTitle = "";
         formContent = "";
@@ -55,6 +57,7 @@
 
     function openEditModal(template: any) {
         isEditing = true;
+        formId = template.id;
         formKey = template.key;
         formTitle = template.title || "";
         formContent = template.content || "";
@@ -70,11 +73,21 @@
 
         isSaving = true;
         try {
-            await whatsappApi.upsertTemplate(formKey, {
-                title: formTitle,
-                content: formContent,
-                category: formCategory,
-            });
+            if (isEditing) {
+                await whatsappApi.updateTemplate(formId, {
+                    key: formKey,
+                    title: formTitle,
+                    content: formContent,
+                    category: formCategory,
+                });
+            } else {
+                await whatsappApi.createTemplate({
+                    key: formKey,
+                    title: formTitle,
+                    content: formContent,
+                    category: formCategory,
+                });
+            }
             toast.success(
                 isEditing ? "Template diperbarui" : "Template dibuat",
             );
@@ -88,7 +101,7 @@
         }
     }
 
-    async function handleDelete(key: string) {
+    async function handleDelete(id: string, key: string) {
         const ok = await confirm.show({
             title: "Hapus Template",
             message: `Apakah Anda yakin ingin menghapus template "${key}"?`,
@@ -99,7 +112,7 @@
         if (!ok) return;
 
         try {
-            await whatsappApi.deleteTemplate(key);
+            await whatsappApi.deleteTemplate(id);
             toast.success("Template dihapus");
             loadTemplates();
         } catch (error) {
@@ -180,7 +193,7 @@
                                         <Button
                                             variant="danger"
                                             size="sm"
-                                            onclick={() => handleDelete(t.key)}
+                                            onclick={() => handleDelete(t.id, t.key)}
                                         >
                                             <Trash2 size={14} />
                                         </Button>
