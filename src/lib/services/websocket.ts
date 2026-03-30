@@ -64,8 +64,7 @@ class WebSocketService {
             this.socket = null;
         }
 
-        let apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3030/api';
-        apiUrl = apiUrl.replace(/\/api$/, '').replace(/\/api$/, '');
+        let apiUrl = import.meta.env.VITE_WS_URL || import.meta.env.VITE_API_URL?.replace(/\/api$/, '') || 'http://localhost:3030';
         
         alert('WS URL: ' + apiUrl);
 
