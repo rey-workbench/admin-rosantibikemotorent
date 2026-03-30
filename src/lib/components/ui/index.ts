@@ -9,9 +9,14 @@ export { default as Badge } from './Badge.svelte';
 export { default as Alert } from './Alert.svelte';
 export { default as Input } from './Input.svelte';
 export { default as Select } from './Select.svelte';
-export { default as Select2 } from "./Select2.svelte"; // Add this
+export { default as Select2 } from "./Select2.svelte";
 export { default as Textarea } from './Textarea.svelte';
 export { default as FileUpload } from './FileUpload.svelte';
 export { default as Toast } from './Toast.svelte';
 export { default as ConfirmModal } from './ConfirmModal.svelte';
 export { default as RichTextEditor } from './RichTextEditor.svelte';
+export { default as DataTable } from './DataTable.svelte';
+export { default as Loading } from './Loading.svelte';
+export { default as EmptyState } from './EmptyState.svelte';
+export { default as Form } from './Form.svelte';
+export { default as Tabs } from './Tabs.svelte';

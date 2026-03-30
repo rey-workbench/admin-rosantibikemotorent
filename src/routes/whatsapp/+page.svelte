@@ -2,7 +2,11 @@
   import { onMount } from "svelte";
   import { RefreshCw, Power, Send, QrCode } from "lucide-svelte";
   import { whatsappApi } from "$lib/api";
-  import { socketConnected, whatsappStatus, transaksiNotifications } from "$lib/services/websocket";
+  import {
+    socketConnected,
+    whatsappStatus,
+    transaksiNotifications,
+  } from "$lib/services/websocket";
   import websocketService from "$lib/services/websocket";
   import { toast } from "$lib/stores/toast";
   import type { WhatsappStatus, WhatsappConnectionStatus } from "$lib/types";
@@ -13,7 +17,9 @@
     Button,
     Badge,
     Input,
+    Tabs,
   } from "$lib/components/ui";
+  import { PageHeader } from "$lib/components/layout";
   import { confirm } from "$lib/stores/confirm";
   import WhatsAppTemplates from "./components/WhatsAppTemplates.svelte";
   import WhatsAppWorkflows from "./components/WhatsAppWorkflows.svelte";
@@ -30,10 +36,12 @@
 
   onMount(() => {
     loadStatus();
-    
+
     // Subscribe to real-time transaksi notifications
     const unsubscribe = websocketService.onTransaksiCreated((transaksi) => {
-      toast.success(`Booking baru: ${transaksi.namaPenyewa} - ${transaksi.unitMotor.platNomor}`);
+      toast.success(
+        `Booking baru: ${transaksi.namaPenyewa} - ${transaksi.unitMotor.platNomor}`,
+      );
     });
 
     return () => {
@@ -167,49 +175,24 @@
   <title>WhatsApp - Rosantibike Motorent</title>
 </svelte:head>
 
-<div class="page-header">
-  <div class="flex items-center gap-3">
-    <h1>Integrasi WhatsApp</h1>
-    {#if $socketConnected}
-      <Badge variant="success" text="Real-time" />
-    {/if}
-  </div>
-  <div class="flex gap-2">
-    <div class="flex p-1 bg-bg-surface border border-border-color rounded-lg">
-      <button
-        class="px-4 py-1.5 text-sm font-medium rounded-md transition-colors {activeTab ===
-        'connection'
-          ? 'bg-primary text-white shadow-sm'
-          : 'text-text-muted hover:text-text-primary'}"
-        onclick={() => (activeTab = "connection")}
-      >
-        Koneksi
-      </button>
-      <button
-        class="px-4 py-1.5 text-sm font-medium rounded-md transition-colors {activeTab ===
-        'templates'
-          ? 'bg-primary text-white shadow-sm'
-          : 'text-text-muted hover:text-text-primary'}"
-        onclick={() => (activeTab = "templates")}
-      >
-        Templates
-      </button>
-      <button
-        class="px-4 py-1.5 text-sm font-medium rounded-md transition-colors {activeTab ===
-        'workflows'
-          ? 'bg-primary text-white shadow-sm'
-          : 'text-text-muted hover:text-text-primary'}"
-        onclick={() => (activeTab = "workflows")}
-      >
-        Workflows
-      </button>
-    </div>
-    <Button variant="secondary" onclick={loadStatus}>
-      <RefreshCw size={18} />
-      Refresh
-    </Button>
-  </div>
-</div>
+<PageHeader title="Integrasi WhatsApp">
+  {#if $socketConnected}
+    <Badge variant="success" text="Real-time" />
+  {/if}
+  <Tabs
+    tabs={[
+      { id: "connection", label: "Koneksi" },
+      { id: "templates", label: "Templates" },
+      { id: "workflows", label: "Workflows" },
+    ]}
+    {activeTab}
+    onchange={(id) => (activeTab = id)}
+  />
+  <Button variant="secondary" onclick={loadStatus}>
+    <RefreshCw size={18} />
+    Refresh
+  </Button>
+</PageHeader>
 
 {#if activeTab === "connection"}
   {#if isLoading}

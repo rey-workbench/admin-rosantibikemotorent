@@ -2,29 +2,24 @@
     import { onMount } from "svelte";
     import {
         Truck,
-        ClipboardList,
         CheckCircle2,
         Clock,
         MoreHorizontal,
-        TrendingUp,
         Calendar as CalendarIcon,
         ChevronDown,
         Activity,
     } from "lucide-svelte";
+    import { formatDateShort, getStatusColor, getStatusDot } from "$lib/utils";
+    import { STATUS_TRANSAKSI } from "$lib/constants";
     import { unitMotorApi, transaksiApi } from "$lib/api";
     import type { UnitMotor, Transaksi } from "$lib/types";
     import { authStore } from "$lib/stores/auth";
-    import { fade } from "svelte/transition";
+    import { Loading } from "$lib/components/ui";
 
     let units: UnitMotor[] = $state([]);
     let transaksis: Transaksi[] = $state([]);
     let historyTransaksis: Transaksi[] = $state([]);
     let isLoading = $state(true);
-    let today = new Date().toLocaleDateString("en-GB", {
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-    });
 
     onMount(async () => {
         try {
@@ -49,23 +44,19 @@
     const disewa = $derived(
         units.filter((u) => u.status?.toLowerCase() === "disewa").length,
     );
-    // Combined active and completed for total "tasks" context if needed, or just completed
     const completed = $derived(
-        historyTransaksis.filter((t) => t.status === "SELESAI").length,
+        historyTransaksis.filter((t) => t.status === STATUS_TRANSAKSI.SELESAI).length,
     );
 
     const efficiency = $derived(
         units.length > 0 ? Math.round((disewa / units.length) * 100) : 0,
     );
 
-    // Chart Data Generation
     const chartData = $derived.by(() => {
         const days = 7;
         const data = new Array(days).fill(0);
         const labels = new Array(days).fill("");
         const now = new Date();
-
-        // Combine all transactions to show activity volume
         const allTx = [...transaksis, ...historyTransaksis];
 
         for (let i = 0; i < days; i++) {
@@ -90,14 +81,14 @@
         const { data } = chartData;
         if (data.length === 0) return "";
 
-        const max = Math.max(...data, 5); // Minimum scale of 5
+        const max = Math.max(...data, 5);
         const width = 950;
-        const height = 150; // Use 150 for drawing area inside 200 height SVG
+        const height = 150;
         const stepX = width / (data.length - 1);
 
         const points = data.map((val, i) => {
             const x = i * stepX;
-            const y = 200 - (val / max) * height; // Invert Y, keep some padding
+            const y = 200 - (val / max) * height;
             return `${x},${y}`;
         });
 
@@ -112,41 +103,10 @@
             d += ` C ${midX},${y0} ${midX},${y1} ${x1},${y1}`;
         }
 
-        // Close shape for fill
         const fillD = `${d} L 950,200 L 0,200 Z`;
 
         return { stroke: d, fill: fillD };
     });
-
-    function getStatusColor(status: string) {
-        switch (status) {
-            case "AKTIF":
-                return "text-info";
-            case "PENDING":
-                return "text-warning";
-            case "SELESAI":
-                return "text-success";
-            case "OVERDUE":
-                return "text-danger";
-            default:
-                return "text-text-muted";
-        }
-    }
-
-    function getStatusDot(status: string) {
-        switch (status) {
-            case "AKTIF":
-                return "bg-info";
-            case "PENDING":
-                return "bg-warning";
-            case "SELESAI":
-                return "bg-success";
-            case "OVERDUE":
-                return "bg-danger";
-            default:
-                return "bg-gray-400";
-        }
-    }
 </script>
 
 <svelte:head>
@@ -154,34 +114,21 @@
 </svelte:head>
 
 <div class="flex flex-col gap-8 w-full">
-    <!-- Header Section -->
-    <div
-        class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4"
-    >
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
         <div>
-            <h1
-                class="text-3xl md:text-4xl font-bold text-text-primary mb-2 tracking-tight"
-            >
+            <h1 class="text-3xl md:text-4xl font-bold text-text-primary mb-2 tracking-tight">
                 Halo, {$authStore.admin?.nama?.split(" ")[0] || "Admin"}
             </h1>
-            <p class="text-text-secondary">
-                Pantau progres tim di sini. Kamu hampir mencapai target!
-            </p>
+            <p class="text-text-secondary">Pantau progres tim di sini.</p>
         </div>
-        <div
-            class="flex items-center gap-2 bg-white px-4 py-2 rounded-xl shadow-sm border border-border/50 text-sm font-medium text-text-secondary"
-        >
-            <span>{today}</span>
+        <div class="flex items-center gap-2 bg-white px-4 py-2 rounded-xl shadow-sm border border-border/50 text-sm font-medium text-text-secondary">
             <CalendarIcon size={16} class="text-text-muted" />
+            <span>{formatDateShort(new Date())}</span>
         </div>
     </div>
 
     {#if isLoading}
-        <div class="h-64 flex items-center justify-center">
-            <div
-                class="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"
-            ></div>
-        </div>
+        <Loading />
     {:else}
         <!-- Stats Row -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">

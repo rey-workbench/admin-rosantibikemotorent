@@ -10,6 +10,7 @@
         Button,
         Badge,
     } from "$lib/components/ui";
+    import { PageHeader } from "$lib/components/layout";
     import { confirm } from "$lib/stores/confirm";
 
     interface QueueStats {
@@ -93,20 +94,17 @@
     <title>Queue Monitor - Rosantibike Motorent</title>
 </svelte:head>
 
-<div class="page-header">
-    <div class="flex items-center gap-3">
-        <h1>Queue Monitor</h1>
-        {#if $socketConnected}
-            <Badge variant="success" text="Real-time" />
-        {:else}
-            <Badge variant="danger" text="Offline" />
-        {/if}
-    </div>
-    <Button variant="secondary" onclick={loadData}>
+<PageHeader title="Queue Monitor">
+    {#if $socketConnected}
+        <Badge variant="success" text="Real-time" />
+    {:else}
+        <Badge variant="danger" text="Offline" />
+    {/if}
+    <Button variant="secondary" onclick={() => loadData(true)}>
         <RefreshCw size={18} />
         Refresh
     </Button>
-</div>
+</PageHeader>
 
 {#if isLoading}
     <div class="loading-page">

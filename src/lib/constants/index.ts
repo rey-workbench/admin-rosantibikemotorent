@@ -50,3 +50,29 @@ export const PAGINATION = {
     DEFAULT_LIMIT: 10,
     MAX_LIMIT: 100,
 } as const;
+
+export const STATUS_VARIANTS = {
+    SUCCESS: 'success',
+    WARNING: 'warning',
+    DANGER: 'danger',
+    INFO: 'info',
+    DEFAULT: 'default',
+} as const;
+
+export type BadgeVariant = typeof STATUS_VARIANTS[keyof typeof STATUS_VARIANTS];
+
+export const TRANSAKSI_STATUS_VARIANTS: Record<string, BadgeVariant> = {
+    PENDING: 'warning',
+    AKTIF: 'info',
+    SELESAI: 'success',
+    OVERDUE: 'danger',
+    DIBATALKAN: 'default',
+} as const;
+
+export const MOTOR_STATUS_VARIANTS: Record<string, BadgeVariant> = {
+    TERSEDIA: 'success',
+    DISEWA: 'info',
+    PERBAIKAN: 'warning',
+    DIPESAN: 'info',
+    OVERDUE: 'danger',
+} as const;

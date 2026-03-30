@@ -9,6 +9,7 @@
         Filter,
         AlertCircle,
     } from "lucide-svelte";
+    import { PageHeader } from "$lib/components/layout";
 
     let currentDate = new Date();
     let currentMonth = currentDate.getMonth();
@@ -132,22 +133,7 @@
 </script>
 
 <div class="p-6 max-w-[1600px] mx-auto min-h-screen flex flex-col">
-    <!-- Header -->
-    <div
-        class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6"
-    >
-        <div>
-            <h1
-                class="text-2xl font-bold text-text-primary flex items-center gap-2"
-            >
-                <Calendar class="text-primary" />
-                Kalender Ketersediaan
-            </h1>
-            <p class="text-text-secondary text-sm mt-1">
-                Pantau stok unit motor secara real-time.
-            </p>
-        </div>
-
+    <PageHeader title="Kalender Ketersediaan" subtitle="Pantau stok unit motor secara real-time.">
         <div
             class="flex items-center gap-3 bg-white dark:bg-bg-secondary p-1.5 rounded-xl shadow-sm border border-border/50"
         >
@@ -167,7 +153,7 @@
                 <ChevronRight size={20} />
             </button>
         </div>
-    </div>
+    </PageHeader>
 
     <!-- Filters & Legend -->
     <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
@@ -288,8 +274,8 @@
                                     <div
                                         class="font-bold text-text-primary text-sm"
                                     >
-                                        {unit.jenisMotor.merk}
-                                        {unit.jenisMotor.model}
+                                        {unit.jenisMotor?.merk ?? ''}
+                                        {unit.jenisMotor?.model ?? ''}
                                     </div>
                                     <div
                                         class="text-xs text-text-muted mt-0.5 font-mono bg-bg-tertiary px-1.5 py-0.5 rounded inline-block"

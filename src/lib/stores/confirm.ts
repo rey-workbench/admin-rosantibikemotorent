@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
 
-interface ConfirmOptions {
+export interface ConfirmOptions {
     title: string;
     message: string;
     type?: 'info' | 'warning' | 'danger' | 'success';
@@ -8,7 +8,7 @@ interface ConfirmOptions {
     cancelText?: string;
 }
 
-interface ConfirmState extends ConfirmOptions {
+export interface ConfirmState extends ConfirmOptions {
     open: boolean;
     resolve: (value: boolean) => void;
 }

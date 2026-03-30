@@ -3,8 +3,9 @@
     import { Plus, Pencil, Trash2, UserCog } from "lucide-svelte";
     import { adminApi } from "$lib/api";
     import type { Admin } from "$lib/types";
-    import { Card, CardBody, Button, Modal, Input } from "$lib/components/ui";
+    import { Card, CardBody, Button, Modal, Input, DataTable, Loading, EmptyState } from "$lib/components/ui";
     import { confirm } from "$lib/stores/confirm";
+  import { PageHeader } from "$lib/components";
 
     let admins: Admin[] = $state([]);
     let isLoading = $state(true);
@@ -16,6 +17,13 @@
     let formNama = $state("");
     let formEmail = $state("");
     let formPassword = $state("");
+
+    const columns = [
+        { key: "username", label: "Username" },
+        { key: "nama", label: "Nama" },
+        { key: "email", label: "Email" },
+        { key: "aksi", label: "Aksi", class: "w-24" },
+    ];
 
     onMount(async () => {
         await loadData();
@@ -87,8 +95,7 @@
     async function handleDelete(id: string) {
         const ok = await confirm.show({
             title: "Hapus Admin",
-            message:
-                "Apakah Anda yakin ingin menghapus admin ini? Tindakan ini tidak dapat dibatalkan.",
+            message: "Apakah Anda yakin ingin menghapus admin ini?",
             type: "danger",
             confirmText: "Ya, Hapus",
         });
@@ -108,89 +115,50 @@
     <title>Admin Management - Rosantibike Motorent</title>
 </svelte:head>
 
-<div class="page-header">
-    <h1>Kelola Admin</h1>
+<PageHeader title="Kelola Admin">
     <Button variant="primary" onclick={openCreateModal}>
         <Plus size={18} />
         Tambah Admin
     </Button>
-</div>
+</PageHeader>
 
 {#if isLoading}
-    <div class="loading-page">
-        <div class="loading-spinner"></div>
-    </div>
+    <Loading />
 {:else if admins.length === 0}
-    <div class="empty-state">
-        <div class="empty-state-icon"><UserCog size={48} /></div>
-        <h3>Belum Ada Admin</h3>
-        <p>Tambahkan admin pertama</p>
-        <Button variant="primary" class="mt-4" onclick={openCreateModal}>
-            <Plus size={18} />
-            Tambah Admin
-        </Button>
-    </div>
+    <EmptyState
+        icon={UserCog}
+        title="Belum Ada Admin"
+        description="Tambahkan admin pertama"
+    >
+        {#snippet action()}
+            <Button variant="primary" class="mt-4" onclick={openCreateModal}>
+                <Plus size={18} />
+                Tambah Admin
+            </Button>
+        {/snippet}
+    </EmptyState>
 {:else}
     <Card>
         <CardBody class="p-0">
-            <div class="overflow-x-auto">
-                <table class="w-full">
-                    <thead>
-                        <tr class="bg-bg-tertiary/30">
-                            <th
-                                class="text-left px-4 py-3 font-semibold text-text-secondary text-sm border-b border-border"
-                                >Username</th
-                            >
-                            <th
-                                class="text-left px-4 py-3 font-semibold text-text-secondary text-sm border-b border-border"
-                                >Nama</th
-                            >
-                            <th
-                                class="text-left px-4 py-3 font-semibold text-text-secondary text-sm border-b border-border"
-                                >Email</th
-                            >
-                            <th
-                                class="text-left px-4 py-3 font-semibold text-text-secondary text-sm border-b border-border"
-                                >Aksi</th
-                            >
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {#each admins as admin}
-                            <tr
-                                class="border-b border-border hover:bg-bg-tertiary/20 transition-colors"
-                            >
-                                <td class="px-4 py-3 font-semibold text-sm"
-                                    >{admin.username}</td
-                                >
-                                <td class="px-4 py-3 text-sm">{admin.nama}</td>
-                                <td class="px-4 py-3 text-text-muted text-sm"
-                                    >{admin.email || "-"}</td
-                                >
-                                <td class="px-4 py-3">
-                                    <div class="flex gap-2">
-                                        <Button
-                                            variant="secondary"
-                                            size="sm"
-                                            onclick={() => openEditModal(admin)}
-                                        >
-                                            <Pencil size={16} />
-                                        </Button>
-                                        <Button
-                                            variant="danger"
-                                            size="sm"
-                                            onclick={() =>
-                                                handleDelete(admin.id)}
-                                        >
-                                            <Trash2 size={16} />
-                                        </Button>
-                                    </div>
-                                </td>
-                            </tr>
-                        {/each}
-                    </tbody>
-                </table>
-            </div>
+            <DataTable {columns}>
+                {#each admins as admin}
+                    <tr class="border-b border-border hover:bg-bg-tertiary/20 transition-colors">
+                        <td class="px-4 py-3 font-semibold text-sm">{admin.username}</td>
+                        <td class="px-4 py-3 text-sm">{admin.nama}</td>
+                        <td class="px-4 py-3 text-text-muted text-sm">{admin.email || "-"}</td>
+                        <td class="px-4 py-3">
+                            <div class="flex gap-2">
+                                <Button variant="secondary" size="sm" onclick={() => openEditModal(admin)}>
+                                    <Pencil size={16} />
+                                </Button>
+                                <Button variant="danger" size="sm" onclick={() => handleDelete(admin.id)}>
+                                    <Trash2 size={16} />
+                                </Button>
+                            </div>
+                        </td>
+                    </tr>
+                {/each}
+            </DataTable>
         </CardBody>
     </Card>
 {/if}
@@ -228,4 +196,3 @@
         </div>
     </form>
 </Modal>
-```

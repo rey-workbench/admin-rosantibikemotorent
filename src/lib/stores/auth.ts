@@ -2,7 +2,7 @@ import { writable, derived } from 'svelte/store';
 import { browser } from '$app/environment';
 import type { Admin } from '$lib/types';
 
-interface AuthState {
+export interface AuthState {
     admin: Admin | null;
     token: string | null;
     isLoading: boolean;
