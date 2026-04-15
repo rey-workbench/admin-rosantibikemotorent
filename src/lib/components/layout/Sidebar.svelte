@@ -16,6 +16,7 @@
         ChevronDown,
         ChevronRight,
         Calendar,
+        Brain,
     } from "lucide-svelte";
     import { authApi } from "$lib/api";
     import { authStore } from "$lib/stores/auth";
@@ -36,6 +37,7 @@
         { path: "/availability", label: "Ketersediaan", icon: Calendar },
         { path: "/blog", label: "Artikel Blog", icon: FileText },
         { path: "/whatsapp", label: "WhatsApp", icon: MessageSquare },
+        { path: "/ai", label: "AI Assistant", icon: Brain },
         { path: "/queue", label: "Monitor Antrian", icon: ListOrdered },
         { path: "/admin", label: "Daftar Admin", icon: Users },
         { path: "/settings", label: "Pengaturan", icon: Settings },
@@ -75,7 +77,7 @@
 </script>
 
 <aside
-    class="w-64 bg-[#F8F9FB] max-[768px]:hidden min-[769px]:flex flex-col shrink-0 h-screen sticky top-0 border-r border-transparent shadow-sm z-20"
+    class="w-64 bg-bg-primary max-[768px]:hidden min-[769px]:flex flex-col shrink-0 h-screen sticky top-0 border-r border-transparent shadow-sm z-20"
 >
     <div class="p-8 pb-4">
         <a

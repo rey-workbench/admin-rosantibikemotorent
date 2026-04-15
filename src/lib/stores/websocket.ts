@@ -5,8 +5,6 @@ import type {
     QueueUpdate,
     TransaksiEvent,
     MotorStatusUpdate,
-    UnitMotorUpdate,
-    DendaNotification,
     WhatsAppMessageEvent
 } from '$lib/types';
 

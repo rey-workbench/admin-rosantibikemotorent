@@ -5,6 +5,7 @@ export * from './transaksi';
 export * from './blog';
 export * from './whatsapp';
 export * from './queue';
+export * from './ai';
 
 export type ToastType = 'success' | 'error' | 'info' | 'warning';
 

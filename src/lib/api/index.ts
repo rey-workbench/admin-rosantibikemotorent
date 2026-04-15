@@ -10,3 +10,4 @@ export * from './blog';
 export * from './whatsapp';
 export * from './queue';
 export * from './redis';
+export * from './ai';

@@ -66,3 +66,15 @@ export const TRANSAKSI_STATUS_VARIANTS: Record<string, BadgeVariant> = {
     SELESAI: 'success',
     OVERDUE: 'danger',
 } as const;
+
+export const MOTOR_STATUS = {
+    AVAILABLE: 'AVAILABLE',
+    RENTED: 'RENTED',
+    MAINTENANCE: 'MAINTENANCE',
+} as const;
+
+export const MOTOR_STATUS_VARIANTS: Record<string, BadgeVariant> = {
+    AVAILABLE: 'success',
+    RENTED: 'info',
+    MAINTENANCE: 'warning',
+} as const;
