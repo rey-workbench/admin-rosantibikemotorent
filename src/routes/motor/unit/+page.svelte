@@ -2,14 +2,12 @@
   import { onMount } from "svelte";
   import { Plus, Pencil, Trash2, Truck } from "lucide-svelte";
   import { formatCurrency } from "$lib/utils";
-  import { MOTOR_STATUS_VARIANTS } from "$lib/constants";
   import { unitMotorApi } from "$lib/api";
   import type { UnitMotor } from "$lib/types";
   import {
     Card,
     CardBody,
     Button,
-    Badge,
     DataTable,
     Loading,
     EmptyState,
@@ -41,7 +39,7 @@
     { key: "plat", label: "Plat Nomor" },
     { key: "jenis", label: "Jenis Motor" },
     { key: "harga", label: "Harga Sewa" },
-    { key: "status", label: "Status" },
+    { key: "tahun", label: "Tahun" },
     { key: "aksi", label: "Aksi", class: "w-24" },
   ];
 
@@ -136,12 +134,7 @@
                 <td class="px-4 py-3 text-sm"
                   >{formatCurrency(unit.jenis?.hargaSewa || 0)}</td
                 >
-                <td class="px-4 py-3">
-                  <Badge
-                    variant={MOTOR_STATUS_VARIANTS[unit.status] || "info"}
-                    text={unit.status}
-                  />
-                </td>
+                <td class="px-4 py-3 text-sm">{unit.tahunPembuatan || '-'}</td>
                 <td class="px-4 py-3">
                   <div class="flex gap-2">
                     <Button

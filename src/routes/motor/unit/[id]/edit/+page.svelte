@@ -9,7 +9,6 @@
   let unit: UnitMotor | null = $state(null);
   let platNomor = $state("");
   let jenisId = $state("");
-  let status = $state("TERSEDIA");
   let jenisMotors: JenisMotor[] = $state([]);
   let isLoading = $state(true);
   let isSaving = $state(false);
@@ -26,7 +25,6 @@
       jenisMotors = jenisRes.data || [];
       platNomor = unit.platNomor;
       jenisId = unit.jenisId || "";
-      status = unit.status;
     } catch (err) {
       console.error(err);
     } finally {
@@ -41,7 +39,6 @@
       await unitMotorApi.update(unitId, {
         platNomor,
         jenisId,
-        status: status as UnitMotor["status"],
       });
       goto("/motor/unit");
     } catch (err) {
@@ -76,16 +73,6 @@
       }))}
       placeholder="Pilih Jenis Motor"
       required
-    />
-    <Select
-      id="status"
-      label="Status"
-      bind:value={status}
-      options={[
-        { value: "TERSEDIA", label: "Tersedia" },
-        { value: "DISEWA", label: "Disewa" },
-        { value: "DIPESAN", label: "Dipesan/Booking" },
-      ]}
     />
   </div>
 </Form>

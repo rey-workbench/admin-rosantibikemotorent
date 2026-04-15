@@ -113,7 +113,10 @@
       <option value={STATUS_TRANSAKSI.AKTIF}>Aktif</option>
       <option value={STATUS_TRANSAKSI.SELESAI}>Selesai</option>
       <option value={STATUS_TRANSAKSI.OVERDUE}>Overdue</option>
-      <option value={STATUS_TRANSAKSI.DIBATALKAN}>Dibatalkan</option>
+      <option value={STATUS_TRANSAKSI.PENDING_DP}>Pending DP</option>
+      <option value={STATUS_TRANSAKSI.DP_DIBAYAR}>DP Dibayar</option>
+      <option value={STATUS_TRANSAKSI.LUNAS}>Lunas</option>
+      <option value={STATUS_TRANSAKSI.BATAL}>Batal</option>
     </select>
     <Button href="/transaksi/new" variant="primary">
       <Plus size={18} />

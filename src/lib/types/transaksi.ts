@@ -1,4 +1,4 @@
-export type StatusTransaksi = 'PENDING' | 'AKTIF' | 'SELESAI' | 'OVERDUE' | 'DIBATALKAN';
+export type StatusTransaksi = 'PENDING_DP' | 'PENDING' | 'DP_DIBAYAR' | 'LUNAS' | 'AKTIF' | 'BATAL' | 'SELESAI' | 'OVERDUE';
 
 export interface Transaksi {
     id: string;

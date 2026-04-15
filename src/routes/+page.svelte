@@ -38,18 +38,12 @@
         }
     });
 
-    const tersedia = $derived(
-        units.filter((u) => u.status?.toLowerCase() === "tersedia").length,
-    );
-    const disewa = $derived(
-        units.filter((u) => u.status?.toLowerCase() === "disewa").length,
-    );
     const completed = $derived(
         historyTransaksis.filter((t) => t.status === STATUS_TRANSAKSI.SELESAI).length,
     );
 
     const efficiency = $derived(
-        units.length > 0 ? Math.round((disewa / units.length) * 100) : 0,
+        units.length > 0 ? Math.round((completed / units.length) * 100) : 0,
     );
 
     const chartData = $derived.by(() => {
@@ -168,15 +162,11 @@
                 </div>
                 <div>
                     <p class="text-sm font-semibold text-text-secondary mb-1">
-                        Disewa
+                        Total Unit
                     </p>
                     <div class="flex items-center gap-2">
                         <span class="text-2xl font-bold text-text-primary"
-                            >{disewa}</span
-                        >
-                        <span
-                            class="text-xs font-medium text-danger bg-danger/10 px-1.5 py-0.5 rounded"
-                            >-6 jam</span
+                            >{units.length}</span
                         >
                     </div>
                 </div>

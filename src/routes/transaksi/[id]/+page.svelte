@@ -321,11 +321,11 @@
               >
                 Belum Lunas (Menunggu DP)
               </div>
-            {:else if transaction.status === "DIBATALKAN"}
+            {:else if transaction.status === "BATAL"}
               <div
                 class="px-3 py-1 bg-gray-50 border border-gray-200 text-gray-400 text-[10px] font-bold uppercase tracking-wider rounded print:border-black print:text-black line-through"
               >
-                Transaksi Dibatalkan
+                Transaksi Batal
               </div>
             {:else}
               <div
@@ -378,7 +378,7 @@
                   >{formatRupiah(transaction.totalBiaya * 0.7)}</span
                 >
               </div>
-            {:else if transaction.status !== "DIBATALKAN"}
+            {:else if transaction.status !== "BATAL"}
               <div
                 class="flex justify-between items-center mb-1 text-green-600 print:text-black"
               >

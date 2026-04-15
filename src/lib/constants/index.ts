@@ -1,17 +1,12 @@
-export const STATUS_MOTOR = {
-    TERSEDIA: 'TERSEDIA',
-    DISEWA: 'DISEWA',
-    PERBAIKAN: 'PERBAIKAN',
-    DIPESAN: 'DIPESAN',
-    OVERDUE: 'OVERDUE',
-} as const;
-
 export const STATUS_TRANSAKSI = {
+    PENDING_DP: 'PENDING_DP',
     PENDING: 'PENDING',
+    DP_DIBAYAR: 'DP_DIBAYAR',
+    LUNAS: 'LUNAS',
     AKTIF: 'AKTIF',
+    BATAL: 'BATAL',
     SELESAI: 'SELESAI',
     OVERDUE: 'OVERDUE',
-    DIBATALKAN: 'DIBATALKAN',
 } as const;
 
 export const STATUS_ARTIKEL = {
@@ -62,17 +57,12 @@ export const STATUS_VARIANTS = {
 export type BadgeVariant = typeof STATUS_VARIANTS[keyof typeof STATUS_VARIANTS];
 
 export const TRANSAKSI_STATUS_VARIANTS: Record<string, BadgeVariant> = {
+    PENDING_DP: 'warning',
     PENDING: 'warning',
+    DP_DIBAYAR: 'info',
+    LUNAS: 'success',
     AKTIF: 'info',
+    BATAL: 'default',
     SELESAI: 'success',
-    OVERDUE: 'danger',
-    DIBATALKAN: 'default',
-} as const;
-
-export const MOTOR_STATUS_VARIANTS: Record<string, BadgeVariant> = {
-    TERSEDIA: 'success',
-    DISEWA: 'info',
-    PERBAIKAN: 'warning',
-    DIPESAN: 'info',
     OVERDUE: 'danger',
 } as const;
