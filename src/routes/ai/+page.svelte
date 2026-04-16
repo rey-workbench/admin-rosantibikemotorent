@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { Brain, Send, Save, Plus, Trash2, Edit2, Search, MessageSquare, Database, Sparkles, Settings, HelpCircle } from "lucide-svelte";
+    import { Brain, Send, Save, Plus, Trash2, Edit2, Search, MessageSquare, Database, Sparkles, Settings, HelpCircle, Check, CheckCheck } from "lucide-svelte";
     import PageHeader from "$lib/components/layout/PageHeader.svelte";
     import { Button, Input, Select, Textarea, Modal, Tabs, Badge, Card } from "$lib/components/ui";
     import { aiApi } from "$lib/api";
@@ -14,8 +14,81 @@
 
     // Playground State
     let testMessage = $state("");
-    let chatHistory = $state<{ role: "user" | "bot"; text: string; debug?: any }[]>([]);
+    let chatHistory = $state<{ role: "user" | "bot"; text: string; debug?: any; timestamp?: number }[]>([]);
     let isWnaTest = $state(false);
+
+    // --- WhatsApp Message Parser ---
+    function parseWhatsAppText(text: string): { type: 'text' | 'bold' | 'italic' | 'code' | 'newlines'; content: string }[] {
+        if (!text) return [];
+        
+        const segments: { type: 'text' | 'bold' | 'italic' | 'code' | 'newlines'; content: string }[] = [];
+        let remaining = text;
+        
+        // Pattern untuk parsing: *bold*, _italic_, ```code```
+        const patterns = [
+            { regex: /\*([^*]+)\*/, type: 'bold' as const },
+            { regex: /_([^_]+)_/, type: 'italic' as const },
+            { regex: /```([^`]+)```/, type: 'code' as const },
+        ];
+        
+        // Proses baris baru terlebih dahulu
+        const lines = remaining.split('\n');
+        
+        lines.forEach((line, lineIndex) => {
+            if (lineIndex > 0) {
+                segments.push({ type: 'newlines', content: '\n' });
+            }
+            
+            let lineRemaining = line;
+            let hasMatch = true;
+            
+            while (hasMatch && lineRemaining) {
+                hasMatch = false;
+                let earliestMatch: { index: number; length: number; type: 'bold' | 'italic' | 'code'; content: string } | null = null;
+                
+                for (const { regex, type } of patterns) {
+                    const match = lineRemaining.match(regex);
+                    if (match && match.index !== undefined) {
+                        if (!earliestMatch || match.index < earliestMatch.index) {
+                            earliestMatch = {
+                                index: match.index,
+                                length: match[0].length,
+                                type,
+                                content: match[1]
+                            };
+                        }
+                    }
+                }
+                
+                if (earliestMatch) {
+                    // Add text before match
+                    if (earliestMatch.index > 0) {
+                        segments.push({ type: 'text', content: lineRemaining.slice(0, earliestMatch.index) });
+                    }
+                    // Add formatted content
+                    segments.push({ type: earliestMatch.type, content: earliestMatch.content });
+                    // Continue with remaining
+                    lineRemaining = lineRemaining.slice(earliestMatch.index + earliestMatch.length);
+                    hasMatch = true;
+                }
+            }
+            
+            // Add remaining text
+            if (lineRemaining) {
+                segments.push({ type: 'text', content: lineRemaining });
+            }
+        });
+        
+        return segments;
+    }
+
+    // Format timestamp untuk tampilan WhatsApp
+    function formatTimestamp(ts: number): string {
+        return new Date(ts).toLocaleTimeString('id-ID', {
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }
 
     // Knowledge State
     let knowledgeBase = $state<AiKnowledge[]>([]);
@@ -52,7 +125,8 @@
         if (!testMessage.trim() || loading) return;
 
         const msg = testMessage;
-        chatHistory = [...chatHistory, { role: "user", text: msg }];
+        const now = Date.now();
+        chatHistory = [...chatHistory, { role: "user", text: msg, timestamp: now }];
         testMessage = "";
         loading = true;
 
@@ -64,7 +138,8 @@
             chatHistory = [...chatHistory, { 
                 role: "bot", 
                 text: data.response || "Maaf, AI tidak memberikan jawaban.",
-                debug: data.debug
+                debug: data.debug,
+                timestamp: Date.now()
             }];
         } catch (e) {
             toast.error("AI gagal merespons");
@@ -170,80 +245,145 @@
         {#if activeTab === "playground"}
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
                 <!-- Chat Interface -->
-                <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-border flex flex-col h-[600px] overflow-hidden">
-                    <div class="p-4 border-b border-border flex justify-between items-center bg-bg-secondary/20">
+                <div class="lg:col-span-2 rounded-2xl shadow-sm border border-border flex flex-col h-[600px] overflow-hidden bg-[#f0f2f5]">
+                    <div class="p-3 border-b border-border/50 flex justify-between items-center" style="background-color: #f0f2f5;">
                         <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
-                                <Brain size={18} />
+                            <div class="w-10 h-10 rounded-full bg-green-600 flex items-center justify-center text-white shadow-sm">
+                                <Brain size={20} />
                             </div>
                             <div>
-                                <h3 class="font-bold text-sm">AI Playground</h3>
-                                <p class="text-[10px] text-text-secondary">Simulator bot RosantiBike</p>
+                                <h3 class="font-bold text-sm text-text-primary">RosantiBike Bot</h3>
+                                <p class="text-[10px] text-text-muted flex items-center gap-1">
+                                    <span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
+                                    Online - AI Assistant
+                                </p>
                             </div>
                         </div>
                     </div>
 
-                    <div class="flex-1 overflow-y-auto p-4 space-y-4 bg-bg-secondary/10">
+                    <div 
+                        class="flex-1 overflow-y-auto p-4 space-y-1 scrollbar-thin"
+                        style="background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); background-blend-mode: overlay; background-color: #efeae2;"
+                    >
                         {#if chatHistory.length === 0}
-                            <div class="h-full flex flex-col items-center justify-center opacity-30 text-center">
-                                <Sparkles size={32} class="mb-3" />
-                                <p class="text-sm">Gunakan kolom di bawah untuk<br>menguji respons AI!</p>
+                            <div class="h-full flex flex-col items-center justify-center opacity-40 text-center">
+                                <div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                                    <Brain size={32} class="text-primary" />
+                                </div>
+                                <p class="text-sm font-medium text-text-secondary">AI Playground Simulator</p>
+                                <p class="text-xs text-text-muted mt-1">Ketik pesan di bawah untuk menguji respons bot</p>
                             </div>
                         {/if}
                         
-                        {#each chatHistory as chat}
-                            <div class="flex flex-col {chat.role === 'user' ? 'items-end' : 'items-start'}">
-                                <div class="max-w-[85%] p-3 rounded-xl text-sm {chat.role === 'user' ? 'bg-primary text-white' : 'bg-white border border-border shadow-sm'}">
-                                    {chat.text}
-                                </div>
-                                
-                                {#if chat.debug && chat.debug.matches}
-                                    <div class="mt-2 p-3 bg-bg-secondary/50 rounded-lg text-[10px] text-text-secondary w-full max-w-[85%] font-mono space-y-1.5 border border-border/50">
-                                        <div class="font-bold text-primary flex items-center gap-1.5 border-b border-border/40 pb-1 mb-1">
-                                            <Database size={10} /> RAG Matches:
-                                        </div>
-                                        {#each chat.debug.matches as match}
-                                            <div class="flex justify-between gap-4">
-                                                <span class="truncate">{match.item.questionId || match.item.id}</span>
-                                                <span class="font-bold {match.score >= 0.82 ? 'text-success' : 'text-warning'}">
-                                                    {(match.score * 100).toFixed(0)}%
-                                                </span>
-                                            </div>
-                                        {:else}
-                                            <div class="italic opacity-50">Menggunakan model bahasa umum (tanpa konteks database)</div>
-                                        {/each}
+                        {#each chatHistory as chat, i}
+                            {@const parsed = parseWhatsAppText(chat.text)}
+                            {@const isUser = chat.role === 'user'}
+                            {@const showAvatar = !isUser && (i === 0 || chatHistory[i - 1].role === 'user')}
+                            
+                            <div class="flex {isUser ? 'justify-end' : 'justify-start'} items-end gap-1 group">
+                                {#if showAvatar}
+                                    <div class="w-7 h-7 rounded-full bg-green-600 flex items-center justify-center text-white text-[10px] font-bold shrink-0 mb-1 shadow-sm">
+                                        <Brain size={14} />
                                     </div>
+                                {:else if !isUser}
+                                    <div class="w-7 shrink-0"></div>
                                 {/if}
+                                
+                                <div class="relative max-w-[70%] {isUser ? 'order-1' : 'order-2'}">
+                                    <div class="
+                                        px-2.5 py-1.5 shadow-sm text-sm
+                                        {isUser 
+                                            ? 'bg-[#d9fdd3] dark:bg-primary/20 rounded-l-lg rounded-tr-lg rounded-br-md' 
+                                            : 'bg-white dark:bg-bg-tertiary rounded-r-lg rounded-tl-md rounded-bl-md'}
+                                    ">
+                                        <div class="whitespace-pre-wrap leading-relaxed text-text-primary {chat.text.length > 100 ? 'text-[13px]' : 'text-sm'}">
+                                            {#each parsed as segment}
+                                                {#if segment.type === 'bold'}
+                                                    <strong class="font-bold">{segment.content}</strong>
+                                                {:else if segment.type === 'italic'}
+                                                    <em class="italic">{segment.content}</em>
+                                                {:else if segment.type === 'code'}
+                                                    <code class="bg-black/10 px-1 py-0.5 rounded text-[12px] font-mono">{segment.content}</code>
+                                                {:else if segment.type === 'newlines'}
+                                                    <br />
+                                                {:else}
+                                                    {segment.content}
+                                                {/if}
+                                            {/each}
+                                        </div>
+                                        
+                                        <div class="flex items-center justify-end gap-1 mt-0.5 -mr-1">
+                                            <span class="text-[10px] text-text-muted/70">
+                                                {chat.timestamp ? formatTimestamp(chat.timestamp) : ''}
+                                            </span>
+                                            {#if isUser}
+                                                <span class="text-primary">
+                                                    <CheckCheck size={14} />
+                                                </span>
+                                            {/if}
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
+                            
+                            {#if chat.debug && chat.debug.matches && chat.debug.matches.length > 0}
+                                <div class="flex {isUser ? 'justify-end' : 'justify-start'} {isUser ? 'ml-10' : 'ml-10'}">
+                                    <div class="mt-1 p-2 bg-white/80 rounded-lg text-[10px] text-text-muted w-full max-w-[85%] font-mono border border-border/30 shadow-sm">
+                                        <div class="font-bold text-primary/80 flex items-center gap-1.5 pb-1 mb-1.5 border-b border-border/30">
+                                            <Database size={10} /> Knowledge Base Matches:
+                                        </div>
+                                        <div class="space-y-1">
+                                            {#each chat.debug.matches.slice(0, 3) as match}
+                                                <div class="flex justify-between gap-3 items-start">
+                                                    <span class="truncate flex-1 text-text-secondary">{match.item.question || match.item.questionId || 'N/A'}</span>
+                                                    <span class="shrink-0 font-bold {match.score >= 0.82 ? 'text-green-600' : 'text-amber-600'}">
+                                                        {(match.score * 100).toFixed(0)}%
+                                                    </span>
+                                                </div>
+                                            {/each}
+                                            {#if chat.debug.matches.length > 3}
+                                                <div class="text-text-muted/60 italic">+{chat.debug.matches.length - 3} matches lainnya</div>
+                                            {/if}
+                                        </div>
+                                    </div>
+                                </div>
+                            {/if}
                         {/each}
 
                         {#if loading}
-                            <div class="flex items-start animate-in fade-in duration-300">
-                                <div class="bg-white p-3 rounded-xl border border-border shadow-sm text-sm">
-                                    <span class="flex items-center gap-2">
-                                        <div class="w-1 h-1 bg-primary rounded-full animate-bounce"></div>
-                                        <div class="w-1 h-1 bg-primary rounded-full animate-bounce [animation-delay:0.2s]"></div>
-                                        <div class="w-1 h-1 bg-primary rounded-full animate-bounce [animation-delay:0.4s]"></div>
-                                        Bot sedang memproses...
+                            <div class="flex items-end gap-1 animate-in fade-in duration-300">
+                                <div class="w-7 h-7 rounded-full bg-green-600 flex items-center justify-center text-white shrink-0">
+                                    <Brain size={14} />
+                                </div>
+                                <div class="bg-white px-4 py-3 rounded-2xl rounded-tl-md shadow-sm">
+                                    <span class="flex items-center gap-1.5">
+                                        <div class="w-1.5 h-1.5 bg-primary rounded-full animate-bounce"></div>
+                                        <div class="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:0.15s]"></div>
+                                        <div class="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:0.3s]"></div>
                                     </span>
                                 </div>
                             </div>
                         {/if}
                     </div>
 
-                    <div class="p-3 border-t border-border">
-                        <form class="flex gap-2" onsubmit={(e) => { e.preventDefault(); handleSendMessage(); }}>
-                            <div class="flex-1">
-                                <Input 
+                    <div class="p-3 border-t border-border/50 bg-bg-secondary/30">
+                        <form class="flex gap-3 items-end" onsubmit={(e) => { e.preventDefault(); handleSendMessage(); }}>
+                            <div class="flex-1 bg-white rounded-xl px-4 py-2.5 border border-border/30 focus-within:border-primary/50 transition-colors shadow-sm">
+                                <input 
                                     id="test-message"
                                     bind:value={testMessage}
-                                    placeholder="Ketik pertanyaan simulasi..." 
+                                    placeholder="Ketik pesan untuk simulasi bot..."
                                     disabled={loading}
+                                    class="w-full bg-transparent outline-none text-sm text-text-primary placeholder:text-text-muted/60"
                                 />
                             </div>
-                            <Button type="submit" disabled={loading} size="icon">
+                            <button 
+                                type="submit" 
+                                disabled={loading || !testMessage.trim()}
+                                class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary/90 transition-colors shadow-sm"
+                            >
                                 <Send size={18} />
-                            </Button>
+                            </button>
                         </form>
                     </div>
                 </div>
