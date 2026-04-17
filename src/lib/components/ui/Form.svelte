@@ -73,6 +73,13 @@
               {/if}
             {/each}
           </div>
+        {:else}
+          <div class="flex justify-end gap-3 pt-4 border-t border-border">
+            <Button type="submit" variant="primary" loading={isLoading}>
+              <Save size={18} />
+              Simpan Data
+            </Button>
+          </div>
         {/if}
       </form>
     </CardBody>
