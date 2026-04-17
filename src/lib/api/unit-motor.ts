@@ -2,7 +2,7 @@ import api from './axios';
 import type { UnitMotor, PaginationMeta } from '$lib/types';
 
 export const unitMotorApi = {
-    getAll: async (filter?: { page?: number; limit?: number; status?: string; jenisId?: string }): Promise<{ data: UnitMotor[]; meta: PaginationMeta }> => {
+    getAll: async (filter?: { page?: number; limit?: number; jenisId?: string }): Promise<{ data: UnitMotor[]; meta: PaginationMeta }> => {
         const { data: body } = await api.get('/unit-motor', { params: filter });
         return { data: body.data, meta: body.meta };
     },
