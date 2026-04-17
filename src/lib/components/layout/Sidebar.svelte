@@ -180,29 +180,6 @@
     </nav>
 
     <div class="p-4 mt-auto">
-        <div
-            class="bg-white/60 backdrop-blur-sm rounded-[2rem] p-6 relative overflow-hidden group border border-white/50"
-        >
-            <div
-                class="absolute -right-4 -top-4 w-20 h-20 bg-primary/10 rounded-full group-hover:scale-110 transition-transform"
-            ></div>
-            <div class="relative z-10">
-                <h4 class="font-bold text-text-primary text-lg mb-2">
-                    Upgrade ke Paket Pro
-                </h4>
-                <p
-                    class="text-xs text-text-secondary mb-4 leading-relaxed max-w-[150px]"
-                >
-                    Dapatkan 1 bulan gratis dan buka fitur premium
-                </p>
-                <button
-                    class="w-full bg-blue-100 text-primary hover:bg-blue-200 py-2 rounded-xl text-sm font-bold transition-all mt-2"
-                >
-                    Tingkatkan
-                </button>
-            </div>
-        </div>
-
         <div class="mt-4 pt-4 border-t border-border/50 space-y-1">
             <button
                 class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-text-secondary hover:text-danger hover:bg-danger/5 transition-all duration-200 font-medium text-left"
