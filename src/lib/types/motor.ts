@@ -15,7 +15,6 @@ export interface UnitMotor {
   platNomor: string;
   jenisId: string;
   jenis?: JenisMotor;
-  jenisMotor?: JenisMotor;
   tahunPembuatan?: number;
   slug: string;
   createdAt: string;

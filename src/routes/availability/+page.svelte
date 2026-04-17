@@ -274,8 +274,8 @@
                                     <div
                                         class="font-bold text-text-primary text-sm"
                                     >
-                                        {unit.jenisMotor?.merk ?? ''}
-                                        {unit.jenisMotor?.model ?? ''}
+                                        {unit.jenis?.merk ?? ''}
+                                        {unit.jenis?.model ?? ''}
                                     </div>
                                     <div
                                         class="text-xs text-text-muted mt-0.5 font-mono bg-bg-tertiary px-1.5 py-0.5 rounded inline-block"
