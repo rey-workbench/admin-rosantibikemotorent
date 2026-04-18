@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { onMount } from "svelte";
+        import { onMount, onDestroy } from "svelte";
     import { unitMotorApi } from "$lib/api";
     import { fade } from "svelte/transition";
     import {
@@ -10,6 +10,7 @@
         AlertCircle,
     } from "lucide-svelte";
     import { PageHeader } from "$lib/components/layout";
+    import { websocketService } from "$lib/services/websocket";
 
     let currentDate = $state(new Date());
     let currentMonth = $state(currentDate.getMonth());
@@ -19,6 +20,7 @@
     let availabilityData = $state<any>(null);
     let brands = $state<{ id: string; merk: string }[]>([]);
     let error = $state("");
+    let unsubs: (() => void)[] = [];
 
     // Generate days for the selected month
     let daysInMonth = $derived(new Date(currentYear, currentMonth + 1, 0).getDate());
@@ -43,7 +45,29 @@
     onMount(async () => {
         await loadBrands();
         await loadAvailability();
+
+        // Connect to websocket
+        websocketService.connect();
+
+        // Listen for all transaction events & unit updates
+        const refresh = () => {
+            console.log("[Availability] Refreshing data due to realtime update...");
+            loadAvailability();
+        };
+
+        unsubs = [
+            websocketService.onTransaksiCreated(refresh),
+            websocketService.onTransaksiUpdated(refresh),
+            websocketService.onTransaksiDeleted(refresh),
+            websocketService.onTransaksiSelesai(refresh),
+            websocketService.onUnitMotorUpdate(refresh)
+        ];
     });
+
+    onDestroy(() => {
+        unsubs.forEach(unsub => unsub());
+    });
+
 
     async function loadBrands() {
         try {
