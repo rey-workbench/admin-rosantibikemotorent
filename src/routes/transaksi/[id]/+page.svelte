@@ -8,7 +8,7 @@
   import { Printer, ArrowLeft } from "lucide-svelte";
   import type { Transaksi } from "$lib/types";
 
-  let transaction: (Transaksi & { qrisBase64?: string }) | null = $state(null);
+  let transaction: (Transaksi & { qris?: { qrImage: string; nominal: string } }) | null = $state(null);
   let isLoading = $state(true);
   let error = $state<string | null>(null);
 
@@ -300,6 +300,36 @@
                 </td>
               </tr>
             {/if}
+ 
+            {#if transaction.biayaDenda && transaction.biayaDenda > 0}
+               <tr>
+                <td class="py-3">
+                  <div
+                    class="font-bold text-gray-900 print:text-black uppercase text-xs"
+                  >
+                    Denda / Jam Tambahan
+                  </div>
+                  <div class="text-[10px] text-gray-500 print:text-black">
+                    Keterlambatan Pengembalian
+                  </div>
+                </td>
+                <td
+                  class="py-3 text-center text-gray-900 print:text-black text-sm"
+                >
+                  -
+                </td>
+                <td
+                  class="py-3 text-right text-gray-900 print:text-black text-sm"
+                >
+                   {formatRupiah(transaction.biayaDenda)}
+                </td>
+                <td
+                  class="py-3 text-right font-bold text-gray-900 print:text-black text-sm"
+                >
+                  {formatRupiah(transaction.biayaDenda)}
+                </td>
+              </tr>
+            {/if}
           </tbody>
         </table>
       </div>
@@ -315,11 +345,11 @@
             Status Pembayaran
           </p>
           <div class="flex items-center gap-2">
-            {#if transaction.status === "PENDING"}
+            {#if transaction.status === "PENDING" || transaction.status === "PENDING_DP"}
               <div
                 class="px-3 py-1 bg-amber-50 border border-amber-200 text-amber-700 text-[10px] font-bold uppercase tracking-wider rounded print:border-black print:text-black"
               >
-                Belum Lunas (Menunggu DP)
+                {transaction.status === "PENDING_DP" ? "Menunggu DP" : "Belum Lunas"}
               </div>
             {:else if transaction.status === "BATAL"}
               <div
@@ -336,7 +366,7 @@
             {/if}
           </div>
           <p class="text-[10px] text-gray-400 print:text-black mt-2 italic">
-            {#if transaction.status === "PENDING"}
+            {#if transaction.status === "PENDING_DP" || transaction.status === "PENDING"}
               * DP minimal 30% diperlukan untuk konfirmasi booking.
             {:else if transaction.status === "AKTIF" || transaction.status === "SELESAI"}
               Pembayaran telah diterima dan divalidasi oleh sistem.
@@ -356,7 +386,7 @@
               >
             </div>
 
-            {#if transaction.status === "PENDING"}
+            {#if transaction.status === "PENDING" || transaction.status === "PENDING_DP"}
               <div
                 class="flex justify-between items-center mb-1 text-amber-600 print:text-black"
               >
@@ -364,7 +394,7 @@
                   >DP (30%) Minimal</span
                 >
                 <span class="text-sm font-bold"
-                  >{formatRupiah(transaction.totalBiaya * 0.3)}</span
+                  >{formatRupiah(Number(transaction.dpAmount) || (Number(transaction.totalBiaya) * 0.3))}</span
                 >
               </div>
               <div
@@ -375,7 +405,7 @@
                   >Sisa Pelunasan</span
                 >
                 <span class="text-sm font-bold text-gray-900 print:text-black"
-                  >{formatRupiah(transaction.totalBiaya * 0.7)}</span
+                  >{formatRupiah(Number(transaction.totalBiaya) - (Number(transaction.dpAmount) || (Number(transaction.totalBiaya) * 0.3)))}</span
                 >
               </div>
             {:else if transaction.status !== "BATAL"}
@@ -413,8 +443,8 @@
               <span
                 class="text-lg font-black text-gray-900 print:text-black print:text-base"
               >
-                {#if transaction.status === "PENDING"}
-                  {formatRupiah(transaction.totalBiaya * 0.3)}
+                {#if transaction.status === "PENDING" || transaction.status === "PENDING_DP"}
+                  {formatRupiah(Number(transaction.dpAmount) || (Number(transaction.totalBiaya) * 0.3))}
                   <span
                     class="block text-[8px] font-normal normal-case text-right text-gray-400 print:text-black"
                   >
@@ -444,7 +474,7 @@
       </div>
 
       <!-- QR Code Section -->
-      {#if transaction.status === "PENDING" && transaction.qrisBase64}
+      {#if (transaction.status === "PENDING" || transaction.status === "PENDING_DP") && transaction.qris?.qrImage}
         <div
           class="mt-12 pt-8 border-t border-dashed border-gray-200 text-center"
         >
@@ -457,7 +487,7 @@
             class="inline-block p-4 bg-white border-2 border-gray-900 rounded-xl shadow-lg print:shadow-none"
           >
             <img
-              src={transaction.qrisBase64}
+              src={transaction.qris.qrImage}
               alt="QRIS Payment"
               class="w-40 h-40 mx-auto filter print:grayscale"
             />

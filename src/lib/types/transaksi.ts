@@ -18,6 +18,8 @@ export interface Transaksi {
     status: StatusTransaksi;
     createdAt: string;
     updatedAt: string;
+    biayaDenda?: number;
+    dpAmount?: number;
 }
 
 export interface TransaksiEvent {

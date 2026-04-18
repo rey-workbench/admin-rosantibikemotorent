@@ -10,7 +10,7 @@ export const transaksiApi = {
         const { data: body } = await api.get('/transaksi/history', { params: filter });
         return { data: body.data, meta: body.meta };
     },
-    getById: async (id: string): Promise<Transaksi & { qrisBase64?: string }> => {
+    getById: async (id: string): Promise<Transaksi & { qris?: { qrImage: string; nominal: string } }> => {
         const { data: body } = await api.get(`/transaksi/${id}`);
         return body.data;
     },
