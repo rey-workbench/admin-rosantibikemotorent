@@ -14,6 +14,6 @@ export default defineConfig({
     },
     // Optimasi agar browser tidak "bengong" saat pertama dibuka
     optimizeDeps: {
-        include: ['lucide-svelte', 'clsx', 'tailwind-merge'] // Tambahkan library UI rentalmu di sini
+        include: ['@lucide/svelte', 'clsx', 'tailwind-merge'] // Tambahkan library UI rentalmu di sini
     }
 });

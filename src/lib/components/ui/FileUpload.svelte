@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Upload } from "lucide-svelte";
+    import { Upload } from "@lucide/svelte";
 
     interface Props {
         label: string;

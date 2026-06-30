@@ -8,7 +8,7 @@
         Calendar as CalendarIcon,
         ChevronDown,
         Activity,
-    } from "lucide-svelte";
+    } from "@lucide/svelte";
     import { formatDateShort, getStatusColor, getStatusDot } from "$lib/utils";
     import { STATUS_TRANSAKSI } from "$lib/constants";
     import { unitMotorApi, transaksiApi } from "$lib/api";

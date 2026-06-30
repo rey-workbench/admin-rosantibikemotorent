@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Settings as SettingsIcon, Save } from "lucide-svelte";
+  import { Settings as SettingsIcon, Save } from "@lucide/svelte";
   import {
     Card,
     CardBody,

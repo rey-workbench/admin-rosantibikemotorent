@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { Plus, Eye, Trash2, Check, ClipboardList } from "lucide-svelte";
+  import { Plus, Eye, Trash2, Check, ClipboardList } from "@lucide/svelte";
   import { formatCurrency, formatDateShort } from "$lib/utils";
   import { STATUS_TRANSAKSI, TRANSAKSI_STATUS_VARIANTS } from "$lib/constants";
   import { transaksiApi } from "$lib/api";

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import { onMount } from "svelte";
-  import { Calculator } from "lucide-svelte";
+  import { Calculator } from "@lucide/svelte";
   import { unitMotorApi, transaksiApi } from "$lib/api";
   import type { UnitMotor } from "$lib/types";
   import { Form, Input, Select } from "$lib/components/ui";

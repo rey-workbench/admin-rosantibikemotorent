@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { ChevronLeft, Maximize2, Minimize2, X } from "lucide-svelte";
+  import { ChevronLeft, Maximize2, Minimize2, X } from "@lucide/svelte";
 
   let {
     title,
@@ -25,7 +25,7 @@
     onReset?: () => void;
   }>();
 
-  import { RefreshCw, LogOut, MoreVertical } from "lucide-svelte";
+  import { RefreshCw, LogOut, MoreVertical } from "@lucide/svelte";
   let showMenu = $state(false);
 </script>
 

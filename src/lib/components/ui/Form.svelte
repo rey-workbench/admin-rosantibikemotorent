@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { ArrowLeft, Save } from "lucide-svelte";
+  import { ArrowLeft, Save } from "@lucide/svelte";
   import { Button, Card, CardBody } from "$lib/components/ui";
   import type { Snippet } from "svelte";
   import { PageHeader } from "../layout";

@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { RefreshCw, Trash2, Play, Pause, ListOrdered } from "lucide-svelte";
+    import { RefreshCw, Trash2, Play, Pause, ListOrdered } from "@lucide/svelte";
     import { queueApi } from "$lib/api";
     import websocketService, { queueUpdates, socketConnected } from "$lib/services/websocket";
     import {

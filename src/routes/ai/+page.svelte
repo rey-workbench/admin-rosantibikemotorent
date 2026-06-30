@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { Brain, Send, Save, Plus, Trash2, Edit2, Search, MessageSquare, Database, Sparkles, Settings, HelpCircle, Check, CheckCheck } from "lucide-svelte";
+    import { Brain, Send, Save, Plus, Trash2, Edit2, Search, MessageSquare, Database, Sparkles, Settings, HelpCircle, Check, CheckCheck } from "@lucide/svelte";
     import PageHeader from "$lib/components/layout/PageHeader.svelte";
     import { Button, Input, Select, Textarea, Modal, Tabs, Badge, Card } from "$lib/components/ui";
     import { aiApi } from "$lib/api";

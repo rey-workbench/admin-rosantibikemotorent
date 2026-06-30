@@ -1,5 +1,6 @@
 <script lang="ts">
-    import { Paperclip, Send, Loader2, Image, MapPin, X } from "lucide-svelte";
+    import { Paperclip, Send, Loader2, Image, MapPin, X } from "@lucide/svelte";
+    import { Smile, UserPlus } from "@lucide/svelte";
 
     let {
         message = $bindable(""),
@@ -29,7 +30,6 @@
         onTyping?: (isTyping: boolean) => void;
     }>();
 
-    import { Smile, UserPlus } from "lucide-svelte";
     let isSticker = $state(false);
     let showContactForm = $state(false);
     let contactName = $state("");

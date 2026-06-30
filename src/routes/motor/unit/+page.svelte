@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { Plus, Pencil, Trash2, Truck } from "lucide-svelte";
+  import { Plus, Pencil, Trash2, Truck } from "@lucide/svelte";
   import { formatCurrency } from "$lib/utils";
   import { unitMotorApi } from "$lib/api";
   import type { UnitMotor } from "$lib/types";

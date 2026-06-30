@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { Snippet, Component } from "svelte";
-    import { Loader2 } from "lucide-svelte";
+    import { Loader2 } from "@lucide/svelte";
 
     type Variant =
         | "primary"

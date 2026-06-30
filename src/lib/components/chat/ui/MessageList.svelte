@@ -9,7 +9,7 @@
         FileText,
         Play,
         Image,
-    } from "lucide-svelte";
+    } from "@lucide/svelte";
 
     let {
         messages = [],

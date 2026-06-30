@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Handle, Position, type NodeProps } from "@xyflow/svelte";
-  import { Zap, Terminal, HelpCircle } from "lucide-svelte";
+  import { Zap, Terminal, HelpCircle } from "@lucide/svelte";
 
   let { data, id }: NodeProps = $props();
 

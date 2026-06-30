@@ -5,7 +5,7 @@
   import { format } from "date-fns";
   import { id as idLocale } from "date-fns/locale";
   import { Button } from "$lib/components/ui";
-  import { Printer, ArrowLeft } from "lucide-svelte";
+  import { Printer, ArrowLeft } from "@lucide/svelte";
   import type { Transaksi } from "$lib/types";
 
   let transaction: (Transaksi & { qris?: { qrImage: string; nominal: string } }) | null = $state(null);

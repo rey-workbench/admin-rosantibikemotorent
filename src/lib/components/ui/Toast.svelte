@@ -6,7 +6,7 @@
         AlertCircle,
         Info,
         AlertTriangle,
-    } from "lucide-svelte";
+    } from "@lucide/svelte";
     import { fly } from "svelte/transition";
     import { flip } from "svelte/animate";
 

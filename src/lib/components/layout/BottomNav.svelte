@@ -14,7 +14,7 @@
         Users,
         LogOut,
         Calendar,
-    } from "lucide-svelte";
+    } from "@lucide/svelte";
     import { slide, fade } from "svelte/transition";
     import { authApi } from "$lib/api";
     import { authStore } from "$lib/stores/auth";

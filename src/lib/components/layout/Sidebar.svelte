@@ -17,7 +17,7 @@
         ChevronRight,
         Calendar,
         Brain,
-    } from "lucide-svelte";
+    } from "@lucide/svelte";
     import { authApi } from "$lib/api";
     import { authStore } from "$lib/stores/auth";
     import { goto } from "$app/navigation";

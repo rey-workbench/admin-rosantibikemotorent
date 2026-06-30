@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Search, Send, User, Check, CheckCheck, Plus } from "lucide-svelte";
+    import { Search, Send, User, Check, CheckCheck, Plus } from "@lucide/svelte";
 
     // Props
     let {

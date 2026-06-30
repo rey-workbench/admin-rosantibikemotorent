@@ -1,6 +1,6 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
-  import { Link, Upload as UploadIcon } from "lucide-svelte";
+  import { Link, Upload as UploadIcon } from "@lucide/svelte";
   import { jenisMotorApi } from "$lib/api";
   import { Form, Input, FileUpload } from "$lib/components/ui";
 

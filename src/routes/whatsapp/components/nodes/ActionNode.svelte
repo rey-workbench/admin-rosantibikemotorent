@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Handle, Position, type NodeProps } from "@xyflow/svelte";
-  import { MessageSquare, Zap, RefreshCw, FileText, Trash2, ChevronDown, AlignLeft, Database } from "lucide-svelte";
+  import { MessageSquare, Zap, RefreshCw, FileText, Trash2, ChevronDown, AlignLeft, Database } from "@lucide/svelte";
 
   let { data, id }: NodeProps = $props();
 

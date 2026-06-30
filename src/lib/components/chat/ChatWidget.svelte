@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { MessageSquare, X } from "lucide-svelte";
+  import { MessageSquare, X } from "@lucide/svelte";
   import { onMount, onDestroy } from "svelte";
   import { transaksiApi, whatsappApi } from "$lib/api";
   import { toast } from "$lib/stores/toast";

@@ -8,7 +8,7 @@
         ChevronRight,
         Filter,
         AlertCircle,
-    } from "lucide-svelte";
+    } from "@lucide/svelte";
     import { PageHeader } from "$lib/components/layout";
     import { websocketService } from "$lib/services/websocket";
 

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount, onDestroy } from "svelte";
-  import { Send, Phone, X } from "lucide-svelte";
+  import { Send, Phone, X } from "@lucide/svelte";
   import { whatsappMessages } from "$lib/services/websocket";
   import websocketService from "$lib/services/websocket";
   import { whatsappApi } from "$lib/api";

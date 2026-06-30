@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { Plus, Pencil, Trash2, UserCog } from "lucide-svelte";
+    import { Plus, Pencil, Trash2, UserCog } from "@lucide/svelte";
     import { adminApi } from "$lib/api";
     import type { Admin } from "$lib/types";
     import { Card, CardBody, Button, Modal, Input, DataTable, Loading, EmptyState } from "$lib/components/ui";

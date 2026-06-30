@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { Plus, Pencil, Trash2, Search, Bike } from "lucide-svelte";
+    import { Plus, Pencil, Trash2, Search, Bike } from "@lucide/svelte";
     import { jenisMotorApi } from "$lib/api";
     import type { JenisMotor } from "$lib/types";
     import { Card, CardBody, Button, Input, DataTable, Loading, EmptyState } from "$lib/components/ui";

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { RefreshCw, Power, Send, QrCode } from "lucide-svelte";
+  import { RefreshCw, Power, Send, QrCode } from "@lucide/svelte";
   import { whatsappApi } from "$lib/api";
   import {
     socketConnected,

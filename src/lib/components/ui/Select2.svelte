@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { Search, ChevronDown, Check, X } from "lucide-svelte";
+  import { Search, ChevronDown, Check, X } from "@lucide/svelte";
   import { slide, fade } from "svelte/transition";
 
   let {

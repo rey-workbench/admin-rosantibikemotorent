@@ -4,7 +4,7 @@
     Plus, Save, Trash2, Edit2, Zap, LayoutGrid, Terminal, HelpCircle, 
     LayoutTemplate, MessageSquare, ListTree,
     Bike, DollarSign, FileText, Search, CreditCard, Landmark, RefreshCw
-  } from "lucide-svelte";
+  } from "@lucide/svelte";
   import { 
     SvelteFlow, 
     Background, 

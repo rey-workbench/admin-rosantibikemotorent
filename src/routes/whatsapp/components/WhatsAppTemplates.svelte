@@ -12,7 +12,7 @@
         Input,
         Textarea,
     } from "$lib/components/ui";
-    import { Plus, Pencil, Trash2, RefreshCw } from "lucide-svelte";
+    import { Plus, Pencil, Trash2, RefreshCw } from "@lucide/svelte";
     import { toast } from "$lib/stores/toast";
     import { confirm } from "$lib/stores/confirm";
 

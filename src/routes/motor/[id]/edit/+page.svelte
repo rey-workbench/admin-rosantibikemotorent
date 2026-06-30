@@ -2,7 +2,7 @@
   import { goto } from "$app/navigation";
   import { onMount } from "svelte";
   import { page } from "$app/state";
-  import { Link, Upload as UploadIcon } from "lucide-svelte";
+  import { Link, Upload as UploadIcon } from "@lucide/svelte";
   import { jenisMotorApi } from "$lib/api";
   import type { JenisMotor } from "$lib/types";
   import { Form, Input, FileUpload } from "$lib/components/ui";

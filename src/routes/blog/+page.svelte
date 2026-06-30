@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { Plus, Pencil, Trash2, FileText } from "lucide-svelte";
+  import { Plus, Pencil, Trash2, FileText } from "@lucide/svelte";
   import { formatDateShort } from "$lib/utils";
   import { STATUS_ARTIKEL } from "$lib/constants";
   import { blogApi } from "$lib/api";
