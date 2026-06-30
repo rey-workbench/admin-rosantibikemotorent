@@ -1,4 +1,4 @@
-import api from './axios';
+import api from './client';
 import type { BlogPost, BlogKategori, BlogTag, PaginationMeta } from '$lib/types';
 
 export const blogApi = {

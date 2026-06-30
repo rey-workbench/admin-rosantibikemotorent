@@ -1,4 +1,4 @@
-import api from './axios';
+import api from './client';
 import type { QueueStatus, QueueJob } from '$lib/types';
 
 export const queueApi = {

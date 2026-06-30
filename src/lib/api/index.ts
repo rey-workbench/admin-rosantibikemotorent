@@ -1,4 +1,4 @@
-export { default as api, api as axios } from './axios';
+export { default as api, api as axios } from './client';
 export * from './base';
 
 export * from './auth';

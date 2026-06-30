@@ -1,4 +1,4 @@
-import api from './axios';
+import api from './client';
 import type { UnitMotor, PaginationMeta } from '$lib/types';
 
 export const unitMotorApi = {

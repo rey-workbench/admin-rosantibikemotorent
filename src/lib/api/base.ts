@@ -1,4 +1,4 @@
-import api from './axios';
+import api from './client';
 import type { PaginationMeta, PaginatedResponse } from '$lib/types';
 
 export interface CRUDOptions<T> {

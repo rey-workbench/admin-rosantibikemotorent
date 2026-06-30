@@ -1,4 +1,4 @@
-import api from './axios';
+import api from './client';
 import type { AiKnowledge, AiKnowledgeDto, AiTestRequest, AiTestResponse } from '$lib/types';
 
 export const aiApi = {
