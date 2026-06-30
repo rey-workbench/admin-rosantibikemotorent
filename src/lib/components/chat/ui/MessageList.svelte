@@ -156,13 +156,13 @@
                         <!-- CONTENT -->
                         {#if msg.type === "image" || msg.type === "video"}
                             <div
-                                class="mb-1 rounded-lg overflow-hidden bg-black/10 min-w-[200px] min-h-[150px] flex items-center justify-center relative"
+                                class="mb-1 rounded-lg overflow-hidden bg-black/10 min-w-50 min-h-37.5 flex items-center justify-center relative"
                             >
                                 {#if msg.body && msg.body.startsWith("data:")}
                                     <img
                                         src={msg.body}
                                         alt="Media content"
-                                        class="max-w-full max-h-[300px] object-cover"
+                                        class="max-w-full max-h-75 object-cover"
                                     />
                                     {#if msg.type === "video"}
                                         <div

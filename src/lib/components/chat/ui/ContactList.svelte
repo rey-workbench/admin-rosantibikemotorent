@@ -164,7 +164,7 @@
 
                             {#if contact.unreadCount > 0}
                                 <div
-                                    class="bg-green-500 text-white text-[10px] font-bold h-5 min-w-[1.25rem] px-1.5 rounded-full flex items-center justify-center shrink-0"
+                                    class="bg-green-500 text-white text-[10px] font-bold h-5 min-w-5 px-1.5 rounded-full flex items-center justify-center shrink-0"
                                 >
                                     {contact.unreadCount}
                                 </div>

@@ -385,7 +385,7 @@
       class="bg-bg-secondary shadow-2xl overflow-hidden flex flex-col transition-all border border-border/50
              {isFullscreen
         ? 'fixed inset-4 rounded-3xl'
-        : 'w-[400px] h-[700px] max-h-[calc(100vh-6rem)] rounded-3xl'}"
+        : 'w-100 h-175 max-h-[calc(100vh-6rem)] rounded-3xl'}"
     >
       <div class="flex-1 relative flex flex-col overflow-hidden">
         <!-- New Chat Modal Overlay -->

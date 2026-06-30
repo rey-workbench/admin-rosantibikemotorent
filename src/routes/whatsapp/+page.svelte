@@ -267,7 +267,7 @@
         <CardBody class="text-center">
           {#if qrCode}
             <div class="bg-white p-4 rounded-lg inline-block">
-              <img src={qrCode} alt="WhatsApp QR Code" class="max-w-[250px]" />
+              <img src={qrCode} alt="WhatsApp QR Code" class="max-w-62.5" />
             </div>
             <p class="text-text-muted text-sm mt-2">
               Scan dengan WhatsApp di HP Anda

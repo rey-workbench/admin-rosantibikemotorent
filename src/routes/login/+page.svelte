@@ -36,14 +36,14 @@
 >
     <!-- Background Accents (Subtler) -->
     <div
-        class="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2"
+        class="absolute top-0 right-0 w-150 h-150 bg-primary/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2"
     ></div>
     <div
-        class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-accent/5 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/3"
+        class="absolute bottom-0 left-0 w-125 h-125 bg-accent/5 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/3"
     ></div>
 
     <div
-        class="w-full max-w-[480px] px-6 py-12 flex flex-col items-center gap-6 relative z-10"
+        class="w-full max-w-120 px-6 py-12 flex flex-col items-center gap-6 relative z-10"
         in:fly={{ y: 15, duration: 600 }}
     >
         <!-- Logo Area -->
@@ -94,7 +94,7 @@
                             class="bg-bg-tertiary/50 border-transparent focus:bg-white transition-all pl-10"
                         />
                         <div
-                            class="absolute left-3 top-[41px] text-text-muted group-focus-within:text-primary transition-colors pointer-events-none"
+                            class="absolute left-3 top-10.25 text-text-muted group-focus-within:text-primary transition-colors pointer-events-none"
                         >
                             <ShieldCheck size={18} />
                         </div>
@@ -112,7 +112,7 @@
                             class="bg-bg-tertiary/50 border-transparent focus:bg-white transition-all pl-10"
                         />
                         <div
-                            class="absolute left-3 top-[41px] text-text-muted group-focus-within:text-primary transition-colors pointer-events-none"
+                            class="absolute left-3 top-10.25 text-text-muted group-focus-within:text-primary transition-colors pointer-events-none"
                         >
                             <KeyRound size={18} />
                         </div>

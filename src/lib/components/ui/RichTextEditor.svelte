@@ -121,7 +121,7 @@
             content: value,
             editorProps: {
                 attributes: {
-                    class: "format format-sm sm:format-base lg:format-lg focus:outline-none max-w-none min-h-[300px] px-4 py-3",
+                    class: "format format-sm sm:format-base lg:format-lg focus:outline-none max-w-none min-h-75 px-4 py-3",
                     id: id,
                 },
             },

@@ -65,7 +65,7 @@
 </script>
 
 <!-- Spacer to prevent content from being hidden behind nav -->
-<!-- This might be handled in layout, but a safer bet is to have a hidden div of same height -->
+<!-- This might be handled in layout, but a safer bet is to have a div of same height -->
 <div class="h-16 min-[769px]:hidden"></div>
 
 <!-- Mobile Bottom Nav -->

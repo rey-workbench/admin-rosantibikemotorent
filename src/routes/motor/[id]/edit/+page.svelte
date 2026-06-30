@@ -157,7 +157,7 @@
               <img
                 src={imageUrl}
                 alt="Preview"
-                class="max-w-[200px] max-h-[150px] object-cover rounded-md mx-auto"
+                class="max-w-50 max-h-37.5 object-cover rounded-md mx-auto"
                 onerror={(e) =>
                   ((e.target as HTMLImageElement).src =
                     "https://placehold.co/600x400?text=Invalid+URL")}

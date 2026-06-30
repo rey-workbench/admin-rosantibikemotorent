@@ -35,7 +35,7 @@
             <img
                 src={preview}
                 alt="Preview"
-                class="max-w-[200px] max-h-[150px] object-cover rounded-md mx-auto mb-4"
+                class="max-w-50 max-h-37.5 object-cover rounded-md mx-auto mb-4"
             />
         {/if}
         <label

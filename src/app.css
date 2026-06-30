@@ -141,7 +141,7 @@ body {
 
 /* Loading states */
 .loading-page {
-    @apply flex items-center justify-center flex-1 h-full min-h-[400px];
+    @apply flex items-center justify-center flex-1 h-full min-h-100;
 }
 
 .loading-spinner {

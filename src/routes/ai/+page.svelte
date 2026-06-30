@@ -245,7 +245,7 @@
         {#if activeTab === "playground"}
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
                 <!-- Chat Interface -->
-                <div class="lg:col-span-2 rounded-2xl shadow-sm border border-border flex flex-col h-[600px] overflow-hidden bg-[#f0f2f5]">
+                <div class="lg:col-span-2 rounded-2xl shadow-sm border border-border flex flex-col h-150 overflow-hidden bg-[#f0f2f5]">
                     <div class="p-3 border-b border-border/50 flex justify-between items-center" style="background-color: #f0f2f5;">
                         <div class="flex items-center gap-3">
                             <div class="w-10 h-10 rounded-full bg-green-600 flex items-center justify-center text-white shadow-sm">

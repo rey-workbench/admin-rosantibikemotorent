@@ -176,7 +176,7 @@
                                     {/if}
                                 </td>
                                 <td
-                                    class="p-3 truncate max-w-[200px]"
+                                    class="p-3 truncate max-w-50"
                                     title={t.content}
                                 >
                                     {t.content}

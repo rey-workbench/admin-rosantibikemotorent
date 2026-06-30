@@ -120,7 +120,7 @@
           </h2>
           <div class="text-xs print:text-[10px]">
             <p
-              class="font-bold text-gray-900 print:text-black break-all max-w-[140px] ml-auto leading-tight"
+              class="font-bold text-gray-900 print:text-black break-all max-w-35 ml-auto leading-tight"
             >
               #{transaction.id}
             </p>

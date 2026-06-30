@@ -167,7 +167,7 @@
             >
                 <ChevronLeft size={20} />
             </button>
-            <span class="font-bold text-text-primary min-w-[150px] text-center">
+            <span class="font-bold text-text-primary min-w-37.5 text-center">
                 {monthLabel}
             </span>
             <button
@@ -265,13 +265,13 @@
                     <thead class="sticky top-0 z-10 bg-bg-tertiary">
                         <tr>
                             <th
-                                class="sticky left-0 z-20 bg-bg-tertiary p-3 text-left font-semibold text-sm border-b border-r border-border min-w-[200px] shadow-[2px_0_5px_rgba(0,0,0,0.05)]"
+                                class="sticky left-0 z-20 bg-bg-tertiary p-3 text-left font-semibold text-sm border-b border-r border-border min-w-50 shadow-[2px_0_5px_rgba(0,0,0,0.05)]"
                             >
                                 Unit Motor
                             </th>
                             {#each monthDays as day}
                                 <th
-                                    class="p-2 text-center border-b border-border min-w-[40px] {day.isToday
+                                    class="p-2 text-center border-b border-border min-w-10 {day.isToday
                                         ? 'bg-primary/10 text-primary'
                                         : ''}"
                                 >
@@ -311,7 +311,7 @@
                                     {@const isAvailable = status.isAvailable}
                                     <!-- We match status against the day. If status.date matches monthDays[i].date ISOString -->
                                     <td
-                                        class="border-b border-r border-border/50 p-1 relative h-[60px]"
+                                        class="border-b border-r border-border/50 p-1 relative h-15"
                                     >
                                         <div
                                             class="w-full h-full rounded transition-all duration-200 outline-none focus:ring-2 focus:ring-primary/50
@@ -367,7 +367,7 @@
     <!-- Custom Tooltip -->
     {#if hoveredBooking}
         <div
-            class="fixed z-50 bg-white dark:bg-bg-secondary p-4 rounded-xl shadow-xl border border-border pointer-events-none min-w-[280px] animate-in fade-in zoom-in-95 duration-150"
+            class="fixed z-50 bg-white dark:bg-bg-secondary p-4 rounded-xl shadow-xl border border-border pointer-events-none min-w-70 animate-in fade-in zoom-in-95 duration-150"
             style="left: {tooltipPosition.x}px; top: {tooltipPosition.y}px;"
         >
             <div

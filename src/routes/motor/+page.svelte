@@ -71,7 +71,7 @@
         <p class="text-text-secondary text-sm">Kelola kategori dan tipe motor yang tersedia</p>
     </div>
     <div class="flex flex-col sm:flex-row gap-3">
-        <div class="relative min-w-[240px]">
+        <div class="relative min-w-60">
             <Input
                 id="search"
                 bind:value={search}

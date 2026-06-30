@@ -108,7 +108,7 @@
 
 <!-- Chat Widget -->
 {#if isOpen}
-  <div class="fixed bottom-6 right-6 w-96 h-[600px] bg-white rounded-lg shadow-2xl flex flex-col z-50 border border-border-color">
+  <div class="fixed bottom-6 right-6 w-96 h-150 bg-white rounded-lg shadow-2xl flex flex-col z-50 border border-border-color">
     <!-- Header -->
     <div class="bg-green-600 text-white p-4 rounded-t-lg flex justify-between items-center">
       <div>

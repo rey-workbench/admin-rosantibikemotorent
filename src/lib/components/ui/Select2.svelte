@@ -144,7 +144,7 @@
         </div>
 
         <!-- Options List -->
-        <div class="max-h-[240px] overflow-y-auto p-1 custom-scrollbar">
+        <div class="max-h-60 overflow-y-auto p-1 custom-scrollbar">
           {#if filteredOptions.length === 0}
             <div class="px-4 py-8 text-center text-text-muted text-sm italic">
               Opsi tidak ditemukan...

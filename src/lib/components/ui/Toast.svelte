@@ -67,7 +67,7 @@
                 <svelte:component this={getIcon(t.type)} size={18} />
             </div>
             <p
-                class="text-sm font-medium text-text-primary flex-1 pt-1 break-words leading-tight"
+                class="text-sm font-medium text-text-primary flex-1 pt-1 wrap-break-word leading-tight"
             >
                 {t.message}
             </p>
