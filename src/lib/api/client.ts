@@ -29,7 +29,6 @@ class ApiClient {
         }
 
         const headers: Record<string, string> = {
-            'Content-Type': 'application/json',
             ...(config.headers || {})
         };
 
@@ -41,11 +40,13 @@ class ApiClient {
         }
 
         let body = undefined;
-        if (data) {
+        if (data !== undefined && data !== null) {
             if (data instanceof FormData) {
-                delete headers['Content-Type'];
                 body = data;
             } else {
+                if (!headers['Content-Type']) {
+                    headers['Content-Type'] = 'application/json';
+                }
                 body = JSON.stringify(data);
             }
         }
