@@ -77,7 +77,7 @@
             {@const Icon = tab.icon}
             <a
                 href={tab.path}
-                on:click={closeMenu}
+                onclick={closeMenu}
                 class="flex flex-col items-center justify-center w-full h-full gap-1 transition-colors duration-200
                 {isActive(tab.path) && !isMenuOpen
                     ? 'text-primary'
@@ -100,7 +100,7 @@
 
         <!-- Menu Toggle -->
         <button
-            on:click={toggleMenu}
+            onclick={toggleMenu}
             class="flex flex-col items-center justify-center w-full h-full gap-1 transition-colors duration-200 {isMenuOpen
                 ? 'text-primary'
                 : 'text-text-secondary hover:text-primary'}"
@@ -119,7 +119,7 @@
 {#if isMenuOpen}
     <button
         class="fixed inset-0 bg-black/50 z-30 md:hidden backdrop-blur-sm border-none cursor-default"
-        on:click={closeMenu}
+        onclick={closeMenu}
         aria-label="Close menu"
         transition:fade={{ duration: 200 }}
     ></button>
@@ -137,7 +137,7 @@
                 {@const Icon = item.icon}
                 <a
                     href={item.path}
-                    on:click={closeMenu}
+                    onclick={closeMenu}
                     class="flex flex-col items-center justify-center p-3 rounded-xl gap-2 bg-bg-tertiary hover:bg-primary/5 hover:text-primary transition-colors border border-transparent hover:border-primary/10"
                 >
                     <div
@@ -155,7 +155,7 @@
 
         <div class="p-4 border-t border-border/50 bg-bg-tertiary/30">
             <button
-                on:click={handleLogout}
+                onclick={handleLogout}
                 class="w-full flex items-center justify-center gap-2 p-3 rounded-xl bg-red-50 text-red-600 font-medium hover:bg-red-100 transition-colors"
             >
                 <LogOut size={18} />
