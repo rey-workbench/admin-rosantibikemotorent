@@ -3,11 +3,12 @@
   import { onMount } from "svelte";
   import { Calculator } from "@lucide/svelte";
   import { unitMotorApi, transaksiApi } from "$lib/api";
-  import type { UnitMotor } from "$lib/types";
+  import type { UnitMotor, StatusTransaksi } from "$lib/types";
   import { Form, Input, Select } from "$lib/components/ui";
 
   let namaPenyewa = $state("");
   let noWhatsapp = $state("");
+  let status = $state<StatusTransaksi>("PENDING_DP");
   let unitId = $state("");
   let tanggalMulai = $state("");
   let tanggalSelesai = $state("");
@@ -22,7 +23,7 @@
   let estimasiBiaya = $state<number | null>(null);
 
   onMount(async () => {
-    const res = await unitMotorApi.getAll({ limit: 100, status: "TERSEDIA" });
+    const res = await unitMotorApi.getAll({ limit: 100 });
     units = res.data || [];
   });
 
@@ -61,6 +62,7 @@
         jamSelesai,
         helm: Number(helm),
         jasHujan: Number(jasHujan),
+        status,
       });
       goto("/transaksi");
     } catch (err) {
@@ -100,6 +102,22 @@
       label="Nomor WhatsApp"
       bind:value={noWhatsapp}
       placeholder="08xxxxxxxxxx"
+      required
+    />
+    <Select
+      id="status"
+      label="Status Transaksi"
+      bind:value={status}
+      options={[
+        { value: "PENDING_DP", label: "Pending DP" },
+        { value: "DP_DIBAYAR", label: "DP Dibayar" },
+        { value: "LUNAS", label: "Lunas" },
+        { value: "AKTIF", label: "Aktif (Motor Diambil)" },
+        { value: "OVERDUE", label: "Overdue" },
+        { value: "SELESAI", label: "Selesai" },
+        { value: "PENDING", label: "Pending" },
+        { value: "BATAL", label: "Batal" },
+      ]}
       required
     />
 
