@@ -33,7 +33,17 @@ export const transaksiApi = {
     delete: async (id: string): Promise<void> => {
         await api.delete(`/transaksi/${id}`);
     },
-    calculatePrice: async (params: { unitId: string; tanggalMulai: string; tanggalSelesai: string; jamMulai: string; jamSelesai: string; helm?: number; jasHujan?: number }): Promise<{ totalBiaya: number }> => {
+    calculatePrice: async (params: { unitId: string; tanggalMulai: string; tanggalSelesai: string; jamMulai: string; jamSelesai: string; helm?: number; jasHujan?: number }): Promise<{
+        totalBiaya: number;
+        rincian: {
+            jumlahHari: number;
+            jamTambahan: number;
+            hargaPerHari: number;
+            biayaJamTambahan: number;
+            totalJam: number;
+            dendaPerJam: number;
+        };
+    }> => {
         const { data: body } = await api.post('/transaksi/calculate-price', params);
         return body.data;
     },

@@ -21,6 +21,7 @@
   let isSaving = $state(false);
   let isCalculating = $state(false);
   let estimasiBiaya = $state<number | null>(null);
+  let rincian = $state<any>(null);
 
   onMount(async () => {
     const res = await unitMotorApi.getAll({ limit: 100 });
@@ -28,7 +29,11 @@
   });
 
   async function handleCalculate() {
-    if (!unitId || !tanggalMulai || !tanggalSelesai) return;
+    if (!unitId || !tanggalMulai || !tanggalSelesai) {
+      estimasiBiaya = null;
+      rincian = null;
+      return;
+    }
     isCalculating = true;
     try {
       const res = await transaksiApi.calculatePrice({
@@ -41,12 +46,20 @@
         jasHujan: Number(jasHujan),
       });
       estimasiBiaya = res.totalBiaya;
+      rincian = res.rincian;
     } catch (err) {
       console.error(err);
+      estimasiBiaya = null;
+      rincian = null;
     } finally {
       isCalculating = false;
     }
   }
+
+  $effect(() => {
+    const _deps = { unitId, tanggalMulai, tanggalSelesai, jamMulai, jamSelesai, helm, jasHujan };
+    handleCalculate();
+  });
 
   async function handleSubmit(e: Event) {
     e.preventDefault();
@@ -184,25 +197,49 @@
       min={0}
       max={2}
     />
+
+    {#if estimasiBiaya !== null && rincian}
+      <div class="mt-6 border border-border rounded-lg bg-bg-tertiary/20 p-5 col-span-1 md:col-span-2">
+        <h4 class="text-md font-semibold text-text-primary mb-3 pb-2 border-b border-border">
+          Perincian Estimasi Biaya
+        </h4>
+        <div class="space-y-3 text-sm">
+          <div class="flex justify-between text-text-secondary">
+            <span>Durasi Sewa:</span>
+            <span class="font-medium text-text-primary">
+              {rincian.jumlahHari} Hari {rincian.jamTambahan > 0 ? `+ ${rincian.jamTambahan} Jam` : ''}
+            </span>
+          </div>
+          <div class="flex justify-between text-text-secondary">
+            <span>Biaya Sewa ({rincian.jumlahHari} hari x {formatRupiah(rincian.hargaPerHari)}):</span>
+            <span class="font-medium text-text-primary">
+              {formatRupiah(rincian.jumlahHari * rincian.hargaPerHari)}
+            </span>
+          </div>
+          {#if rincian.jamTambahan > 0}
+            <div class="flex justify-between text-text-secondary">
+              <span>Biaya Jam Tambahan ({rincian.jamTambahan} jam x {formatRupiah(rincian.dendaPerJam)}):</span>
+              <span class="font-medium text-text-primary">
+                {formatRupiah(rincian.biayaJamTambahan)}
+              </span>
+            </div>
+          {/if}
+          <div class="flex justify-between text-text-secondary">
+            <span>Fasilitas Helm ({helm} pcs):</span>
+            <span class="font-medium text-text-primary">Gratis</span>
+          </div>
+          <div class="flex justify-between text-text-secondary">
+            <span>Fasilitas Jas Hujan ({jasHujan} pcs):</span>
+            <span class="font-medium text-text-primary">Gratis</span>
+          </div>
+          <div class="flex justify-between pt-3 border-t border-border text-base font-bold text-text-primary">
+            <span>Total Estimasi:</span>
+            <span class="text-xl text-primary font-bold">{formatRupiah(estimasiBiaya)}</span>
+          </div>
+        </div>
+      </div>
+    {/if}
   </div>
 
-  {#if estimasiBiaya !== null}
-    <div
-      class="bg-primary/10 p-4 rounded-lg flex justify-between items-center text-primary border border-primary/20 mt-4"
-    >
-      <span class="font-semibold">Estimasi Total Biaya:</span>
-      <span class="text-xl font-bold">{formatRupiah(estimasiBiaya)}</span>
-    </div>
-  {/if}
 
-  <div class="flex justify-end gap-3 mt-4">
-    <button
-      type="button"
-      class="btn-secondary"
-      onclick={handleCalculate}
-      disabled={isCalculating}
-    >
-      <Calculator size={18} /> Hitung Estimasi
-    </button>
-  </div>
 </Form>
