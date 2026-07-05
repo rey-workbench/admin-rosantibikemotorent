@@ -42,7 +42,7 @@
         status: statusFilter || undefined,
       });
       blogs = res.data || [];
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error loading blogs:", error);
     } finally {
       isLoading = false;
@@ -62,7 +62,7 @@
     try {
       await blogApi.delete(id);
       await loadData();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error deleting blog:", error);
     }
   }

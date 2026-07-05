@@ -37,9 +37,8 @@
         isLoading = true;
         try {
             templates = await whatsappApi.getAllTemplates();
-        } catch (error) {
+        } catch (error: any) {
             console.error("Error loading templates:", error);
-            toast.error("Gagal memuat template");
         } finally {
             isLoading = false;
         }
@@ -93,9 +92,8 @@
             );
             showModal = false;
             loadTemplates();
-        } catch (error) {
+        } catch (error: any) {
             console.error("Error saving template:", error);
-            toast.error("Gagal menyimpan template");
         } finally {
             isSaving = false;
         }
@@ -115,9 +113,8 @@
             await whatsappApi.deleteTemplate(id);
             toast.success("Template dihapus");
             loadTemplates();
-        } catch (error) {
+        } catch (error: any) {
             console.error("Error deleting template:", error);
-            toast.error("Gagal menghapus template");
         }
     }
 </script>

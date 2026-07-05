@@ -94,9 +94,9 @@
             availabilityData = await unitMotorApi.checkAvailability(
                 params as any,
             );
-        } catch (e) {
+        } catch (e: any) {
             console.error(e);
-            error = "Gagal memuat data ketersediaan.";
+            error = e?.response?.data?.userErrorMsg;
         } finally {
             isLoading = false;
         }
@@ -195,8 +195,6 @@
                     <option value="">Semua Merek</option>
                     {#each brands as brand}
                         <option value={brand.id}>{brand.merk}</option>
-                        <!-- Note: brand might only have merk string based on API response, verifying... -->
-                        <!-- unitMotorApi.getBrands returns {id, merk}[]? Controller says distinct: ['merk'], select id, merk. So yes. -->
                     {/each}
                 </select>
             </div>

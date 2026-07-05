@@ -20,7 +20,6 @@
             goto("/");
         } catch (err: any) {
             console.error("Login error:", err);
-            // Optional: Add toast error here if globally available
         } finally {
             isLoading = false;
         }

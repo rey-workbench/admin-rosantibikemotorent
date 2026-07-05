@@ -49,9 +49,8 @@
     try {
       await whatsappApi.sendMessage(selectedChat, messageInput);
       messageInput = "";
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error sending message:", error);
-      toast.error("Gagal mengirim pesan");
     } finally {
       isSending = false;
     }

@@ -19,7 +19,7 @@
       blog = await blogApi.getById(blogId);
       judul = blog.judul;
       konten = blog.konten || "";
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
     } finally {
       isLoading = false;
@@ -35,7 +35,7 @@
       formData.append("konten", konten);
       await blogApi.update(blogId, formData);
       goto("/blog");
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
     } finally {
       isSaving = false;

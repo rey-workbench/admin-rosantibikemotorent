@@ -34,7 +34,7 @@
             const res = await queueApi.getStatus();
             queues = res || [];
         } catch (err: any) {
-            error = err.response?.data?.message || "Gagal memuat status queue";
+            error = err.response?.data?.userErrorMsg || err.response?.data?.message;
             console.error("Error loading queues:", err);
         } finally {
             if (showLoading) isLoading = false;

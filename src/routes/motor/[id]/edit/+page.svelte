@@ -33,7 +33,7 @@
         uploadType = "url";
         imageUrl = motor.gambar;
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
     } finally {
       isLoading = false;
@@ -63,7 +63,7 @@
         formData.append("gambar", imageUrl);
       await jenisMotorApi.update(motorId, formData);
       goto("/motor");
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
     } finally {
       isSaving = false;

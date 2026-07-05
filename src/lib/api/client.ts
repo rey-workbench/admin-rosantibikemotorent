@@ -78,20 +78,21 @@ class ApiClient {
             const isWhatsapp = url.includes('/whatsapp');
             if (browser && method !== 'GET' && responseData?.message && !isWhatsapp) {
                 const type = responseData.type || 'success';
-                toast.add(responseData.message, type as any);
+                const successMsg = responseData.userErrorMsg || responseData.message;
+                toast.add(successMsg, type as any);
             }
 
             return { data: responseData, status: response.status };
         } catch (error: any) {
             if (browser) {
                 const status = error.response?.status;
-                const message = error.response?.data?.message || error.message || 'Terjadi kesalahan sistem';
+                const message = error.response?.data?.userErrorMsg || error.response?.data?.message;
 
                 if (status === 401) {
                     localStorage.removeItem('token');
                     localStorage.removeItem('admin');
                     window.location.href = '/login';
-                } else {
+                } else if (message) {
                     toast.error(message);
                 }
             }

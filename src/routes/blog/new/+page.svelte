@@ -16,7 +16,7 @@
       formData.append("konten", konten);
       await blogApi.create(formData);
       goto("/blog");
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
     } finally {
       isSaving = false;

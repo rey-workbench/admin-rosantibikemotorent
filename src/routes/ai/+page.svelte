@@ -115,8 +115,8 @@
     async function fetchKnowledge() {
         try {
             knowledgeBase = await aiApi.getKnowledge();
-        } catch (e) {
-            toast.error("Gagal mengambil data knowledge base");
+        } catch (e: any) {
+            console.error(e);
         }
     }
 
@@ -141,8 +141,8 @@
                 debug: data.debug,
                 timestamp: Date.now()
             }];
-        } catch (e) {
-            toast.error("AI gagal merespons");
+        } catch (e: any) {
+            console.error(e);
         } finally {
             loading = false;
         }
@@ -194,8 +194,8 @@
             }
             isModalOpen = false;
             await fetchKnowledge();
-        } catch (e) {
-            toast.error("Gagal menyimpan data");
+        } catch (e: any) {
+            console.error(e);
         } finally {
             loading = false;
         }
@@ -215,8 +215,8 @@
             await aiApi.deleteKnowledge(id);
             toast.success("Item berhasil dihapus");
             await fetchKnowledge();
-        } catch (e) {
-            toast.error("Gagal menghapus data");
+        } catch (e: any) {
+            console.error(e);
         }
     }
 

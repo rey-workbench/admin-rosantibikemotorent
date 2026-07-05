@@ -36,9 +36,9 @@
         ...data,
         durasiHari: data.durasiHari || duration,
       };
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      error = "Gagal memuat data transaksi";
+      error = err?.response?.data?.userErrorMsg || err?.response?.data?.message;
     } finally {
       isLoading = false;
     }

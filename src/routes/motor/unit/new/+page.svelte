@@ -21,7 +21,7 @@
         try {
             await unitMotorApi.create({ platNomor, jenisId });
             goto("/motor/unit");
-        } catch (err) { console.error(err); }
+        } catch (err: any) { console.error(err); }
         finally { isSaving = false; }
     }
 </script>

@@ -25,7 +25,7 @@
       jenisMotors = jenisRes.data || [];
       platNomor = unit.platNomor;
       jenisId = unit.jenisId || "";
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
     } finally {
       isLoading = false;
@@ -41,7 +41,7 @@
         jenisId,
       });
       goto("/motor/unit");
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
     } finally {
       isSaving = false;

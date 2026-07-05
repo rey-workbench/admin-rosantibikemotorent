@@ -31,7 +31,7 @@
                 search: search || undefined,
             });
             jenisMotors = res.data || [];
-        } catch (error) {
+        } catch (error: any) {
             console.error("Error loading jenis motor:", error);
         } finally {
             isLoading = false;
@@ -51,7 +51,7 @@
         try {
             await jenisMotorApi.delete(id);
             await loadData();
-        } catch (error) {
+        } catch (error: any) {
             console.error("Error deleting:", error);
         }
     }

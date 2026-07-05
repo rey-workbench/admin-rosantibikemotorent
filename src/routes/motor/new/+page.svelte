@@ -37,7 +37,7 @@
         formData.append("gambar", imageUrl);
       await jenisMotorApi.create(formData);
       goto("/motor");
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
     } finally {
       isSaving = false;

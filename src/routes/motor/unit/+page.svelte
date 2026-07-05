@@ -52,7 +52,7 @@
     try {
       const res = await unitMotorApi.getAll({ limit: 100 });
       units = res.data || [];
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error loading unit motor:", error);
     } finally {
       isLoading = false;
@@ -72,7 +72,7 @@
     try {
       await unitMotorApi.delete(id);
       await loadData();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error deleting:", error);
     }
   }

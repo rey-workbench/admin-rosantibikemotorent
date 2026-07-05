@@ -74,16 +74,16 @@
     try {
       const data = await whatsappApi.getAllWorkflows();
       workflows = data;
-    } catch {
-      toast.error("Gagal memuat workflows");
+    } catch (err: any) {
+      console.error(err);
     }
   }
 
   async function loadTemplates() {
     try {
       templates = await whatsappApi.getAllTemplates();
-    } catch {
-      console.error("Gagal memuat templates");
+    } catch (err: any) {
+      console.error("Gagal memuat templates", err);
     }
   }
 
@@ -227,9 +227,8 @@
       toast.success("Workflow berhasil disimpan!");
       await loadWorkflows();
       showConfigModal = false;
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
-      toast.error("Gagal menyimpan workflow");
     } finally {
       isSaving = false;
     }
@@ -248,8 +247,8 @@
       toast.success("Workflow dihapus");
       selectedId = null;
       await loadWorkflows();
-    } catch {
-      toast.error("Gagal menghapus workflow");
+    } catch (err: any) {
+      console.error(err);
     }
   }
 </script>

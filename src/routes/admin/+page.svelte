@@ -33,7 +33,7 @@
         isLoading = true;
         try {
             admins = await adminApi.getAll();
-        } catch (err) {
+        } catch (err: any) {
             console.error("Error loading admins:", err);
         } finally {
             isLoading = false;
@@ -105,7 +105,7 @@
         try {
             await adminApi.delete(id);
             await loadData();
-        } catch (err) {
+        } catch (err: any) {
             console.error("Error deleting:", err);
         }
     }

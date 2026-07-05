@@ -22,6 +22,7 @@
   let isCalculating = $state(false);
   let estimasiBiaya = $state<number | null>(null);
   let rincian = $state<any>(null);
+  let errorMsg = $state<string | null>(null);
 
   onMount(async () => {
     const res = await unitMotorApi.getAll({ limit: 100 });
@@ -64,6 +65,7 @@
   async function handleSubmit(e: Event) {
     e.preventDefault();
     isSaving = true;
+    errorMsg = null;
     try {
       await transaksiApi.create({
         namaPenyewa,
@@ -78,8 +80,9 @@
         status,
       });
       goto("/transaksi");
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      errorMsg = err?.response?.data?.userErrorMsg || err?.response?.data?.message;
     } finally {
       isSaving = false;
     }
@@ -99,6 +102,11 @@
   isLoading={isSaving}
   {handleSubmit}
 >
+  {#if errorMsg}
+    <div class="bg-danger-50 text-danger-600 p-4 rounded-lg mb-4 text-sm font-medium">
+      {errorMsg}
+    </div>
+  {/if}
   <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
     <div class="col-span-1 md:col-span-2">
       <h3 class="text-lg font-semibold mb-3">Data Penyewa</h3>
