@@ -233,24 +233,28 @@
             {/if}
 
             <div class="flex gap-2">
-              <Button
-                variant="primary"
-                onclick={getQrCode}
-                disabled={status.status === "connected"}
-                loading={isLoadingQr}
-              >
-                <QrCode size={18} />
-                Get QR
-              </Button>
               {#if status.status === "connected"}
                 <Button variant="danger" onclick={handleLogout}>
                   <Power size={18} />
-                  Logout
+                  Logout / Putuskan Sesi
                 </Button>
-              {:else}
+              {:else if status.status === "connecting" || status.isConnecting}
+                <Button variant="primary" disabled loading={true}>
+                  <QrCode size={18} />
+                  Menghubungkan...
+                </Button>
                 <Button variant="warning" onclick={handleReset}>
                   <RefreshCw size={18} />
                   Reset Sesi
+                </Button>
+              {:else}
+                <Button
+                  variant="primary"
+                  onclick={getQrCode}
+                  loading={isLoadingQr}
+                >
+                  <QrCode size={18} />
+                  Hubungkan WhatsApp
                 </Button>
               {/if}
             </div>
@@ -291,7 +295,7 @@
                   class="text-text-muted opacity-30 mx-auto mb-4"
                 />
                 <p class="text-text-muted">
-                  Klik "Get QR" untuk menampilkan QR Code
+                  Klik "Hubungkan WhatsApp" untuk menampilkan QR Code
                 </p>
               {/if}
             </div>
