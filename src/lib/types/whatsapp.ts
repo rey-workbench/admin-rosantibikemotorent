@@ -33,7 +33,7 @@ export interface WhatsappContact {
 }
 
 export interface WhatsappMessage {
-    id: string;
+    id: any;
     body: string;
     type: string;
     t: number;
@@ -58,7 +58,7 @@ export interface WhatsappMessage {
 }
 
 export interface WhatsAppMessageEvent {
-    id: string;
+    id: any;
     from: string;
     chatId?: string;
     body: string;

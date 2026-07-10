@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { page } from "$app/stores";
+  import { page } from "$app/state";
   import { transaksiApi } from "$lib/api";
   import { format } from "date-fns";
   import { id as idLocale } from "date-fns/locale";
@@ -12,7 +12,7 @@
   let isLoading = $state(true);
   let error = $state<string | null>(null);
 
-  const id = $page.params.id;
+  const id = page.params.id;
 
   onMount(async () => {
     if (id) {

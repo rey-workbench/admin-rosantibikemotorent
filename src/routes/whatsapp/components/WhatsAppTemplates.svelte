@@ -16,18 +16,18 @@
     import { toast } from "$lib/stores/toast";
     import { confirm } from "$lib/stores/confirm";
 
-    let templates: any[] = [];
-    let isLoading = false;
-    let showModal = false;
-    let isSaving = false;
+    let templates: any[] = $state([]);
+    let isLoading = $state(false);
+    let showModal = $state(false);
+    let isSaving = $state(false);
 
     // Form State
     let formId = "";
-    let formKey = "";
-    let formTitle = "";
-    let formContent = "";
-    let formCategory = "";
-    let isEditing = false;
+    let formKey = $state("");
+    let formTitle = $state("");
+    let formContent = $state("");
+    let formCategory = $state("");
+    let isEditing = $state(false);
 
     onMount(() => {
         loadTemplates();

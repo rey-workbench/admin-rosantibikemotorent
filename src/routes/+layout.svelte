@@ -2,7 +2,7 @@
   import "../app.css";
   import { onMount, onDestroy } from "svelte";
   import { goto } from "$app/navigation";
-  import { page } from "$app/stores";
+  import { page } from "$app/state";
   import Sidebar from "$lib/components/layout/Sidebar.svelte";
   import BottomNav from "$lib/components/layout/BottomNav.svelte";
   import ChatWidget from "$lib/components/chat/ChatWidget.svelte";
@@ -22,7 +22,7 @@
   });
 
   $effect(() => {
-    const isLoginPage = $page.url.pathname === "/login";
+    const isLoginPage = page.url.pathname === "/login";
     if (!$authStore.isLoading) {
       if (!$authStore.token && !isLoginPage) {
         goto("/login");
@@ -32,7 +32,7 @@
     }
   });
 
-  const isLoginPage = $derived($page.url.pathname === "/login");
+  const isLoginPage = $derived(page.url.pathname === "/login");
 </script>
 
 <svelte:head>

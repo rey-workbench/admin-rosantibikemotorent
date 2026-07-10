@@ -54,6 +54,7 @@
     class="fixed top-20 right-4 z-50 flex flex-col gap-2 pointer-events-none max-w-[calc(100vw-2rem)]"
 >
     {#each $toast as t (t.id)}
+        {@const SvelteComponent = getIcon(t.type)}
         <div
             animate:flip
             in:fly={{ x: 50, duration: 300 }}
@@ -64,7 +65,7 @@
             <div
                 class={`p-1.5 rounded-full shrink-0 ${getBgColorClass(t.type)} ${getIconColorClass(t.type)}`}
             >
-                <svelte:component this={getIcon(t.type)} size={18} />
+                <SvelteComponent size={18} />
             </div>
             <p
                 class="text-sm font-medium text-text-primary flex-1 pt-1 wrap-break-word leading-tight"

@@ -1,12 +1,13 @@
 <script lang="ts">
-  import { Handle, Position, type NodeProps } from "@xyflow/svelte";
+  import { Handle, Position } from "@xyflow/svelte";
   import { Zap, Terminal, HelpCircle } from "@lucide/svelte";
 
-  let { data, id }: NodeProps = $props();
-
-  function updateTrigger(type: string) {
-    data.trigger = type;
+  interface Props {
+    id: string;
+    data: { trigger?: string; keyword?: string };
   }
+
+  let { data, id }: Props = $props();
 </script>
 
 <div class="w-56 bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden group">
@@ -22,17 +23,17 @@
   <!-- Body -->
   <div class="p-4 space-y-3 bg-white">
     <div class="flex bg-slate-100 p-0.5 rounded-lg">
-      <button 
+      <button
         class="flex-1 flex items-center justify-center gap-1.5 py-1.5 text-[10px] font-bold rounded-md transition-all
                {data.trigger === 'keyword' ? 'bg-white shadow-sm text-orange-600' : 'text-slate-500 hover:text-slate-700'}"
-        onclick={() => updateTrigger('keyword')}
+        onclick={() => (data.trigger = 'keyword')}
       >
         <Terminal size={12} /> KEYWORD
       </button>
-      <button 
+      <button
         class="flex-1 flex items-center justify-center gap-1.5 py-1.5 text-[10px] font-bold rounded-md transition-all
                {data.trigger === 'fallback' ? 'bg-white shadow-sm text-orange-600' : 'text-slate-500 hover:text-slate-700'}"
-        onclick={() => updateTrigger('fallback')}
+        onclick={() => (data.trigger = 'fallback')}
       >
         <HelpCircle size={12} /> FALLBACK
       </button>
@@ -45,7 +46,7 @@
           <input
             id="keyword-{id}"
             type="text"
-            bind:value={(data.keyword as string)}
+            bind:value={data.keyword}
             placeholder="e.g. menu, sewa"
             class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all font-medium text-slate-700"
           />

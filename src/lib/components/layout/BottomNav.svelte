@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { page } from "$app/stores";
+    import { page } from "$app/state";
     import {
         LayoutDashboard,
         Bike,
@@ -38,12 +38,12 @@
         { path: "/settings", label: "Pengaturan", icon: Settings },
     ];
 
-    let isMenuOpen = false;
+    let isMenuOpen = $state(false);
 
     function isActive(path: string): boolean {
         return (
-            $page.url.pathname === path ||
-            (path !== "/" && $page.url.pathname.startsWith(path))
+            page.url.pathname === path ||
+            (path !== "/" && page.url.pathname.startsWith(path))
         );
     }
 
