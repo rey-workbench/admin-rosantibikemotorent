@@ -77,7 +77,7 @@ async function parseResponse(response: Response, url: string, method: string) {
     return { data: responseData, status: response.status };
 }
 
-function handleError(error: any) {
+function handleError(error: any): never {
     if (browser) {
         const status = error.response?.status;
         const message = error.response?.data?.userErrorMsg || error.response?.data?.message;
