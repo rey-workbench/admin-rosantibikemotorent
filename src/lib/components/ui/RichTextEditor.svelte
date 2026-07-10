@@ -1,13 +1,6 @@
 <script lang="ts">
     import { onMount, onDestroy } from "svelte";
-    import { Editor } from "@tiptap/core";
-    import StarterKit from "@tiptap/starter-kit";
-    import Underline from "@tiptap/extension-underline";
-    import Link from "@tiptap/extension-link";
-    import TextAlign from "@tiptap/extension-text-align";
-    import Highlight from "@tiptap/extension-highlight";
-    import Image from "@tiptap/extension-image";
-    import Youtube from "@tiptap/extension-youtube";
+    import type { Editor } from "@tiptap/core";
     import { Modal, Input, Button } from "$lib/components/ui";
     import { blogApi } from "$lib/api";
 
@@ -46,14 +39,15 @@
         urlInput = "";
 
         // Predent with current value if editing a link
-        if (type === "link" && editor.isActive("link")) {
-            urlInput = editor.getAttributes("link").href || "";
+        if (type === "link" && editor?.isActive("link")) {
+            urlInput = editor?.getAttributes("link").href || "";
         }
 
         showUrlModal = true;
     }
 
     function handleModalSubmit() {
+        if (!editor) return;
         if (!urlInput) {
             if (urlType === "link") {
                 editor.chain().focus().unsetLink().run();
@@ -95,8 +89,28 @@
         }
     }
 
-    onMount(() => {
-        editor = new Editor({
+    onMount(async () => {
+        const [
+            { Editor: TiptapEditor },
+            { default: StarterKit },
+            { default: Underline },
+            { default: Link },
+            { default: TextAlign },
+            { default: Highlight },
+            { default: Image },
+            { default: Youtube }
+        ] = await Promise.all([
+            import("@tiptap/core"),
+            import("@tiptap/starter-kit"),
+            import("@tiptap/extension-underline"),
+            import("@tiptap/extension-link"),
+            import("@tiptap/extension-text-align"),
+            import("@tiptap/extension-highlight"),
+            import("@tiptap/extension-image"),
+            import("@tiptap/extension-youtube")
+        ]);
+
+        editor = new TiptapEditor({
             element: editorElement,
             extensions: [
                 StarterKit,
@@ -125,8 +139,8 @@
                     id: id,
                 },
             },
-            onUpdate: ({ editor }) => {
-                value = editor.getHTML();
+            onUpdate: ({ editor: e }) => {
+                value = e.getHTML();
             },
         });
     });
@@ -173,11 +187,12 @@
     >
         <!-- Toolbar -->
         <div
-            class="flex flex-wrap items-center gap-1 p-2 border-b border-gray-100 bg-gray-50/50"
+            class="flex flex-wrap items-center gap-1 p-2 border-b border-gray-100 bg-gray-50/50 min-h-[50px]"
         >
+        {#if editor}
             <button
                 type="button"
-                onclick={() => editor.chain().focus().toggleBold().run()}
+                onclick={() => editor?.chain().focus().toggleBold().run()}
                 class="p-2 rounded-lg hover:bg-white hover:shadow-sm text-gray-600 transition-all {editor?.isActive(
                     'bold',
                 )
@@ -200,7 +215,7 @@
             </button>
             <button
                 type="button"
-                onclick={() => editor.chain().focus().toggleItalic().run()}
+                onclick={() => editor?.chain().focus().toggleItalic().run()}
                 class="p-2 rounded-lg hover:bg-white hover:shadow-sm text-gray-600 transition-all {editor?.isActive(
                     'italic',
                 )
@@ -223,7 +238,7 @@
             </button>
             <button
                 type="button"
-                onclick={() => editor.chain().focus().toggleUnderline().run()}
+                onclick={() => editor?.chain().focus().toggleUnderline().run()}
                 class="p-2 rounded-lg hover:bg-white hover:shadow-sm text-gray-600 transition-all {editor?.isActive(
                     'underline',
                 )
@@ -249,7 +264,7 @@
             <button
                 type="button"
                 onclick={() =>
-                    editor.chain().focus().toggleHeading({ level: 1 }).run()}
+                    editor?.chain().focus().toggleHeading({ level: 1 }).run()}
                 class="p-2 rounded-lg hover:bg-white hover:shadow-sm text-gray-600 transition-all {editor?.isActive(
                     'heading',
                     { level: 1 },
@@ -263,7 +278,7 @@
             <button
                 type="button"
                 onclick={() =>
-                    editor.chain().focus().toggleHeading({ level: 2 }).run()}
+                    editor?.chain().focus().toggleHeading({ level: 2 }).run()}
                 class="p-2 rounded-lg hover:bg-white hover:shadow-sm text-gray-600 transition-all {editor?.isActive(
                     'heading',
                     { level: 2 },
@@ -279,7 +294,7 @@
 
             <button
                 type="button"
-                onclick={() => editor.chain().focus().toggleBulletList().run()}
+                onclick={() => editor?.chain().focus().toggleBulletList().run()}
                 class="p-2 rounded-lg hover:bg-white hover:shadow-sm text-gray-600 transition-all {editor?.isActive(
                     'bulletList',
                 )
@@ -302,7 +317,7 @@
             </button>
             <button
                 type="button"
-                onclick={() => editor.chain().focus().toggleOrderedList().run()}
+                onclick={() => editor?.chain().focus().toggleOrderedList().run()}
                 class="p-2 rounded-lg hover:bg-white hover:shadow-sm text-gray-600 transition-all {editor?.isActive(
                     'orderedList',
                 )
@@ -329,7 +344,7 @@
             <button
                 type="button"
                 onclick={() =>
-                    editor.chain().focus().setTextAlign("left").run()}
+                    editor?.chain().focus().setTextAlign("left").run()}
                 class="p-2 rounded-lg hover:bg-white hover:shadow-sm text-gray-600 transition-all {editor?.isActive(
                     { textAlign: 'left' },
                 )
@@ -353,7 +368,7 @@
             <button
                 type="button"
                 onclick={() =>
-                    editor.chain().focus().setTextAlign("center").run()}
+                    editor?.chain().focus().setTextAlign("center").run()}
                 class="p-2 rounded-lg hover:bg-white hover:shadow-sm text-gray-600 transition-all {editor?.isActive(
                     { textAlign: 'center' },
                 )
@@ -377,7 +392,7 @@
             <button
                 type="button"
                 onclick={() =>
-                    editor.chain().focus().setTextAlign("right").run()}
+                    editor?.chain().focus().setTextAlign("right").run()}
                 class="p-2 rounded-lg hover:bg-white hover:shadow-sm text-gray-600 transition-all {editor?.isActive(
                     { textAlign: 'right' },
                 )
@@ -403,7 +418,7 @@
 
             <button
                 type="button"
-                onclick={() => editor.chain().focus().toggleBlockquote().run()}
+                onclick={() => editor?.chain().focus().toggleBlockquote().run()}
                 class="p-2 rounded-lg hover:bg-white hover:shadow-sm text-gray-600 transition-all {editor?.isActive(
                     'blockquote',
                 )
@@ -485,6 +500,7 @@
                     ></path></svg
                 >
             </button>
+        {/if}
         </div>
 
         <!-- Editor Content -->
