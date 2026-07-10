@@ -25,8 +25,8 @@
   import WhatsAppWorkflows from "./components/WhatsAppWorkflows.svelte";
   import WhatsAppChatWidget from "./components/WhatsAppChatWidget.svelte";
 
-  let status: WhatsappStatus | null = $state(null);
-  let qrCode: string | null = $state(null);
+  let status = $derived($whatsappStatus);
+  let qrCode = $derived($whatsappStatus?.qrCode || null);
   let isLoading = $state(true);
   let isSending = $state(false);
   let isLoadingQr = $state(false);
@@ -49,26 +49,10 @@
     };
   });
 
-  $effect(() => {
-    if ($whatsappStatus) {
-      status = $whatsappStatus;
-
-      if ($whatsappStatus.qrCode) {
-        qrCode = $whatsappStatus.qrCode;
-      } else if ($whatsappStatus.status === "connected") {
-        qrCode = null;
-      }
-    }
-  });
-
   async function loadStatus() {
     try {
-      status = await whatsappApi.getStatus();
-      if (status.qrCode) {
-        qrCode = status.qrCode;
-      } else if (status.status === "connected") {
-        qrCode = null;
-      }
+      const res = await whatsappApi.getStatus();
+      whatsappStatus.set(res);
     } catch (error: any) {
       console.error("Error loading status:", error);
     } finally {
@@ -85,8 +69,14 @@
     isLoadingQr = true;
     try {
       const res = await whatsappApi.getQrCode();
-      qrCode = res.qrcode;
-      if (!qrCode) {
+      const newQrCode = res.qrcode;
+      whatsappStatus.update((s) => ({
+        ...s,
+        qrCode: newQrCode,
+        hasQrCode: !!newQrCode,
+        status: newQrCode ? "connecting" : s.status,
+      }));
+      if (!newQrCode) {
         toast.warning(
           "QR Code belum tersedia. Browser sedang disiapkan, mohon tunggu sebentar...",
         );
@@ -112,7 +102,6 @@
     try {
       await whatsappApi.logout();
       await loadStatus();
-      qrCode = null;
     } catch (error: any) {
       console.error("Error logging out:", error);
     }
@@ -131,7 +120,6 @@
     try {
       await whatsappApi.resetSession();
       await loadStatus();
-      qrCode = null;
     } catch (error: any) {
       console.error("Error resetting:", error);
     }
