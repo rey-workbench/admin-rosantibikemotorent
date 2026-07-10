@@ -159,8 +159,7 @@
                                 class="mb-1 rounded-lg overflow-hidden bg-black/10 min-w-50 min-h-37.5 flex items-center justify-center relative"
                             >
                                 {#if msg.body && msg.body.startsWith("data:")}
-                                    <img
-                                        src={msg.body}
+                                    <img loading="lazy" decoding="async" src={msg.body}
                                         alt="Media content"
                                         class="max-w-full max-h-75 object-cover"
                                     />
@@ -184,8 +183,7 @@
                             </div>
                         {:else if msg.type === "sticker"}
                             {#if msg.body && msg.body.startsWith("data:")}
-                                <img
-                                    src={msg.body}
+                                <img loading="lazy" decoding="async" src={msg.body}
                                     alt="Sticker content"
                                     class="w-32 h-32 object-contain drop-shadow-sm"
                                 />

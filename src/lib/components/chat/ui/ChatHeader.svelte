@@ -45,8 +45,7 @@
     <div class="flex items-center gap-3">
       {#if contact?.profilePicUrl}
         <div class="w-9 h-9 rounded-full overflow-hidden shadow-sm">
-          <img
-            src={contact.profilePicUrl}
+          <img loading="lazy" decoding="async" src={contact.profilePicUrl}
             alt=""
             class="w-full h-full object-cover"
           />

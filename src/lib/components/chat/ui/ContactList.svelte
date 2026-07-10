@@ -103,8 +103,7 @@
                                 'bg-gray-300'} flex items-center justify-center text-white font-bold text-lg overflow-hidden"
                         >
                             {#if contact.profilePicUrl}
-                                <img
-                                    src={contact.profilePicUrl}
+                                <img loading="lazy" decoding="async" src={contact.profilePicUrl}
                                     alt=""
                                     class="w-full h-full object-cover"
                                 />

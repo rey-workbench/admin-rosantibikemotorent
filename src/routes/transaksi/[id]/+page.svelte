@@ -486,8 +486,7 @@
           <div
             class="inline-block p-4 bg-white border-2 border-gray-900 rounded-xl shadow-lg print:shadow-none"
           >
-            <img
-              src={transaction.qris.qrImage}
+            <img loading="lazy" decoding="async" src={transaction.qris.qrImage}
               alt="QRIS Payment"
               class="w-40 h-40 mx-auto filter print:grayscale"
             />

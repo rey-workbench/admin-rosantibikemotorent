@@ -527,7 +527,7 @@
                 transition:fade
               >
                 <div class="bg-white p-4 rounded-3xl shadow-2xl mb-6 relative">
-                  <img src={qrCode} alt="WhatsApp QR Code" class="w-64 h-64" />
+                  <img loading="lazy" decoding="async" src={qrCode} alt="WhatsApp QR Code" class="w-64 h-64" />
                   {#if qrAttemptInfo}
                     <span
                       class="absolute -top-2 -right-2 bg-orange-500 text-white text-xs font-bold px-2 py-1 rounded-full"

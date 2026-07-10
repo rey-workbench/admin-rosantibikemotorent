@@ -116,7 +116,7 @@
                     <tr class="border-b border-border hover:bg-bg-tertiary/20 transition-colors">
                         <td class="px-4 py-3">
                             {#if motor.gambar}
-                                <img src={motor.gambar} alt={motor.model} class="w-16 h-10 object-cover rounded" />
+                                <img loading="lazy" decoding="async" src={motor.gambar} alt={motor.model} class="w-16 h-10 object-cover rounded" />
                             {:else}
                                 <div class="w-16 h-10 bg-bg-tertiary rounded"></div>
                             {/if}

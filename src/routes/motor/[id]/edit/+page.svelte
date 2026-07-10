@@ -154,8 +154,7 @@
             <div
               class="border-2 border-dashed border-border rounded-lg p-6 text-center"
             >
-              <img
-                src={imageUrl}
+              <img loading="lazy" decoding="async" src={imageUrl}
                 alt="Preview"
                 class="max-w-50 max-h-37.5 object-cover rounded-md mx-auto"
                 onerror={(e) =>

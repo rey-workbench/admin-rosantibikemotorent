@@ -123,8 +123,7 @@
           >
             <td class="px-4 py-3">
               {#if blog.thumbnail}
-                <img
-                  src={blog.thumbnail}
+                <img loading="lazy" decoding="async" src={blog.thumbnail}
                   alt={blog.judul}
                   class="w-20 h-12 object-cover rounded"
                 />

@@ -32,8 +32,7 @@
         class="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-primary/50 transition-colors"
     >
         {#if preview}
-            <img
-                src={preview}
+            <img loading="lazy" decoding="async" src={preview}
                 alt="Preview"
                 class="max-w-50 max-h-37.5 object-cover rounded-md mx-auto mb-4"
             />
