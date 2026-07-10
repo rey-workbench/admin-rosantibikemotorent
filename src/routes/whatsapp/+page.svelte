@@ -35,7 +35,9 @@
   let activeTab = $state("connection"); // 'connection' | 'templates'
 
   onMount(() => {
-    loadStatus();
+    if (!$socketConnected) {
+      loadStatus();
+    }
 
     // Subscribe to real-time transaksi notifications
     const unsubscribe = websocketService.onTransaksiCreated((transaksi) => {
@@ -47,6 +49,12 @@
     return () => {
       unsubscribe();
     };
+  });
+
+  $effect(() => {
+    if ($socketConnected) {
+      loadStatus();
+    }
   });
 
   async function loadStatus() {
