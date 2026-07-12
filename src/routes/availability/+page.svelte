@@ -51,7 +51,6 @@
 
         // Listen for all transaction events & unit updates
         const refresh = () => {
-            console.log("[Availability] Refreshing data due to realtime update...");
             loadAvailability();
         };
 

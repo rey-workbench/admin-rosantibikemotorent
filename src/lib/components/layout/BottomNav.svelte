@@ -19,6 +19,7 @@
     import { authApi } from "$lib/api";
     import { authStore } from "$lib/stores/auth";
     import { goto } from "$app/navigation";
+    import { toast } from "$lib/stores/toast";
 
     // Main bottom tabs
     const mainTabs = [
@@ -58,7 +59,9 @@
     async function handleLogout() {
         try {
             await authApi.logout();
-        } catch (e) {}
+        } catch (e) {
+            toast.error("Gagal logout, coba lagi");
+        }
         authStore.logout();
         goto("/login");
     }

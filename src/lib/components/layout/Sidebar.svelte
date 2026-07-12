@@ -22,6 +22,7 @@
     import { authStore } from "$lib/stores/auth";
     import { goto } from "$app/navigation";
     import { slide } from "svelte/transition";
+    import { toast } from "$lib/stores/toast";
 
     const navItems = [
         { path: "/", label: "Dashboard", icon: LayoutDashboard },
@@ -70,7 +71,9 @@
     async function handleLogout() {
         try {
             await authApi.logout();
-        } catch (e) {}
+        } catch (e) {
+            toast.error("Gagal logout, coba lagi");
+        }
         authStore.logout();
         goto("/login");
     }

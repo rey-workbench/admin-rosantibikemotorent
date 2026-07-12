@@ -50,8 +50,7 @@
         // Subscribe to real-time queue updates
         const unsubscribe = queueUpdates.subscribe((update) => {
             if (update) {
-                console.log("[Queue] Update received:", update);
-                loadData(false); // Silent refresh
+                loadData(false);
             }
         });
 

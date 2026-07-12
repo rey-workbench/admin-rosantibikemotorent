@@ -17,11 +17,7 @@
   let unsubscribe: (() => void) | null = null;
 
   onMount(() => {
-    // Subscribe to incoming messages
     unsubscribe = websocketService.onWhatsAppMessage((message) => {
-      console.log("New message received:", message);
-      
-      // Show browser notification
       if (!message.fromMe && 'Notification' in window && Notification.permission === 'granted') {
         new Notification(message.notifyName || message.from, {
           body: message.body,

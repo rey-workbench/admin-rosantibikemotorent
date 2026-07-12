@@ -152,7 +152,6 @@
 
         // Cleanup unsaved images if not committed
         if (!isCommitted && sessionImages.length > 0) {
-            console.log("Cleaning up unsaved images...", sessionImages);
             for (const url of sessionImages) {
                 try {
                     await blogApi.deleteImage(url);
