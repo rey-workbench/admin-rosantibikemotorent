@@ -15,6 +15,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 
     // Apply security headers
     const response = await resolve(event);
+    response.headers.set('X-Robots-Tag', 'noindex, nofollow');
     response.headers.set('X-Content-Type-Options', 'nosniff');
     response.headers.set('X-Frame-Options', 'DENY');
     response.headers.set(
