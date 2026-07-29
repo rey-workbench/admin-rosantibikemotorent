@@ -1,57 +1,51 @@
 import { writable, derived } from 'svelte/store';
 import { browser } from '$app/environment';
 import type { Admin } from '$lib/types';
+import { api } from '$lib/api/client';
 
 export interface AuthState {
     admin: Admin | null;
-    token: string | null;
     isLoading: boolean;
 }
 
 function createAuthStore() {
     const initialState: AuthState = {
         admin: null,
-        token: null,
         isLoading: true,
     };
 
     const { subscribe, set, update } = writable<AuthState>(initialState);
 
-    // Initialize from localStorage on browser
-    if (browser) {
-        const storedToken = localStorage.getItem('token');
-        const storedAdmin = localStorage.getItem('admin');
-
-        if (storedToken && storedAdmin) {
-            try {
-                set({
-                    token: storedToken,
-                    admin: JSON.parse(storedAdmin),
-                    isLoading: false,
-                });
-            } catch {
-                set({ ...initialState, isLoading: false });
-            }
-        } else {
-            set({ ...initialState, isLoading: false });
-        }
-    }
-
     return {
         subscribe,
-        login: (admin: Admin, token: string) => {
-            if (browser) {
-                localStorage.setItem('token', token);
-                localStorage.setItem('admin', JSON.stringify(admin));
+        init: async () => {
+            if (!browser) return;
+            try {
+                const response = await api.get('/auth/me');
+                if (response?.data?.admin) {
+                    set({ admin: response.data.admin, isLoading: false });
+                } else {
+                    set({ admin: null, isLoading: false });
+                }
+            } catch (error) {
+                set({ admin: null, isLoading: false });
             }
-            set({ admin, token, isLoading: false });
         },
-        logout: () => {
+        login: (admin: Admin) => {
+            set({ admin, isLoading: false });
+        },
+        logout: async () => {
             if (browser) {
-                localStorage.removeItem('token');
-                localStorage.removeItem('admin');
+                try {
+                    await api.post('/auth/logout');
+                } catch (e) {
+                    // Ignore errors on logout
+                }
             }
-            set({ admin: null, token: null, isLoading: false });
+            set({ admin: null, isLoading: false });
+            if (browser) {
+                window.location.href = '/login';
+            }
         },
         setLoading: (isLoading: boolean) => {
             update((state) => ({ ...state, isLoading }));
@@ -62,4 +56,4 @@ function createAuthStore() {
 export const authStore = createAuthStore();
 
 // Derived store for checking authentication
-export const isAuthenticated = derived(authStore, ($auth) => !!$auth.token && !!$auth.admin);
+export const isAuthenticated = derived(authStore, ($auth) => !!$auth.admin);

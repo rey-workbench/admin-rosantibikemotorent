@@ -1,7 +1,6 @@
 <script lang="ts">
   import "../app.css";
   import { onMount, onDestroy } from "svelte";
-  import { goto } from "$app/navigation";
   import { page } from "$app/state";
   import Sidebar from "$lib/components/layout/Sidebar.svelte";
   import BottomNav from "$lib/components/layout/BottomNav.svelte";
@@ -14,22 +13,12 @@
   let { children } = $props();
 
   onMount(() => {
+    authStore.init();
     websocketService.connect();
   });
 
   onDestroy(() => {
     websocketService.disconnect();
-  });
-
-  $effect(() => {
-    const isLoginPage = page.url.pathname === "/login";
-    if (!$authStore.isLoading) {
-      if (!$authStore.token && !isLoginPage) {
-        goto("/login");
-      } else if ($authStore.token && isLoginPage) {
-        goto("/");
-      }
-    }
   });
 
   const isLoginPage = $derived(page.url.pathname === "/login");
@@ -72,7 +61,7 @@
   </div>
 {:else if isLoginPage}
   {@render children()}
-{:else if $authStore.token}
+{:else if $authStore.admin}
   <div class="flex h-screen bg-bg-primary overflow-hidden">
     <!-- Left Sidebar -->
     <Sidebar />

@@ -31,13 +31,6 @@ function buildHeadersAndBody(data?: any, customHeaders?: any) {
         ...(customHeaders || {})
     };
 
-    if (browser) {
-        const token = localStorage.getItem('token');
-        if (token) {
-            headers['Authorization'] = `Bearer ${token}`;
-        }
-    }
-
     let body = undefined;
     if (data !== undefined && data !== null) {
         if (data instanceof FormData) {
@@ -80,14 +73,14 @@ async function parseResponse(response: Response, url: string, method: string) {
 function handleError(error: any): never {
     if (browser) {
         const status = error.response?.status;
-        const message = error.response?.data?.userErrorMsg || error.response?.data?.message;
+        const message = error.response?.data?.message;
 
         if (status === 401) {
-            localStorage.removeItem('token');
-            localStorage.removeItem('admin');
             window.location.href = '/login';
-        } else if (message) {
+        } else if (message && typeof message === 'string' && message.length < 100) {
             toast.error(message);
+        } else {
+            toast.error('An error occurred');
         }
     }
     throw error;
@@ -102,7 +95,8 @@ class ApiClient {
             const response = await fetch(fetchUrl, {
                 method,
                 headers,
-                body
+                body,
+                credentials: 'include'
             });
             return await parseResponse(response, url, method);
         } catch (error: any) {
