@@ -20,7 +20,7 @@ export const handle: Handle = async ({ event, resolve }) => {
     response.headers.set('X-Frame-Options', 'DENY');
     response.headers.set(
         'Content-Security-Policy',
-        "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://res.cloudinary.com; connect-src 'self' http://localhost:3030 ws://localhost:3030 https://*; object-src 'none';"
+        "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://res.cloudinary.com; connect-src 'self' http://localhost:3030 ws://localhost:3030 https://* wss://*; object-src 'none';"
     );
 
     return response;
