@@ -31,6 +31,11 @@ function buildHeadersAndBody(data?: any, customHeaders?: any) {
         ...(customHeaders || {})
     };
 
+    // Provide an Origin header during SSR to pass backend CORS checks
+    if (!browser && !headers['Origin'] && !headers['origin']) {
+        headers['Origin'] = 'https://rosantibikemotorent.com';
+    }
+
     let body = undefined;
     if (data !== undefined && data !== null) {
         if (data instanceof FormData) {
