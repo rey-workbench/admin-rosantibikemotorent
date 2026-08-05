@@ -20,6 +20,10 @@ function createAuthStore() {
         subscribe,
         init: async () => {
             if (!browser) return;
+            if (window.location.pathname === '/login') {
+                set({ admin: null, isLoading: false });
+                return;
+            }
             try {
                 const response = await api.get('/auth/me');
                 if (response?.data?.admin) {

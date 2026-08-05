@@ -56,6 +56,7 @@ class WebSocketService {
 
     connect(): void {
         if (!browser) return;
+        if (window.location.pathname === '/login') return;
         if (this.socket && (this.socket.connected || this.socket.active)) return;
 
         if (this.socket) {
