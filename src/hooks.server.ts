@@ -9,10 +9,6 @@ export const handle: Handle = async ({ event, resolve }) => {
         throw redirect(302, '/login');
     }
 
-    if (token && isLoginPage) {
-        throw redirect(302, '/');
-    }
-
     // Apply security headers
     const response = await resolve(event);
     response.headers.set('X-Robots-Tag', 'noindex, nofollow');
