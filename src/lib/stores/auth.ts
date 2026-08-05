@@ -26,8 +26,9 @@ function createAuthStore() {
             }
             try {
                 const response = await api.get('/auth/me');
-                if (response?.data?.admin) {
-                    set({ admin: response.data.admin, isLoading: false });
+                const admin = response?.data?.admin || response?.data?.data?.admin;
+                if (admin) {
+                    set({ admin, isLoading: false });
                 } else {
                     set({ admin: null, isLoading: false });
                 }
