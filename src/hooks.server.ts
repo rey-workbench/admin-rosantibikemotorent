@@ -41,10 +41,12 @@ export const handle: Handle = async ({ event, resolve }) => {
 
   const API_URL = env.API_URL || "http://localhost:3030";
   const wsUrl = API_URL.replace(/^http/, "ws");
+  const wssUrl = API_URL.replace(/^http/, "wss");
+  const apiUrlHttps = API_URL.replace(/^http:/, "https:");
 
   response.headers.set(
     "Content-Security-Policy",
-    `default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' ${API_URL} ${wsUrl}; object-src 'none';`,
+    `default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' ${API_URL} ${apiUrlHttps} ${wsUrl} ${wssUrl}; object-src 'none';`,
   );
 
   return response;
