@@ -9,7 +9,7 @@ export const handle: Handle = async ({ event, resolve }) => {
   let user = null;
   if (token) {
     try {
-      const API_URL = env.API_URL || "http://localhost:3030";
+      const API_URL = env.API_URL || env.VITE_WS_URL || env.VITE_API_URL?.replace(/\/api$/, '') || "http://localhost:3030";
       const res = await event.fetch(`${API_URL}/api/auth/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -39,7 +39,7 @@ export const handle: Handle = async ({ event, resolve }) => {
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("X-Frame-Options", "DENY");
 
-  const API_URL = env.API_URL || "http://localhost:3030";
+  const API_URL = env.API_URL || env.VITE_WS_URL || env.VITE_API_URL?.replace(/\/api$/, '') || "http://localhost:3030";
   const wsUrl = API_URL.replace(/^http/, "ws");
   const wssUrl = API_URL.replace(/^http/, "wss");
   const apiUrlHttps = API_URL.replace(/^http:/, "https:");
