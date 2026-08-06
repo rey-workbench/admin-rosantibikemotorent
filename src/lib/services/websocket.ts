@@ -67,9 +67,7 @@ class WebSocketService {
 
         let apiUrl = import.meta.env.VITE_WS_URL || import.meta.env.VITE_API_URL?.replace(/\/api$/, '');
         if (!apiUrl) {
-            apiUrl = browser
-                ? `${window.location.protocol}//${window.location.hostname}:3030`
-                : 'http://localhost:3030';
+            apiUrl = `${window.location.protocol}//${window.location.hostname}:3030`;
         }
 
         this.socket = io(`${apiUrl}/realtime`, {

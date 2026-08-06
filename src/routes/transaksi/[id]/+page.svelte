@@ -2,13 +2,16 @@
   import { onMount } from "svelte";
   import { page } from "$app/state";
   import { transaksiApi } from "$lib/api";
+  import { formatCurrency } from "$lib/utils/formatters";
   import { format } from "date-fns";
   import { id as idLocale } from "date-fns/locale";
   import { Button } from "$lib/components/ui";
   import { Printer, ArrowLeft } from "@lucide/svelte";
   import type { Transaksi } from "$lib/types";
 
-  let transaction: (Transaksi & { qris?: { qrImage: string; nominal: string } }) | null = $state(null);
+  let transaction:
+    | (Transaksi & { qris?: { qrImage: string; nominal: string } })
+    | null = $state(null);
   let isLoading = $state(true);
   let error = $state<string | null>(null);
 
@@ -47,14 +50,6 @@
   function formatDate(date: string) {
     if (!date) return "-";
     return format(new Date(date), "dd MMMM yyyy", { locale: idLocale });
-  }
-
-  function formatRupiah(amount: number) {
-    return new Intl.NumberFormat("id-ID", {
-      style: "currency",
-      currency: "IDR",
-      minimumFractionDigits: 0,
-    }).format(amount);
   }
 
   function handlePrint() {
@@ -229,12 +224,12 @@
               <td
                 class="py-3 print:py-2 text-right text-gray-900 print:text-black text-sm print:text-xs"
               >
-                {formatRupiah(transaction.unitMotor?.jenis?.hargaSewa || 0)}
+                {formatCurrency(transaction.unitMotor?.jenis?.hargaSewa || 0)}
               </td>
               <td
                 class="py-3 print:py-2 text-right font-bold text-gray-900 print:text-black text-sm print:text-xs"
               >
-                {formatRupiah(
+                {formatCurrency(
                   (transaction.unitMotor?.jenis?.hargaSewa || 0) *
                     transaction.durasiHari,
                 )}
@@ -300,9 +295,9 @@
                 </td>
               </tr>
             {/if}
- 
+
             {#if transaction.biayaDenda && transaction.biayaDenda > 0}
-               <tr>
+              <tr>
                 <td class="py-3">
                   <div
                     class="font-bold text-gray-900 print:text-black uppercase text-xs"
@@ -321,12 +316,12 @@
                 <td
                   class="py-3 text-right text-gray-900 print:text-black text-sm"
                 >
-                   {formatRupiah(transaction.biayaDenda)}
+                  {formatCurrency(transaction.biayaDenda)}
                 </td>
                 <td
                   class="py-3 text-right font-bold text-gray-900 print:text-black text-sm"
                 >
-                  {formatRupiah(transaction.biayaDenda)}
+                  {formatCurrency(transaction.biayaDenda)}
                 </td>
               </tr>
             {/if}
@@ -349,7 +344,9 @@
               <div
                 class="px-3 py-1 bg-amber-50 border border-amber-200 text-amber-700 text-[10px] font-bold uppercase tracking-wider rounded print:border-black print:text-black"
               >
-                {transaction.status === "PENDING_DP" ? "Menunggu DP" : "Belum Lunas"}
+                {transaction.status === "PENDING_DP"
+                  ? "Menunggu DP"
+                  : "Belum Lunas"}
               </div>
             {:else if transaction.status === "BATAL"}
               <div
@@ -382,7 +379,7 @@
                 >Total Biaya</span
               >
               <span class="text-sm font-bold text-gray-900 print:text-black"
-                >{formatRupiah(transaction.totalBiaya)}</span
+                >{formatCurrency(transaction.totalBiaya)}</span
               >
             </div>
 
@@ -394,7 +391,10 @@
                   >DP (30%) Minimal</span
                 >
                 <span class="text-sm font-bold"
-                  >{formatRupiah(Number(transaction.dpAmount) || (Number(transaction.totalBiaya) * 0.3))}</span
+                  >{formatCurrency(
+                    Number(transaction.dpAmount) ||
+                      Number(transaction.totalBiaya) * 0.3,
+                  )}</span
                 >
               </div>
               <div
@@ -405,7 +405,11 @@
                   >Sisa Pelunasan</span
                 >
                 <span class="text-sm font-bold text-gray-900 print:text-black"
-                  >{formatRupiah(Number(transaction.totalBiaya) - (Number(transaction.dpAmount) || (Number(transaction.totalBiaya) * 0.3)))}</span
+                  >{formatCurrency(
+                    Number(transaction.totalBiaya) -
+                      (Number(transaction.dpAmount) ||
+                        Number(transaction.totalBiaya) * 0.3),
+                  )}</span
                 >
               </div>
             {:else if transaction.status !== "BATAL"}
@@ -416,7 +420,7 @@
                   >Dibayar (Lunas)</span
                 >
                 <span class="text-sm font-bold"
-                  >{formatRupiah(transaction.totalBiaya)}</span
+                  >{formatCurrency(transaction.totalBiaya)}</span
                 >
               </div>
               <div
@@ -444,14 +448,17 @@
                 class="text-lg font-black text-gray-900 print:text-black print:text-base"
               >
                 {#if transaction.status === "PENDING" || transaction.status === "PENDING_DP"}
-                  {formatRupiah(Number(transaction.dpAmount) || (Number(transaction.totalBiaya) * 0.3))}
+                  {formatCurrency(
+                    Number(transaction.dpAmount) ||
+                      Number(transaction.totalBiaya) * 0.3,
+                  )}
                   <span
                     class="block text-[8px] font-normal normal-case text-right text-gray-400 print:text-black"
                   >
                     (Min. DP)
                   </span>
                 {:else}
-                  {formatRupiah(transaction.totalBiaya)}
+                  {formatCurrency(transaction.totalBiaya)}
                 {/if}
               </span>
             </div>
@@ -486,7 +493,10 @@
           <div
             class="inline-block p-4 bg-white border-2 border-gray-900 rounded-xl shadow-lg print:shadow-none"
           >
-            <img loading="lazy" decoding="async" src={transaction.qris.qrImage}
+            <img
+              loading="lazy"
+              decoding="async"
+              src={transaction.qris.qrImage}
               alt="QRIS Payment"
               class="w-40 h-40 mx-auto filter print:grayscale"
             />

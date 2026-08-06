@@ -1,12 +1,36 @@
 import { redirect, type Handle } from '@sveltejs/kit';
+import { env } from '$env/dynamic/private';
 
 export const handle: Handle = async ({ event, resolve }) => {
     // Route Protection
     const isLoginPage = event.url.pathname.startsWith('/login');
     const token = event.cookies.get('accessToken');
 
-    if (!token && !isLoginPage) {
+    let user = null;
+    if (token) {
+        try {
+            const API_URL = env.API_URL || 'http://localhost:3030';
+            const res = await event.fetch(`${API_URL}/api/auth/me`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            if (res.ok) {
+                user = await res.json();
+            } else {
+                event.cookies.delete('accessToken', { path: '/' });
+            }
+        } catch (e) {
+            console.error('Auth verification failed:', e);
+        }
+    }
+
+    if (!user && !isLoginPage) {
         throw redirect(302, '/login');
+    }
+
+    if (user && isLoginPage) {
+        throw redirect(302, '/');
     }
 
     // Apply security headers
@@ -14,9 +38,13 @@ export const handle: Handle = async ({ event, resolve }) => {
     response.headers.set('X-Robots-Tag', 'noindex, nofollow');
     response.headers.set('X-Content-Type-Options', 'nosniff');
     response.headers.set('X-Frame-Options', 'DENY');
+
+    const API_URL = env.API_URL || 'http://localhost:3030';
+    const wsUrl = API_URL.replace(/^http/, 'ws');
+
     response.headers.set(
         'Content-Security-Policy',
-        "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' http://localhost:3030 ws://localhost:3030 https://* wss://*; object-src 'none';"
+        `default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' ${API_URL} ${wsUrl}; object-src 'none';`
     );
 
     return response;

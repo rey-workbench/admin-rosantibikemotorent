@@ -5,6 +5,7 @@
   import { unitMotorApi, transaksiApi } from "$lib/api";
   import type { UnitMotor, StatusTransaksi } from "$lib/types";
   import { Form, Input, Select } from "$lib/components/ui";
+  import { formatCurrency } from "$lib/utils/formatters";
 
   let namaPenyewa = $state("");
   let noWhatsapp = $state("");
@@ -58,7 +59,15 @@
   }
 
   $effect(() => {
-    const _deps = { unitId, tanggalMulai, tanggalSelesai, jamMulai, jamSelesai, helm, jasHujan };
+    const _deps = {
+      unitId,
+      tanggalMulai,
+      tanggalSelesai,
+      jamMulai,
+      jamSelesai,
+      helm,
+      jasHujan,
+    };
     handleCalculate();
   });
 
@@ -82,17 +91,11 @@
       goto("/transaksi");
     } catch (err: any) {
       console.error(err);
-      errorMsg = err?.response?.data?.userErrorMsg || err?.response?.data?.message;
+      errorMsg =
+        err?.response?.data?.userErrorMsg || err?.response?.data?.message;
     } finally {
       isSaving = false;
     }
-  }
-
-  function formatRupiah(amount: number) {
-    return new Intl.NumberFormat("id-ID", {
-      style: "currency",
-      currency: "IDR",
-    }).format(amount);
   }
 </script>
 
@@ -103,7 +106,9 @@
   {handleSubmit}
 >
   {#if errorMsg}
-    <div class="bg-danger-50 text-danger-600 p-4 rounded-lg mb-4 text-sm font-medium">
+    <div
+      class="bg-danger-50 text-danger-600 p-4 rounded-lg mb-4 text-sm font-medium"
+    >
       {errorMsg}
     </div>
   {/if}
@@ -207,28 +212,42 @@
     />
 
     {#if estimasiBiaya !== null && rincian}
-      <div class="mt-6 border border-border rounded-lg bg-bg-tertiary/20 p-5 col-span-1 md:col-span-2">
-        <h4 class="text-md font-semibold text-text-primary mb-3 pb-2 border-b border-border">
+      <div
+        class="mt-6 border border-border rounded-lg bg-bg-tertiary/20 p-5 col-span-1 md:col-span-2"
+      >
+        <h4
+          class="text-md font-semibold text-text-primary mb-3 pb-2 border-b border-border"
+        >
           Perincian Estimasi Biaya
         </h4>
         <div class="space-y-3 text-sm">
           <div class="flex justify-between text-text-secondary">
             <span>Durasi Sewa:</span>
             <span class="font-medium text-text-primary">
-              {rincian.jumlahHari} Hari {rincian.jamTambahan > 0 ? `+ ${rincian.jamTambahan} Jam` : ''}
+              {rincian.jumlahHari} Hari {rincian.jamTambahan > 0
+                ? `+ ${rincian.jamTambahan} Jam`
+                : ""}
             </span>
           </div>
           <div class="flex justify-between text-text-secondary">
-            <span>Biaya Sewa ({rincian.jumlahHari} hari x {formatRupiah(rincian.hargaPerHari)}):</span>
+            <span
+              >Biaya Sewa ({rincian.jumlahHari} hari x {formatCurrency(
+                rincian.hargaPerHari,
+              )}):</span
+            >
             <span class="font-medium text-text-primary">
-              {formatRupiah(rincian.jumlahHari * rincian.hargaPerHari)}
+              {formatCurrency(rincian.jumlahHari * rincian.hargaPerHari)}
             </span>
           </div>
           {#if rincian.jamTambahan > 0}
             <div class="flex justify-between text-text-secondary">
-              <span>Biaya Jam Tambahan ({rincian.jamTambahan} jam x {formatRupiah(rincian.dendaPerJam)}):</span>
+              <span
+                >Biaya Jam Tambahan ({rincian.jamTambahan} jam x {formatCurrency(
+                  rincian.dendaPerJam,
+                )}):</span
+              >
               <span class="font-medium text-text-primary">
-                {formatRupiah(rincian.biayaJamTambahan)}
+                {formatCurrency(rincian.biayaJamTambahan)}
               </span>
             </div>
           {/if}
@@ -240,14 +259,16 @@
             <span>Fasilitas Jas Hujan ({jasHujan} pcs):</span>
             <span class="font-medium text-text-primary">Gratis</span>
           </div>
-          <div class="flex justify-between pt-3 border-t border-border text-base font-bold text-text-primary">
+          <div
+            class="flex justify-between pt-3 border-t border-border text-base font-bold text-text-primary"
+          >
             <span>Total Estimasi:</span>
-            <span class="text-xl text-primary font-bold">{formatRupiah(estimasiBiaya)}</span>
+            <span class="text-xl text-primary font-bold"
+              >{formatCurrency(estimasiBiaya)}</span
+            >
           </div>
         </div>
       </div>
     {/if}
   </div>
-
-
 </Form>

@@ -6,7 +6,10 @@ if (!rawUrl) {
     if (browser) {
         rawUrl = `${window.location.protocol}//${window.location.hostname}:3030/api`;
     } else {
-        rawUrl = 'http://localhost:3030/api';
+        rawUrl = (typeof process !== 'undefined' ? process.env.API_URL : null) || 'http://localhost:3030';
+        if (!rawUrl.endsWith('/api')) {
+            rawUrl = `${rawUrl}/api`;
+        }
     }
 }
 const API_BASE_URL = rawUrl.endsWith('/api') ? rawUrl : `${rawUrl}/api`;
