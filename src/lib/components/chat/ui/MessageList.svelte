@@ -14,9 +14,8 @@
     let {
         messages = [],
         isLoading = false,
-        currentUser = null,
-        selectedContact = null,
-        onReply = (msg: any) => {},
+                selectedContact = null,
+        onReply = (_msg: any) => {},
     } = $props<{
         messages: any[];
         isLoading?: boolean;
@@ -49,11 +48,7 @@
         }
     });
 
-    function isSameDay(t1: number, t2: number) {
-        const d1 = new Date(t1 * 1000);
-        const d2 = new Date(t2 * 1000);
-        return d1.toDateString() === d2.toDateString();
-    }
+    
 </script>
 
 <div
@@ -84,7 +79,7 @@
             <p class="text-xs">Memuat pesan...</p>
         </div>
     {:else if messages.length > 0}
-        {#each messages as msg, i}
+        {#each messages as msg}
             <!-- Day Separator Logic could be here based on i > 0 -->
 
             <div

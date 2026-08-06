@@ -4,7 +4,7 @@
     import { authStore } from "$lib/stores/auth";
     import { Button, Input } from "$lib/components/ui";
     import { LogIn, Bike, ShieldCheck, KeyRound } from "@lucide/svelte";
-    import { fade, fly } from "svelte/transition";
+    import { fly } from "svelte/transition";
 
     let username = $state("");
     let password = $state("");

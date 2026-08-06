@@ -1,12 +1,12 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { Brain, Send, Save, Plus, Trash2, Edit2, Search, MessageSquare, Database, Sparkles, Settings, HelpCircle, Check, CheckCheck } from "@lucide/svelte";
+    import { Brain, Send, Save, Plus, Trash2, Edit2, Search, Database, Settings, HelpCircle, CheckCheck } from "@lucide/svelte";
     import PageHeader from "$lib/components/layout/PageHeader.svelte";
     import { Button, Input, Select, Textarea, Modal, Tabs, Badge, Card } from "$lib/components/ui";
     import { aiApi } from "$lib/api";
+	import { toast } from "$lib/stores/toast";
     import type { AiKnowledge } from "$lib/types";
-    import { toast } from "$lib/stores/toast";
-    import { confirm } from "$lib/stores/confirm";
+        import { confirm } from "$lib/stores/confirm";
 
     // --- State Management ---
     let activeTab = $state("playground");

@@ -2,7 +2,8 @@
     import { onMount } from "svelte";
     import { RefreshCw, Trash2, Play, Pause, ListOrdered } from "@lucide/svelte";
     import { queueApi } from "$lib/api";
-    import websocketService, { queueUpdates, socketConnected } from "$lib/services/websocket";
+    import { websocketService } from "$lib/services/websocket";
+	import { queueUpdates, socketConnected } from "$lib/stores/websocket";
     import {
         Card,
         CardBody,
@@ -48,7 +49,7 @@
         loadData(true);
 
         // Subscribe to real-time queue updates
-        const unsubscribe = queueUpdates.subscribe((update) => {
+        const unsubscribe = queueUpdates.subscribe((update: any) => {
             if (update) {
                 loadData(false);
             }

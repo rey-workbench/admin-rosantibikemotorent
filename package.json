@@ -9,7 +9,9 @@
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		"format": "prettier --write .",
+		"lint": "prettier --check ."
 	},
 	"devDependencies": {
 		"@lucide/svelte": "^1.22.0",
@@ -17,29 +19,26 @@
 		"@sveltejs/kit": "^2.68.0",
 		"@sveltejs/vite-plugin-svelte": "^6.2.4",
 		"@tailwindcss/vite": "^4.3.2",
-		"autoprefixer": "^10.5.2",
-		"postcss": "^8.5.16",
+		"@types/node": "^26.1.2",
 		"svelte": "^5.56.4",
 		"svelte-check": "^4.7.1",
 		"tailwindcss": "^4.3.2",
 		"typescript": "^5.9.3",
 		"vite": "^7.3.6",
-		"vite-plugin-compression": "^0.5.1"
+		"vite-plugin-compression": "^0.5.1",
+		"prettier": "^3.9.4",
+		"prettier-plugin-svelte": "^3.5.2"
 	},
 	"dependencies": {
-		"@tiptap/core": "^3.27.1",
-		"@tiptap/extension-highlight": "^3.27.1",
-		"@tiptap/extension-image": "^3.27.1",
-		"@tiptap/extension-link": "^3.27.1",
-		"@tiptap/extension-text-align": "^3.27.1",
-		"@tiptap/extension-underline": "^3.27.1",
-		"@tiptap/extension-youtube": "^3.27.1",
-		"@tiptap/pm": "^3.27.1",
-		"@tiptap/starter-kit": "^3.27.1",
 		"@xyflow/svelte": "^1.6.1",
 		"date-fns": "^4.4.0",
 		"flowbite-typography": "^1.0.5",
 		"socket.io-client": "^4.8.3",
 		"tailwind-merge": "^3.6.0"
+	},
+	"knip": {
+		"ignoreDependencies": [
+			"prettier-plugin-svelte"
+		]
 	}
 }

@@ -1,4 +1,4 @@
-import api from "./client";
+import { api } from "./client";
 import type { WhatsappStatus, WhatsappSessionStatusResponse } from "$lib/types";
 
 export const whatsappApi = {

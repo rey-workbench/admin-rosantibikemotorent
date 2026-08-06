@@ -10,8 +10,6 @@
         Settings,
         Users,
         Bike,
-        Zap,
-        HelpCircle,
         LogOut,
         ChevronDown,
         ChevronRight,
@@ -21,9 +19,9 @@
     import { authApi } from "$lib/api";
     import { authStore } from "$lib/stores/auth";
     import { goto } from "$app/navigation";
-    import { slide } from "svelte/transition";
     import { toast } from "$lib/stores/toast";
-
+    import { slide } from "svelte/transition";
+    
     const navItems = [
         { path: "/", label: "Dashboard", icon: LayoutDashboard },
         {

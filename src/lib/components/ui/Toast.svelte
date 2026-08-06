@@ -1,6 +1,5 @@
 <script lang="ts">
-    import { toast } from "$lib/stores/toast";
-    import {
+        import {
         X,
         CheckCircle,
         AlertCircle,
@@ -9,6 +8,7 @@
     } from "@lucide/svelte";
     import { fly } from "svelte/transition";
     import { flip } from "svelte/animate";
+    import { toast as toastStore } from "$lib/stores/toast";
 
     function getIcon(type: string) {
         switch (type) {
@@ -53,7 +53,7 @@
 <div
     class="fixed top-20 right-4 z-50 flex flex-col gap-2 pointer-events-none max-w-[calc(100vw-2rem)]"
 >
-    {#each $toast as t (t.id)}
+    {#each $toastStore as t (t.id)}
         {@const SvelteComponent = getIcon(t.type)}
         <div
             animate:flip
@@ -74,7 +74,7 @@
             </p>
             <button
                 class="text-text-muted hover:text-text-primary transition-colors pt-1 shrink-0"
-                onclick={() => toast.remove(t.id)}
+                onclick={() => toastStore.remove(t.id)}
                 aria-label="Close"
             >
                 <X size={16} />

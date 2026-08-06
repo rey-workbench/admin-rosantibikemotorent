@@ -1,6 +1,6 @@
 <script lang="ts">
     import { Paperclip, Send, Loader2, Image, MapPin, X } from "@lucide/svelte";
-    import { Smile, UserPlus } from "@lucide/svelte";
+    import { UserPlus } from "@lucide/svelte";
 
     let {
         message = $bindable(""),
@@ -11,10 +11,10 @@
         locationLongitude = $bindable(""),
         replyMessage = null,
         onSend = () => {},
-        onSendSticker = (file: File) => {},
-        onSendContact = (name: string, number: string) => {},
+        onSendSticker = (_file: File) => {},
+        onSendContact = (_name: string, _number: string) => {},
         onCancelReply = () => {},
-        onTyping = (isTyping: boolean) => {},
+        onTyping = (_isTyping: boolean) => {},
     } = $props<{
         message: string;
         isSending: boolean;

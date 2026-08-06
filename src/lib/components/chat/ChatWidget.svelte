@@ -2,9 +2,9 @@
   import { MessageSquare, X } from "@lucide/svelte";
   import { onMount, onDestroy } from "svelte";
   import { transaksiApi, whatsappApi } from "$lib/api";
+    import { fade, fly, slide } from "svelte/transition";
+  import { websocketService } from "$lib/services/websocket";
   import { toast } from "$lib/stores/toast";
-  import { fade, fly, slide } from "svelte/transition";
-  import websocketService from "$lib/services/websocket";
 
   // UI Components
   import ChatHeader from "./ui/ChatHeader.svelte";
@@ -24,8 +24,7 @@
   let isLoadingMessages = $state(false);
   let replyMessage = $state<any>(null);
   let sessionStatus = $state<string>("disconnected");
-  let sessionStatusMessage = $state<string>("");
-  let qrCode = $state<string | null>(null);
+    let qrCode = $state<string | null>(null);
   let qrAttemptInfo = $state<string>(""); // e.g. "1/3"
   let isRequestingQr = $state(false);
 
@@ -41,21 +40,21 @@
   function setupWebSocket() {
     // Updated logic: combine listeners or use a cleaner approach
     unsubscribes.push(
-      websocketService.onWhatsAppMessageSent((data) => {
+      websocketService.onWhatsAppMessageSent((data: any) => {
         const targetId =
           selectedContact?.id?._serialized || selectedContact?.phone;
-        if (targetId && data.chatId?.includes(targetId.split("@")[0])) {
+        if (targetId && (data as any).chatId?.includes(targetId.split("@")[0])) {
           // Update optimistic message with real ID and status
           // Find the optimistic message (assuming it's the last one with a temp id or we match body)
           const index = chatMessages.findIndex(
-            (m) => m.id._serialized.startsWith("temp_") && m.body === data.body,
+            (m) => m.id._serialized.startsWith("temp_") && m.body === (data as any).body,
           );
           if (index !== -1) {
             const updated = { ...chatMessages[index] };
             updated.id = {
-              _serialized: data.messageId,
+              _serialized: (data as any).messageId,
               fromMe: true,
-              user: data.chatId.split("@")[0],
+              user: (data as any).chatId.split("@")[0],
             };
             updated.ack = 1; // Sent
             updated.t = Math.floor(Date.now() / 1000);
@@ -65,7 +64,7 @@
           loadContacts();
         }
       }),
-      websocketService.onWhatsAppMessage((data) => {
+      websocketService.onWhatsAppMessage((data: any) => {
         const fromId = data.from?.split("@")[0];
         const selectedId = selectedContact?.phone;
 
@@ -82,18 +81,17 @@
 
         if (data.type === "incoming") {
           loadContacts();
-          if (!isOpen) toast.info(`Pesan dari ${data.notifyName || fromId}`);
+          if (!isOpen) toast.info(`Pesan dari ${(data as any).notifyName || fromId}`);
         }
       }),
-      websocketService.onWhatsAppStatus((data) => {
-        sessionStatus = data.status;
-        sessionStatusMessage = data.message || "";
-        const match = data.message?.match(/(\d+\/\d+)/);
+      websocketService.onWhatsAppStatus((data: any) => {
+        sessionStatus = (data as any).status;
+                const match = (data as any).message?.match(/(\d+\/\d+)/);
         if (match) qrAttemptInfo = match[1];
-        if (data.status === "disconnected") {
+        if ((data as any).status === "disconnected") {
           toast.warning("WhatsApp Terputus");
         }
-        if (data.status === "qr_timeout") {
+        if ((data as any).status === "qr_timeout") {
           qrCode = null;
           qrAttemptInfo = "";
           toast.warning(
@@ -101,7 +99,7 @@
           );
         }
       }),
-      websocketService.onWhatsAppQrCode((data) => {
+      websocketService.onWhatsAppQrCode((data: any) => {
         qrCode = data.qrCode;
         if (qrCode) sessionStatus = "connecting";
       }),

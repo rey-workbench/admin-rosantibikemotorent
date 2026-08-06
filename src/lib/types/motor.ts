@@ -32,9 +32,3 @@ export interface UnitMotorUpdate {
   data?: unknown;
   id?: string;
 }
-
-export interface AvailabilityCheckParams {
-  startDate: string;
-  endDate: string;
-  unitId?: string;
-}

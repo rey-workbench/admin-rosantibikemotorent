@@ -2,14 +2,10 @@
   import { onMount } from "svelte";
   import { RefreshCw, Power, Send, QrCode } from "@lucide/svelte";
   import { whatsappApi } from "$lib/api";
-  import {
-    socketConnected,
-    whatsappStatus,
-    transaksiNotifications,
-  } from "$lib/services/websocket";
-  import websocketService from "$lib/services/websocket";
-  import { toast } from "$lib/stores/toast";
-  import type { WhatsappStatus, WhatsappConnectionStatus } from "$lib/types";
+  import { socketConnected, whatsappStatus } from "$lib/stores/websocket";
+  import { websocketService } from "$lib/services/websocket";
+	import { toast } from "$lib/stores/toast";
+    import type { WhatsappConnectionStatus } from "$lib/types";
   import {
     Card,
     CardBody,
@@ -40,7 +36,7 @@
     }
 
     // Subscribe to real-time transaksi notifications
-    const unsubscribe = websocketService.onTransaksiCreated((transaksi) => {
+    const unsubscribe = websocketService.onTransaksiCreated((transaksi: any) => {
       toast.success(
         `Booking baru: ${transaksi.namaPenyewa} - ${transaksi.unitMotor.platNomor}`,
       );
@@ -78,7 +74,7 @@
     try {
       const res = await whatsappApi.getQrCode();
       const newQrCode = res.qrcode;
-      whatsappStatus.update((s) => ({
+      whatsappStatus.update((s: any) => ({
         ...s,
         qrCode: newQrCode,
         hasQrCode: !!newQrCode,

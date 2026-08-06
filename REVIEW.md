@@ -7,6 +7,7 @@
 ### 1. Dashboard (`/`)
 
 Pada halaman dashboard, admin bisa melihat:
+
 - Ringkasan jumlah unit motor yang tersedia
 - Jumlah transaksi yang sudah selesai
 - Persentase efisiensi (transaksi selesai vs total unit)
@@ -20,6 +21,7 @@ Pada halaman dashboard, admin bisa melihat:
 ### 2. Login (`/login`)
 
 Pada halaman login, admin bisa:
+
 - Masuk dengan username dan password
 - Checklist "Ingat saya" (fitur belum berfungsi - hanya UI)
 - Redirect otomatis ke dashboard kalau sudah login
@@ -31,6 +33,7 @@ Pada halaman login, admin bisa:
 ### 3. Jenis Motor (`/motor`)
 
 Pada halaman jenis motor, admin bisa:
+
 - Melihat daftar semua jenis motor (merk, model, CC, harga sewa per hari)
 - Cari motor berdasarkan merk atau model
 - Tambah jenis motor baru (isi merk, model, CC, harga sewa, upload gambar)
@@ -44,6 +47,7 @@ Pada halaman jenis motor, admin bisa:
 ### 4. Unit Motor (`/motor/unit`)
 
 Pada halaman unit motor, admin bisa:
+
 - Melihat semua unit motor (plat nomor), dikelompokkan per merk
 - Tambah unit motor baru (pilih jenis motor dulu, isi plat nomor, tahun)
 - Edit unit motor
@@ -57,6 +61,7 @@ Sama pattern dengan halaman Jenis Motor.
 ### 5. Transaksi (`/transaksi`)
 
 Pada halaman transaksi, admin bisa:
+
 - Melihat semua transaksi sewa
 - Filter berdasarkan status (semua / pending / aktif / selesai / overdue)
 - Buat transaksi baru
@@ -73,6 +78,7 @@ Pada halaman transaksi, admin bisa:
 ### 6. Buat Transaksi (`/transaksi/new`)
 
 Pada halaman buat transaksi, admin bisa:
+
 - Isi data penyewa (nama lengkap, nomor WhatsApp)
 - Pilih motor yang tersedia (dropdown)
 - Pilih tanggal mulai dan selesai
@@ -89,12 +95,14 @@ Pada halaman buat transaksi, admin bisa:
 ### 7. Detail Transaksi / Invoice (`/transaksi/[id]`)
 
 Pada halaman detail transaksi, admin bisa:
+
 - Lihat invoice lengkap (nama penyewa, motor, tanggal, rincian biaya)
 - Print invoice (tombol Cetak Invoice - membuka print dialog)
 - Lihat QRIS untuk pembayaran (kalau status PENDING)
 - Lihat status sudah lunas atau belum
 
 **Invoice berisi:**
+
 - Nama perusahaan: ROSANTIBIKE MOTORENT
 - Alamat dan kontak
 - Data penyewa dan motor
@@ -107,6 +115,7 @@ Pada halaman detail transaksi, admin bisa:
 ### 8. Blog (`/blog`)
 
 Pada halaman blog, admin bisa:
+
 - Melihat semua artikel
 - Filter berdasarkan status (Published/Draft)
 - Tulis artikel baru
@@ -122,6 +131,7 @@ Sama pattern dengan halaman Jenis Motor.
 Pada halaman WhatsApp, admin bisa:
 
 **Tab Koneksi:**
+
 - Cek status koneksi WhatsApp (connected/ disconnect/connecting)
 - Klik "Get QR" untuk dapat QR Code
 - Scan QR dengan HP untuk koneksi
@@ -129,12 +139,15 @@ Pada halaman WhatsApp, admin bisa:
 - Logout (putus koneksi)
 
 **Tab Templates:**
+
 - Kelola pesan template yang bisa dikirim
 
 **Tab Workflows:**
+
 - Buat workflow automasi (auto reply, auto booking, dll)
 
 **Fitur Tersedia:**
+
 - WhatsApp Chat Widget melayang (bisa chatting sama customer)
 - Notifikasi real-time kalau ada booking baru via WhatsApp
 
@@ -145,6 +158,7 @@ Pada halaman WhatsApp, admin bisa:
 ### 10. Settings (`/settings`)
 
 Pada halaman settings, admin bisa:
+
 - Edit nama website
 - Edit deskripsi
 - Edit nomor telepon
@@ -159,6 +173,7 @@ Pada halaman settings, admin bisa:
 ### 11. Kelola Admin (`/admin`)
 
 Pada halaman kelola admin, admin bisa:
+
 - Melihat daftar semua admin
 - Tambah admin baru (isi username, nama, email, password)
 - Edit data admin
@@ -169,6 +184,7 @@ Pada halaman kelola admin, admin bisa:
 ### 12. Queue Monitor (`/queue`)
 
 Pada halaman queue monitor, admin bisa:
+
 - Melihat semua queue yang berjalan (whatsapp, email, dll)
 - Lihat jumlah job per queue: waiting, active, completed, failed, delayed
 - Pause/Resume queue
@@ -184,12 +200,14 @@ Pada halaman queue monitor, admin bisa:
 Pada halaman AI, admin bisa:
 
 **Tab AI Playground:**
+
 - Chat simulator untuk test respons bot sepertiWhatsApp
 - Toggle WNA mode (kalau customer luar Indonesia)
 - Lihat debug info - knowledge base matches yang dipake
 - Lihat format pesan WhatsApp (bold, italic, code)
 
 **Tab Knowledge Base:**
+
 - Melihat semua FAQ yang dikenali bot
 - Tambah knowledge baru (question + answer + kategori)
 - Edit knowledge yang ada
@@ -199,6 +217,7 @@ Pada halaman AI, admin bisa:
 **Kategorinya:** Syarat & Ketentuan, Fasilitas, Lokasi & Antar Jemput, Pembayaran, Denda & Telat, Umum
 
 **Cara Kerja Bot:**
+
 1. Customer kirim pertanyaan
 2. Bot cari knowledge yang paling match
 3. AI gabungin sama conversation context
@@ -211,6 +230,7 @@ Pada halaman AI, admin bisa:
 ### 14. Availability Calendar (`/availability`)
 
 Pada halaman availability calendar, admin bisa:
+
 - Melihat kalender ketersediaan per bulan
 - Navigasi bulan (tombol kiri/kanan)
 - Filter per merek motor
@@ -218,6 +238,7 @@ Pada halaman availability calendar, admin bisa:
 - Tooltip menampilkan detail penyewa
 
 **Visual:**
+
 - Hijau = Tersedia (klik untuk booking)
 - Merah = Sedang disewa atau overdue
 - Abu-abu = Service atau tidak diketahui
@@ -226,29 +247,30 @@ Pada halaman availability calendar, admin bisa:
 
 ## Components yang Tersedia
 
-| Component | Gunanya |
-|-----------|--------|
-| `Card` | Card/wrapper |
-| `Button` | Tombol (primary/secondary/danger/success/warning) |
-| `Input` | Input teks dengan label |
-| `Select` | Dropdown |
-| `DataTable` | Tabel data |
-| `Badge` | Status badges |
-| `Modal` | Popup dialog |
-| `Loading` | Spinner loading |
-| `EmptyState` | Kalau data kosong |
-| `Form` | Wrapper form (include back button + submit) |
-| `Toast` | Notifikasi sukses/error |
-| `ConfirmModal` | Dialog konfirmasi (untuk hapus dll) |
-| `FileUpload` | Upload file/gambar |
-| `Alert` | Alert messages |
-| `Tabs` | Tab navigation |
+| Component      | Gunanya                                           |
+| -------------- | ------------------------------------------------- |
+| `Card`         | Card/wrapper                                      |
+| `Button`       | Tombol (primary/secondary/danger/success/warning) |
+| `Input`        | Input teks dengan label                           |
+| `Select`       | Dropdown                                          |
+| `DataTable`    | Tabel data                                        |
+| `Badge`        | Status badges                                     |
+| `Modal`        | Popup dialog                                      |
+| `Loading`      | Spinner loading                                   |
+| `EmptyState`   | Kalau data kosong                                 |
+| `Form`         | Wrapper form (include back button + submit)       |
+| `Toast`        | Notifikasi sukses/error                           |
+| `ConfirmModal` | Dialog konfirmasi (untuk hapus dll)               |
+| `FileUpload`   | Upload file/gambar                                |
+| `Alert`        | Alert messages                                    |
+| `Tabs`         | Tab navigation                                    |
 
 ---
 
 ## Patterns yang Dipakai
 
 **Yang Bagus:**
+
 - Form wrapper pattern (otomatis back + submit button)
 - Confirm dialog untuk aksi berbahaya (hapus)
 - Toast untuk feedback sukses/error
@@ -256,6 +278,7 @@ Pada halaman availability calendar, admin bisa:
 - WebSocket untuk real-time updates
 
 **Yang Perlu Dibiarkan/Benerin:**
+
 - Settings - UI ada, API belum
 - Pagination belum ada (ambil 100 sekaligus)
 - Filter debouncing belum ada (langsung reload)
@@ -276,4 +299,4 @@ Pada halaman availability calendar, admin bisa:
 
 ---
 
-*Generated: 2026-04-19*
+_Generated: 2026-04-19_

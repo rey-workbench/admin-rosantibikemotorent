@@ -1,23 +1,22 @@
 <script lang="ts">
   import { onMount, onDestroy } from "svelte";
   import { Send, Phone, X } from "@lucide/svelte";
-  import { whatsappMessages } from "$lib/services/websocket";
-  import websocketService from "$lib/services/websocket";
+  import { whatsappMessages } from "$lib/stores/websocket";
+  import { websocketService } from "$lib/services/websocket";
   import { whatsappApi } from "$lib/api";
-  import { Button, Input, Badge } from "$lib/components/ui";
-  import { toast } from "$lib/stores/toast";
-
+  import { Button, Badge } from "$lib/components/ui";
+  
   let isOpen = $state(false);
   let messageInput = $state("");
   let selectedChat = $state<string | null>(null);
   let selectedChatName = $state<string>("");
   let isSending = $state(false);
-  let unreadCount = $derived($whatsappMessages.filter(m => !m.fromMe).length);
+  let unreadCount = $derived($whatsappMessages.filter((m: any) => !m.fromMe).length);
 
   let unsubscribe: (() => void) | null = null;
 
   onMount(() => {
-    unsubscribe = websocketService.onWhatsAppMessage((message) => {
+    unsubscribe = websocketService.onWhatsAppMessage((message: any) => {
       if (!message.fromMe && 'Notification' in window && Notification.permission === 'granted') {
         new Notification(message.notifyName || message.from, {
           body: message.body,
@@ -69,7 +68,7 @@
   function getUniqueChats() {
     const chatsMap = new Map();
     
-    $whatsappMessages.forEach(msg => {
+    $whatsappMessages.forEach((msg: any) => {
       const key = msg.from;
       if (!chatsMap.has(key)) {
         chatsMap.set(key, {
@@ -160,7 +159,7 @@
 
           <!-- Messages -->
           <div class="flex-1 overflow-y-auto p-4 space-y-2">
-            {#each $whatsappMessages.filter(m => m.from === selectedChat) as message}
+            {#each $whatsappMessages.filter((m: any) => m.from === selectedChat) as message}
               <div class="flex {message.fromMe ? 'justify-end' : 'justify-start'}">
                 <div
                   class="max-w-[80%] rounded-lg p-3 {message.fromMe

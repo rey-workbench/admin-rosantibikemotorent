@@ -1,20 +1,19 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { whatsappApi } from "$lib/api";
+	import { toast } from "$lib/stores/toast";
     import {
         Card,
         CardBody,
         CardHeader,
         Button,
-        Table,
         Badge,
         Modal,
         Input,
         Textarea,
     } from "$lib/components/ui";
     import { Plus, Pencil, Trash2, RefreshCw } from "@lucide/svelte";
-    import { toast } from "$lib/stores/toast";
-    import { confirm } from "$lib/stores/confirm";
+        import { confirm } from "$lib/stores/confirm";
 
     let templates: any[] = $state([]);
     let isLoading = $state(false);

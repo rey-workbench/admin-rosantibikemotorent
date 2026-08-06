@@ -20,7 +20,7 @@
     import { authStore } from "$lib/stores/auth";
     import { goto } from "$app/navigation";
     import { toast } from "$lib/stores/toast";
-
+    
     // Main bottom tabs
     const mainTabs = [
         { path: "/", label: "Home", icon: LayoutDashboard },

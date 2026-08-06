@@ -1,10 +1,10 @@
 <script lang="ts">
-    import { Search, Send, User, Check, CheckCheck, Plus } from "@lucide/svelte";
+    import { Search, Send, Check, CheckCheck, Plus } from "@lucide/svelte";
 
     // Props
     let {
         contacts = [],
-        onSelect = (contact: any) => {},
+        onSelect = (_contact: any) => {},
         onNewContact = () => {},
         onDirectMessage = () => {},
     } = $props<{

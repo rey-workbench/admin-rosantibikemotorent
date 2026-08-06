@@ -1,8 +1,7 @@
 <script lang="ts">
-  import { onMount, untrack } from "svelte";
+  import { onMount } from "svelte";
   import {
-    Plus, Save, Trash2, Edit2, Zap, LayoutGrid, Terminal, HelpCircle, 
-    LayoutTemplate, MessageSquare, ListTree,
+    Plus, Save, Trash2, Edit2, Zap, LayoutGrid, ListTree,
     Bike, DollarSign, FileText, Search, CreditCard, Landmark, RefreshCw
   } from "@lucide/svelte";
   import { 
@@ -19,8 +18,8 @@
   import Input from "$lib/components/ui/Input.svelte";
   import Modal from "$lib/components/ui/Modal.svelte";
   import { whatsappApi } from "$lib/api";
-  import { toast } from "$lib/stores/toast";
-  import { confirm } from "$lib/stores/confirm";
+	import { toast } from "$lib/stores/toast";
+    import { confirm } from "$lib/stores/confirm";
   
   import TriggerNode from "./nodes/TriggerNode.svelte";
   import ActionNode from "./nodes/ActionNode.svelte";
@@ -61,8 +60,7 @@
   });
 
   // Derived selected workflow
-  let selectedWorkflow = $derived(workflows.find(w => w.id === selectedId));
-
+  
   // ─── Initialization ────────────────────────────────────────────────────────
   onMount(async () => {
     isLoading = true;

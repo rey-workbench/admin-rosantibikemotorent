@@ -1,8 +1,7 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import { onMount } from "svelte";
-  import { Calculator } from "@lucide/svelte";
-  import { unitMotorApi, transaksiApi } from "$lib/api";
+    import { unitMotorApi, transaksiApi } from "$lib/api";
   import type { UnitMotor, StatusTransaksi } from "$lib/types";
   import { Form, Input, Select } from "$lib/components/ui";
   import { formatCurrency } from "$lib/utils/formatters";
@@ -20,8 +19,7 @@
 
   let units: UnitMotor[] = $state([]);
   let isSaving = $state(false);
-  let isCalculating = $state(false);
-  let estimasiBiaya = $state<number | null>(null);
+    let estimasiBiaya = $state<number | null>(null);
   let rincian = $state<any>(null);
   let errorMsg = $state<string | null>(null);
 
@@ -36,7 +34,7 @@
       rincian = null;
       return;
     }
-    isCalculating = true;
+    
     try {
       const res = await transaksiApi.calculatePrice({
         unitId,
@@ -54,20 +52,12 @@
       estimasiBiaya = null;
       rincian = null;
     } finally {
-      isCalculating = false;
+      
     }
   }
 
   $effect(() => {
-    const _deps = {
-      unitId,
-      tanggalMulai,
-      tanggalSelesai,
-      jamMulai,
-      jamSelesai,
-      helm,
-      jasHujan,
-    };
+    
     handleCalculate();
   });
 

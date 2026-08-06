@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { Modal, Button } from "./";
+    import { Button } from "./";
     import { AlertTriangle, Info, CheckCircle2, XCircle } from "@lucide/svelte";
     import { fade, scale } from "svelte/transition";
 

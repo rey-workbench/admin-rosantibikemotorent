@@ -3,7 +3,6 @@
     import { unitMotorApi } from "$lib/api";
     import { fade } from "svelte/transition";
     import {
-        Calendar,
         ChevronLeft,
         ChevronRight,
         Filter,
@@ -304,7 +303,7 @@
                                         {unit.platNomor}
                                     </div>
                                 </td>
-                                {#each unit.availability as status, i}
+                                {#each unit.availability as status}
                                     {@const isAvailable = status.isAvailable}
                                     <!-- We match status against the day. If status.date matches monthDays[i].date ISOString -->
                                     <td

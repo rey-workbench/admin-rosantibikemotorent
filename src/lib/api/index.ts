@@ -1,13 +1,9 @@
-export { default as api } from './client';
-export * from './base';
-
-export * from './auth';
-export * from './admin';
-export * from './jenis-motor';
-export * from './unit-motor';
-export * from './transaksi';
-export * from './blog';
-export * from './whatsapp';
-export * from './queue';
-export * from './redis';
-export * from './ai';
+export * from "./auth";
+export * from "./admin";
+export * from "./jenis-motor";
+export * from "./unit-motor";
+export * from "./transaksi";
+export * from "./blog";
+export * from "./whatsapp";
+export * from "./queue";
+export * from "./ai";

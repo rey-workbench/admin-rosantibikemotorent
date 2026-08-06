@@ -8,7 +8,7 @@
   import { Toast, ConfirmModal } from "$lib/components/ui";
   import { authStore } from "$lib/stores/auth";
   import { confirm } from "$lib/stores/confirm";
-  import websocketService from "$lib/services/websocket";
+  import { websocketService } from "$lib/services/websocket";
 
   let { children } = $props();
 
