@@ -28,6 +28,7 @@ export default defineConfig({
     include: ["@lucide/svelte", "clsx", "tailwind-merge"], // Tambahkan library UI rentalmu di sini
   },
   build: {
+    sourcemap: false,
     rollupOptions: {
       output: {
         manualChunks: (id) => {
