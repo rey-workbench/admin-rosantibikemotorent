@@ -40,14 +40,16 @@ export const handle: Handle = async ({ event, resolve }) => {
   response.headers.set("X-Frame-Options", "DENY");
 
   const API_URL = env.API_URL || env.VITE_WS_URL || env.VITE_API_URL?.replace(/\/api$/, '') || "http://localhost:3030";
-  const wsUrl = API_URL.replace(/^http/, "ws");
-  const wssUrl = API_URL.replace(/^http/, "wss");
+  // Build scheme variants from the base URL (http -> ws/wss, https -> wss).
+  const wsUrl = API_URL.replace(/^http:/, "ws:");
+  const wssUrl = API_URL.replace(/^https:/, "wss:").replace(/^http:/, "wss:");
   const apiUrlHttps = API_URL.replace(/^http:/, "https:");
 
   response.headers.set(
     "Content-Security-Policy",
-    `default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' ${API_URL} ${apiUrlHttps} ${wsUrl} ${wssUrl}; object-src 'none';`,
+    `default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' ${API_URL} ${apiUrlHttps} ${wsUrl} ${wssUrl}; object-src 'none';`,
   );
+  response.headers.set("Strict-Transport-Security", "max-age=63072000; includeSubDomains");
 
   return response;
 };
