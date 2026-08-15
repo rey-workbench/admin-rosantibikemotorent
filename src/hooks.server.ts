@@ -39,17 +39,30 @@ export const handle: Handle = async ({ event, resolve }) => {
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("X-Frame-Options", "DENY");
 
-  const API_URL = env.API_URL || env.VITE_WS_URL || env.VITE_API_URL?.replace(/\/api$/, '') || "http://localhost:3030";
-  // Build scheme variants from the base URL (http -> ws/wss, https -> wss).
-  const wsUrl = API_URL.replace(/^http:/, "ws:");
-  const wssUrl = API_URL.replace(/^https:/, "wss:").replace(/^http:/, "wss:");
-  const apiUrlHttps = API_URL.replace(/^http:/, "https:");
+  const rawApiUrl = env.API_URL || env.VITE_WS_URL || env.VITE_API_URL?.replace(/\/api$/, '') || "http://localhost:3030";
+  let apiOrigin = "http://localhost:3030";
+  let wsOrigin = "ws://localhost:3030";
+  try {
+    const parsed = new URL(rawApiUrl);
+    apiOrigin = parsed.origin;
+    wsOrigin = parsed.origin.replace(/^http:/, "ws:").replace(/^https:/, "wss:");
+  } catch {}
+
+  const connectSrcList = Array.from(new Set(["'self'", apiOrigin, wsOrigin])).join(" ");
 
   response.headers.set(
     "Content-Security-Policy",
-    `default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' ${API_URL} ${apiUrlHttps} ${wsUrl} ${wssUrl}; object-src 'none';`,
+    `default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src ${connectSrcList}; object-src 'none'; frame-ancestors 'none';`,
   );
   response.headers.set("Strict-Transport-Security", "max-age=63072000; includeSubDomains");
 
   return response;
+};
+
+export const handleError = ({ error }: { error: unknown }) => {
+  // Server-only log to avoid exposing trace details to client
+  console.error("Admin server error:", error);
+  return {
+    message: "Terjadi kesalahan internal.",
+  };
 };
