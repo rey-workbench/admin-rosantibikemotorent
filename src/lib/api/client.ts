@@ -54,8 +54,6 @@ function buildHeadersAndBody(data?: any, customHeaders?: any) {
     ...(customHeaders || {}),
   };
 
-  // Admin dashboard: kirim token via Authorization header (bukan cookie),
-  // supaya kredensial admin tidak ikut terkirim ke api.* di luar dashboard.
   const token = getToken();
   if (token && !headers["Authorization"] && !headers["authorization"]) {
     headers["Authorization"] = `Bearer ${token}`;
