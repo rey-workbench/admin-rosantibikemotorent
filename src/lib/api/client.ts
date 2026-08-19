@@ -34,6 +34,23 @@ export function clearToken(): void {
   sessionStorage.removeItem(TOKEN_KEY);
 }
 
+const SESSION_COOKIE = "accessToken";
+
+function sessionCookieOptions(): string {
+  const secure = browser && window.location.protocol === "https:" ? "; Secure" : "";
+  return `; Path=/; SameSite=Lax${secure}; Max-Age=604800`;
+}
+
+export function setSessionCookie(token: string): void {
+  if (!browser) return;
+  document.cookie = `${SESSION_COOKIE}=${encodeURIComponent(token)}${sessionCookieOptions()}`;
+}
+
+export function clearSessionCookie(): void {
+  if (!browser) return;
+  document.cookie = `${SESSION_COOKIE}=; Path=/; Max-Age=0`;
+}
+
 function buildUrl(url: string, params?: any): string {
   let fetchUrl = `${API_BASE_URL}${url}`;
   if (!params) return fetchUrl;
@@ -110,6 +127,8 @@ function handleError(error: any): never {
     const message = error.response?.data?.message;
 
     if (status === 401) {
+      clearToken();
+      clearSessionCookie();
       if (browser && window.location.pathname !== "/login") {
         window.location.href = "/login";
       }

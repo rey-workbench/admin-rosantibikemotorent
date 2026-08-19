@@ -1,7 +1,14 @@
 import { writable } from "svelte/store";
 import { browser } from "$app/environment";
 import type { Admin } from "$lib/types";
-import { api, clearToken, getToken, setToken } from "$lib/api/client";
+import {
+  api,
+  clearSessionCookie,
+  clearToken,
+  getToken,
+  setSessionCookie,
+  setToken,
+} from "$lib/api/client";
 
 interface AuthState {
   admin: Admin | null;
@@ -44,10 +51,12 @@ function createAuthStore() {
     },
     login: (admin: Admin, token: string) => {
       setToken(token);
+      setSessionCookie(token);
       set({ admin, isLoading: false });
     },
     logout: async () => {
       clearToken();
+      clearSessionCookie();
       if (browser) {
         try {
           await api.post("/auth/logout");
