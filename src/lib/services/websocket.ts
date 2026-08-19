@@ -1,5 +1,6 @@
 import { io, type Socket } from "socket.io-client";
 import { browser } from "$app/environment";
+import { getToken } from "$lib/api/client";
 import {
   socketConnected,
   whatsappStatus,
@@ -81,6 +82,7 @@ class WebSocketService {
 
     this.socket = io(`${apiUrl}/realtime`, {
       transports: ["websocket"],
+      auth: { token: getToken() },
       reconnection: true,
       reconnectionAttempts: 5,
       reconnectionDelay: 2000,

@@ -16,7 +16,7 @@
 
         try {
             const response = await authApi.login({ username, password });
-            authStore.login(response.admin);
+            authStore.login(response.admin, response.token);
             goto("/");
         } catch (err: any) {
             console.error("Login error:", err);

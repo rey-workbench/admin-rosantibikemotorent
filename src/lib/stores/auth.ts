@@ -1,7 +1,7 @@
 import { writable } from "svelte/store";
 import { browser } from "$app/environment";
 import type { Admin } from "$lib/types";
-import { api } from "$lib/api/client";
+import { api, clearToken, getToken, setToken } from "$lib/api/client";
 
 interface AuthState {
   admin: Admin | null;
@@ -24,22 +24,30 @@ function createAuthStore() {
         set({ admin: null, isLoading: false });
         return;
       }
+      if (!getToken()) {
+        set({ admin: null, isLoading: false });
+        return;
+      }
       try {
         const response = await api.get("/auth/me");
         const admin = response?.data?.admin || response?.data?.data?.admin;
         if (admin) {
           set({ admin, isLoading: false });
         } else {
+          clearToken();
           set({ admin: null, isLoading: false });
         }
       } catch (error) {
+        clearToken();
         set({ admin: null, isLoading: false });
       }
     },
-    login: (admin: Admin) => {
+    login: (admin: Admin, token: string) => {
+      setToken(token);
       set({ admin, isLoading: false });
     },
     logout: async () => {
+      clearToken();
       if (browser) {
         try {
           await api.post("/auth/logout");

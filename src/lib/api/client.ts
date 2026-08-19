@@ -16,6 +16,24 @@ if (!rawUrl) {
 }
 const API_BASE_URL = rawUrl.endsWith("/api") ? rawUrl : `${rawUrl}/api`;
 
+const TOKEN_KEY = "accessToken";
+
+export function getToken(): string | null {
+  if (!browser) return null;
+  return localStorage.getItem(TOKEN_KEY) || sessionStorage.getItem(TOKEN_KEY);
+}
+
+export function setToken(token: string): void {
+  if (!browser) return;
+  localStorage.setItem(TOKEN_KEY, token);
+}
+
+export function clearToken(): void {
+  if (!browser) return;
+  localStorage.removeItem(TOKEN_KEY);
+  sessionStorage.removeItem(TOKEN_KEY);
+}
+
 function buildUrl(url: string, params?: any): string {
   let fetchUrl = `${API_BASE_URL}${url}`;
   if (!params) return fetchUrl;
@@ -35,6 +53,13 @@ function buildHeadersAndBody(data?: any, customHeaders?: any) {
   const headers: Record<string, string> = {
     ...(customHeaders || {}),
   };
+
+  // Admin dashboard: kirim token via Authorization header (bukan cookie),
+  // supaya kredensial admin tidak ikut terkirim ke api.* di luar dashboard.
+  const token = getToken();
+  if (token && !headers["Authorization"] && !headers["authorization"]) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
 
   // Provide an Origin header during SSR to pass backend CORS checks
   if (!browser && !headers["Origin"] && !headers["origin"]) {
