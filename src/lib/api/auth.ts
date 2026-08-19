@@ -1,5 +1,5 @@
 import { api } from "./client";
-import type { LoginCredentials, AuthResponse, Admin } from "$lib/types";
+import type { LoginCredentials, AuthResponse } from "$lib/types";
 
 export const authApi = {
   login: async (credentials: LoginCredentials): Promise<AuthResponse> => {
@@ -8,9 +8,5 @@ export const authApi = {
   },
   logout: async (): Promise<void> => {
     await api.post("/auth/logout");
-  },
-  getProfile: async (): Promise<{ admin: Admin }> => {
-    const { data: body } = await api.get("/auth/me");
-    return body.data;
   },
 };

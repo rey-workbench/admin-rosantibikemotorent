@@ -25,23 +25,10 @@ export const transaksiApi = {
     const { data: body } = await api.get(`/transaksi/${id}`);
     return body.data;
   },
-  searchByPhone: async (noWhatsapp: string): Promise<Transaksi[]> => {
-    const { data: body } = await api.get("/transaksi/search", {
-      params: { noHP: noWhatsapp },
-    });
-    return body.data;
-  },
   create: async (
     transaksi: Partial<Transaksi> & { generateQRISOnly?: boolean },
   ): Promise<Transaksi & { qrisBase64?: string }> => {
     const { data: body } = await api.post("/transaksi", transaksi);
-    return body.data;
-  },
-  update: async (
-    id: string,
-    transaksi: Partial<Transaksi>,
-  ): Promise<Transaksi> => {
-    const { data: body } = await api.patch(`/transaksi/${id}`, transaksi);
     return body.data;
   },
   selesaiSewa: async (id: string): Promise<Transaksi> => {

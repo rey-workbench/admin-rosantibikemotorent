@@ -1,10 +1,5 @@
 import { api } from "./client";
-import type {
-  BlogPost,
-  BlogKategori,
-  BlogTag,
-  PaginationMeta,
-} from "$lib/types";
+import type { BlogPost, PaginationMeta } from "$lib/types";
 
 export const blogApi = {
   getAll: async (filter?: {
@@ -18,14 +13,6 @@ export const blogApi = {
   },
   getById: async (id: string): Promise<BlogPost> => {
     const { data } = await api.get(`/blog/${id}`);
-    return data.data;
-  },
-  getKategori: async (): Promise<BlogKategori[]> => {
-    const { data } = await api.get("/blog/kategori");
-    return data.data;
-  },
-  getTags: async (): Promise<BlogTag[]> => {
-    const { data } = await api.get("/blog/tags");
     return data.data;
   },
   create: async (blog: FormData): Promise<BlogPost> => {
@@ -42,17 +29,5 @@ export const blogApi = {
   },
   delete: async (id: string): Promise<void> => {
     await api.delete(`/blog/${id}`);
-  },
-  uploadImage: async (file: File, blogId?: string): Promise<string> => {
-    const formData = new FormData();
-    formData.append("file", file);
-    const { data } = await api.post("/blog/upload", formData, {
-      params: { blogId },
-      headers: { "Content-Type": "multipart/form-data" },
-    });
-    return data.data.url;
-  },
-  deleteImage: async (url: string): Promise<void> => {
-    await api.delete("/blog/upload", { data: { url } });
   },
 };

@@ -15,12 +15,6 @@ export interface WhatsappStatus {
   timestamp?: Date;
 }
 
-export interface WhatsappSessionStatusResponse {
-  session: string;
-  status: WhatsappConnectionStatus;
-  qrCode?: string | null;
-}
-
 export interface WhatsAppMessageEvent {
   id: any;
   from: string;

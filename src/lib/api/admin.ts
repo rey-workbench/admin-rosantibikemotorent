@@ -6,10 +6,6 @@ export const adminApi = {
     const { data: body } = await api.get("/admin");
     return body.data;
   },
-  getById: async (id: string): Promise<Admin> => {
-    const { data: body } = await api.get(`/admin/${id}`);
-    return body.data;
-  },
   create: async (
     adminData: Partial<Admin> & { password: string },
   ): Promise<Admin> => {

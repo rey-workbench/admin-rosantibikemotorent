@@ -8,18 +8,6 @@ export interface QueueStatus {
   paused: boolean;
 }
 
-export interface QueueJob {
-  id: string;
-  name: string;
-  data: Record<string, unknown>;
-  status: string;
-  progress?: number;
-  timestamp: number;
-  processedOn?: number;
-  finishedOn?: number;
-  failedReason?: string;
-}
-
 export interface QueueUpdate {
   queue: string;
   jobId: string;

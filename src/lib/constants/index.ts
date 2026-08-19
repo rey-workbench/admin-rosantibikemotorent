@@ -22,8 +22,7 @@ const STATUS_VARIANTS = {
   DEFAULT: "default",
 } as const;
 
-export type BadgeVariant =
-  (typeof STATUS_VARIANTS)[keyof typeof STATUS_VARIANTS];
+type BadgeVariant = (typeof STATUS_VARIANTS)[keyof typeof STATUS_VARIANTS];
 
 export const TRANSAKSI_STATUS_VARIANTS: Record<string, BadgeVariant> = {
   PENDING_DP: "warning",
