@@ -16,39 +16,21 @@ if (!rawUrl) {
 }
 const API_BASE_URL = rawUrl.endsWith("/api") ? rawUrl : `${rawUrl}/api`;
 
-const TOKEN_KEY = "accessToken";
-
+// Auth token kini dikelola via httpOnly cookie (di-set backend saat login),
+// dikirim otomatis oleh browser (credentials: "include").
+// TIDAK menyimpan token di localStorage/sessionStorage (anti XSS theft).
+//
+// getToken() dipertahankan untuk kompatibilitas (mis. WebSocket) namun
+// tidak membaca storage apa pun — token httpOnly tidak bisa diakses JS.
 export function getToken(): string | null {
-  if (!browser) return null;
-  return localStorage.getItem(TOKEN_KEY) || sessionStorage.getItem(TOKEN_KEY);
-}
-
-export function setToken(token: string): void {
-  if (!browser) return;
-  localStorage.setItem(TOKEN_KEY, token);
+  return null;
 }
 
 export function clearToken(): void {
+  // Tidak ada lagi token di storage — bersihkan sisa legacy dari versi lama
   if (!browser) return;
-  localStorage.removeItem(TOKEN_KEY);
-  sessionStorage.removeItem(TOKEN_KEY);
-}
-
-const SESSION_COOKIE = "accessToken";
-
-function sessionCookieOptions(): string {
-  const secure = browser && window.location.protocol === "https:" ? "; Secure" : "";
-  return `; Path=/; SameSite=Lax${secure}; Max-Age=604800`;
-}
-
-export function setSessionCookie(token: string): void {
-  if (!browser) return;
-  document.cookie = `${SESSION_COOKIE}=${encodeURIComponent(token)}${sessionCookieOptions()}`;
-}
-
-export function clearSessionCookie(): void {
-  if (!browser) return;
-  document.cookie = `${SESSION_COOKIE}=; Path=/; Max-Age=0`;
+  localStorage.removeItem("accessToken");
+  sessionStorage.removeItem("accessToken");
 }
 
 function buildUrl(url: string, params?: any): string {
@@ -71,10 +53,8 @@ function buildHeadersAndBody(data?: any, customHeaders?: any) {
     ...(customHeaders || {}),
   };
 
-  const token = getToken();
-  if (token && !headers["Authorization"] && !headers["authorization"]) {
-    headers["Authorization"] = `Bearer ${token}`;
-  }
+  // Token dikirim otomatis via httpOnly cookie (credentials: "include")
+  // — tidak perlu Authorization header dari JS.
 
   // Provide an Origin header during SSR to pass backend CORS checks
   if (!browser && !headers["Origin"] && !headers["origin"]) {
@@ -124,14 +104,18 @@ async function parseResponse(response: Response, url: string, method: string) {
 function handleError(error: any): never {
   if (browser) {
     const status = error.response?.status;
-    const message = error.response?.data?.message;
+    const rawMsg = error.response?.data?.message;
+    const message = Array.isArray(rawMsg) ? rawMsg.join(", ") : rawMsg;
 
     if (status === 401) {
-      clearToken();
-      clearSessionCookie();
+      clearToken(); // bersihkan sisa legacy storage
       if (browser && window.location.pathname !== "/login") {
         window.location.href = "/login";
+      } else if (message && typeof message === "string" && message.length < 100) {
+        toast.error(message);
       }
+    } else if (status === 429) {
+      toast.error("Terlalu banyak percobaan. Silakan coba lagi nanti.");
     } else if (message && typeof message === "string" && message.length < 100) {
       toast.error(message);
     } else {

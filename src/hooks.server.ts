@@ -50,9 +50,13 @@ export const handle: Handle = async ({ event, resolve }) => {
 
   const connectSrcList = Array.from(new Set(["'self'", apiOrigin, wsOrigin])).join(" ");
 
+  // script-src tanpa 'unsafe-inline' — pakai nonce dari SvelteKit (mode: auto)
+  // sehingga inline script SvelteKit tetap jalan tapi inline script attacker diblokir.
+  const scriptNonce = event.csp?.nonce ? ` 'nonce-${event.csp.nonce}'` : "";
+
   response.headers.set(
     "Content-Security-Policy",
-    `default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src ${connectSrcList}; object-src 'none'; frame-ancestors 'none';`,
+    `default-src 'self'; script-src 'self'${scriptNonce}; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src ${connectSrcList}; object-src 'none'; frame-ancestors 'none';`,
   );
   response.headers.set("Strict-Transport-Security", "max-age=63072000; includeSubDomains");
 

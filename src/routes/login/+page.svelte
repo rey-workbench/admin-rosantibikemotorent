@@ -2,17 +2,19 @@
     import { goto } from "$app/navigation";
     import { authApi } from "$lib/api";
     import { authStore } from "$lib/stores/auth";
-    import { Button, Input } from "$lib/components/ui";
+    import { Button, Input, Alert } from "$lib/components/ui";
     import { LogIn, Bike, ShieldCheck, KeyRound } from "@lucide/svelte";
     import { fly } from "svelte/transition";
 
     let username = $state("");
     let password = $state("");
     let isLoading = $state(false);
+    let errorMessage = $state("");
 
     async function handleLogin(e: Event) {
         e.preventDefault();
         isLoading = true;
+        errorMessage = "";
 
         try {
             const response = await authApi.login({ username, password });
@@ -20,6 +22,19 @@
             goto("/");
         } catch (err: any) {
             console.error("Login error:", err);
+            const status = err.response?.status;
+            const resMsg = err.response?.data?.message;
+            if (status === 429) {
+                errorMessage = "Terlalu banyak percobaan login. Silakan tunggu 15 menit.";
+            } else if (Array.isArray(resMsg)) {
+                errorMessage = resMsg.join(", ");
+            } else if (typeof resMsg === "string" && resMsg.trim()) {
+                errorMessage = resMsg;
+            } else if (err.message && !err.message.includes("status code")) {
+                errorMessage = err.message;
+            } else {
+                errorMessage = "Username atau password salah";
+            }
         } finally {
             isLoading = false;
         }
@@ -79,6 +94,12 @@
                     Masuk untuk mengelola rental
                 </p>
             </div>
+
+            {#if errorMessage}
+                <div class="mb-5" in:fly={{ y: -8, duration: 300 }}>
+                    <Alert variant="danger" message={errorMessage} />
+                </div>
+            {/if}
 
             <form class="flex flex-col gap-5" onsubmit={handleLogin}>
                 <div class="space-y-4">
