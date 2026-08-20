@@ -76,7 +76,11 @@ class WebSocketService {
       import.meta.env.VITE_WS_URL ||
       import.meta.env.VITE_API_URL?.replace(/\/api$/, "");
     if (!apiUrl) {
-      apiUrl = `${window.location.protocol}//${window.location.hostname}:3030`;
+      if (browser && window.location.hostname.includes("rosantibikemotorent.com")) {
+        apiUrl = "https://api.rosantibikemotorent.com";
+      } else {
+        apiUrl = `${window.location.protocol}//${window.location.hostname}:3030`;
+      }
     }
 
     this.socket = io(`${apiUrl}/realtime`, {
