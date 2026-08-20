@@ -109,7 +109,7 @@
               bind:value={data.data!.text}
               placeholder="Write message..."
               rows="3"
-              class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all font-medium text-slate-700 resize-none custom-scrollbar"
+              class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-blue-500/20 outline-none transition-all font-medium text-slate-700 resize-none custom-scrollbar"
             ></textarea>
           </div>
         {:else}
@@ -117,7 +117,7 @@
             <div class="relative">
               <select
                 bind:value={data.data!.templateKey}
-                class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all font-medium text-slate-700 appearance-none pr-8"
+                class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-blue-500/20 outline-none transition-all font-medium text-slate-700 appearance-none pr-8"
               >
                 <option value="" disabled>Select Template...</option>
                 {#each (data.templates ?? []) as t}
@@ -136,7 +136,7 @@
         <div class="relative">
           <select
             bind:value={data.type}
-            class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all font-medium text-slate-700 appearance-none pr-8"
+            class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all font-medium text-slate-700 appearance-none pr-8"
           >
             {#each (data.systemActions ?? []) as action}
               <option value={action.value}>{action.label}</option>

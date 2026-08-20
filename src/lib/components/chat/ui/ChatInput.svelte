@@ -244,7 +244,7 @@
         </div>
 
         <div
-            class="flex-1 bg-bg-tertiary rounded-2xl flex items-center px-4 py-2 border border-transparent focus-within:border-primary/30 focus-within:ring-2 focus-within:ring-primary/10 transition-all"
+            class="flex-1 bg-bg-tertiary rounded-2xl flex items-center px-4 py-2 border border-transparent focus-within:ring-2 focus-within:ring-primary/10 transition-all"
         >
             <textarea
                 bind:value={message}
@@ -252,7 +252,7 @@
                 onkeydown={handleKeyDown}
                 placeholder="Ketik pesan..."
                 rows="1"
-                class="w-full bg-transparent border-none outline-none text-sm text-text-primary placeholder:text-text-muted resize-none max-h-32 py-2"
+                class="w-full bg-transparent border-none outline-none text-sm text-text-primary resize-none max-h-32 py-2"
                 style="min-height: 24px;"
             ></textarea>
         </div>

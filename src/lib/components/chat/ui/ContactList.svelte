@@ -74,7 +74,7 @@
                 type="text"
                 bind:value={searchQuery}
                 placeholder="Cari atau mulai chat baru"
-                class="w-full bg-bg-tertiary rounded-lg pl-9 pr-4 py-2 text-sm outline-none focus:ring-1 focus:ring-primary/30 transition-all text-text-primary placeholder:text-text-muted/70"
+                class="w-full bg-bg-tertiary rounded-lg pl-9 pr-4 py-2 text-sm outline-none focus:ring-1 focus:ring-primary/30 transition-all text-text-primary"
             />
         </div>
         <button

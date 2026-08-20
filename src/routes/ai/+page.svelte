@@ -368,13 +368,13 @@
 
                     <div class="p-3 border-t border-border/50 bg-bg-secondary/30">
                         <form class="flex gap-3 items-end" onsubmit={(e) => { e.preventDefault(); handleSendMessage(); }}>
-                            <div class="flex-1 bg-white rounded-xl px-4 py-2.5 border border-border/30 focus-within:border-primary/50 transition-colors shadow-sm">
+                            <div class="flex-1 bg-white rounded-xl px-4 py-2.5 border border-border/30 transition-colors shadow-sm">
                                 <input 
                                     id="test-message"
                                     bind:value={testMessage}
                                     placeholder="Ketik pesan untuk simulasi bot..."
                                     disabled={loading}
-                                    class="w-full bg-transparent outline-none text-sm text-text-primary placeholder:text-text-muted/60"
+                                    class="w-full bg-transparent outline-none text-sm text-text-primary"
                                 />
                             </div>
                             <button 

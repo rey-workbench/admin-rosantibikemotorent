@@ -1,6 +1,9 @@
 # BUKU PANDUAN PENGGUNA (MANUAL BOOK)
+
 # SISTEM OPERASIONAL DAN MANAJEMEN RENTAL MOTOR
+
 # ROSANTI BIKE MOTORENT
+
 ## EDISI REVISI TAHUN 2026
 
 ---
@@ -37,17 +40,19 @@ Tim Penyusun & Manajemen Rosanti Bike
 ## BAB 1. PENDAHULUAN & KETENTUAN UMUM
 
 ### 1.1 Latar Belakang & Tujuan Sistem
+
 Sistem Panel Administrasi Rosanti Bike Motorent adalah platform manajemen terpadu berbasis web yang dirancang untuk mengelola seluruh siklus bisnis persewaan motor: pencatatan pesanan, kalender ketersediaan armada, otomatisasi WhatsApp CRM, asisten pintar AI, hingga pengawasan beban server latar belakang.
 
 ### 1.2 Ketentuan Hak Akses Pengguna (Role Permission)
+
 Setiap staf memiliki akun pengguna dengan batasan hak akses sesuai tugas operasional:
 
-| Role Pengguna | Batasan & Wewenang Akses Menu |
-| :--- | :--- |
-| Super Admin | Akses penuh (100%): Pengaturan Sistem, Data Master, Kelola Admin, WhatsApp, dan Transaksi. |
-| Admin Operasional | Akses Transaksi Booking, Kalender Ketersediaan, WhatsApp Bot, dan Katalog Motor. |
-| Staf Kasir | Akses Pembuatan Transaksi Baru, Pembayaran Kasir, dan Validasi Identitas Penyewa. |
-| Teknisi / Mekanik | Akses Status Kesiapan Fisik Unit, Riwayat Servis, dan Pelaporan Kerusakan. |
+| Role Pengguna     | Batasan & Wewenang Akses Menu                                                              |
+| :---------------- | :----------------------------------------------------------------------------------------- |
+| Super Admin       | Akses penuh (100%): Pengaturan Sistem, Data Master, Kelola Admin, WhatsApp, dan Transaksi. |
+| Admin Operasional | Akses Transaksi Booking, Kalender Ketersediaan, WhatsApp Bot, dan Katalog Motor.           |
+| Staf Kasir        | Akses Pembuatan Transaksi Baru, Pembayaran Kasir, dan Validasi Identitas Penyewa.          |
+| Teknisi / Mekanik | Akses Status Kesiapan Fisik Unit, Riwayat Servis, dan Pelaporan Kerusakan.                 |
 
 ---
 
@@ -60,6 +65,7 @@ Gambar 2.1: Halaman Login Administrator Rosanti Bike
 Pada Gambar 2.1, kita dapat melihat halaman awal autentikasi sebelum masuk ke dalam panel admin. Halaman ini berfungsi untuk memverifikasi identitas pengguna resmi.
 
 Untuk mengakses sistem admin, ikuti langkah-langkah berikut:
+
 1. Buka aplikasi browser di komputer Anda (Google Chrome, Microsoft Edge, atau Mozilla Firefox).
 2. Ketikkan alamat website admin: https://admin.rosantibikemotorent.com pada kolom pencarian browser.
 3. Tunggu hingga layar menampilkan formulir login utama Rosanti Bike.
@@ -73,6 +79,7 @@ Gambar 2.2: Formulir Login Terisi dan Tombol Masuk
 Pada Gambar 2.2, kita dapat melihat contoh pengisian email dan kata sandi pengelola pada kolom login.
 
 Untuk melakukan login dan masuk ke panel, ikuti langkah-langkah berikut:
+
 1. Masukkan alamat email akun Anda pada kolom Email (contoh: admin@rosantibike.com).
 2. Masukkan kata sandi rahasia Anda pada kolom Password.
 3. Klik tombol Masuk ke Panel yang berwarna biru.
@@ -89,6 +96,7 @@ Gambar 3.1: Dasbor Statistik & Ringkasan Performa Rental
 Pada Gambar 3.1, kita dapat memantau ringkasan statistik sewa motor secara real-time, melihat jumlah motor yang siap disewa, motor yang sedang jalan, total transaksi, serta grafik pendapatan.
 
 Untuk membaca informasi pada Dasbor, ikuti langkah-langkah berikut:
+
 1. Klik menu Dashboard pada bilah menu di sebelah kiri.
 2. Periksa 4 kotak ringkasan di bagian atas layar:
    - Total Booking: Menampilkan akumulasi seluruh transaksi sewa yang tercatat.
@@ -107,6 +115,7 @@ Gambar 3.2: Halaman Daftar Transaksi Booking & Status Sewa
 Pada Gambar 3.2, kita dapat melihat daftar lengkap seluruh pesanan sewa pelanggan, melakukan pencarian data penyewa, memfilter status pesanan, serta mengubah status sewa kendaraan.
 
 Untuk mengelola transaksi booking, ikuti langkah-langkah berikut:
+
 1. Klik menu Transaksi pada bilah menu di sebelah kiri.
 2. Gunakan kolom pencarian di bagian atas tabel untuk mencari nama pelanggan, nomor telepon, atau plat nomor motor.
 3. Klik tab filter status di atas tabel untuk menyaring pesanan:
@@ -126,6 +135,7 @@ Gambar 3.3: Kalender Matriks Ketersediaan Armada Motor Real-Time
 Pada Gambar 3.3, kita dapat memantau ketersediaan seluruh unit motor dalam bentuk kalender matriks visual agar tidak terjadi pemesanan ganda (double-booking).
 
 Untuk membaca kalender ketersediaan, ikuti langkah-langkah berikut:
+
 1. Klik menu Ketersediaan pada bilah menu di sebelah kiri.
 2. Gunakan tombol panah kiri dan kanan di bagian atas kalender untuk berpindah minggu atau bulan.
 3. Perhatikan balok warna jadwal pada masing-masing baris unit motor:
@@ -146,6 +156,7 @@ Gambar 4.1: Status Koneksi WhatsApp Gateway & Pemindaian QR Code
 Pada Gambar 4.1, kita dapat melihat status koneksi nomor WhatsApp resmi Rosanti Bike dan melakukan pemindaian QR Code untuk mengaktifkan bot notifikasi otomatis.
 
 Untuk menghubungkan nomor WhatsApp ke sistem, ikuti langkah-langkah berikut:
+
 1. Klik menu WhatsApp pada bilah menu di sebelah kiri.
 2. Pilih tab Status Koneksi di bagian atas halaman.
 3. Jika status menunjukkan disconnected, klik tombol hijau Generate QR Code.
@@ -163,6 +174,7 @@ Gambar 4.2: Halaman Pengaturan Template Pesan Otomatis Pelanggan
 Pada Gambar 4.2, kita dapat melihat dan mengubah format pesan WhatsApp otomatis yang akan dikirimkan kepada pelanggan (konfirmasi booking, pengingat pengembalian, dan ucapan terima kasih).
 
 Untuk menyunting template pesan, ikuti langkah-langkah berikut:
+
 1. Klik menu WhatsApp, lalu pilih tab Template Pesan di bagian atas.
 2. Pilih kartu template pesan yang ingin diubah.
 3. Edit teks pesan sesuai standar pelayanan kantor dan sertakan variabel dinamis yang tersedia:
@@ -181,6 +193,7 @@ Gambar 4.3: Pengaturan Alur Kerja Pesan Otomatis (Workflows)
 Pada Gambar 4.3, kita dapat mengatur pemicu (trigger) pengiriman pesan otomatis seperti pesan sambutan pelanggan baru dan pengingat jatuh tempo sewa.
 
 Untuk mengelola workflow pesan otomatis, ikuti langkah-langkah berikut:
+
 1. Klik menu WhatsApp, lalu pilih tab Workflows.
 2. Aktifkan atau nonaktifkan sakelar pada jenis pesan otomatis yang diinginkan.
 3. Tentukan waktu jeda pengiriman pengingat (misalnya kirim pengingat 2 jam sebelum waktu sewa berakhir).
@@ -195,6 +208,7 @@ Gambar 4.4: Halaman Uji Coba Respon AI Assistant (Playground)
 Pada Gambar 4.4, kita dapat melakukan simulasi percakapan untuk menguji kecerdasan balasan asisten AI sebelum dilepas melayani pelanggan secara langsung.
 
 Untuk melakukan pengujian asisten AI, ikuti langkah-langkah berikut:
+
 1. Klik menu AI Assistant pada bilah menu di sebelah kiri.
 2. Pilih tab AI Playground.
 3. Ketikkan pertanyaan pelanggan pada kolom input di bagian bawah (contoh: Berapa harga sewa motor Vario per hari?).
@@ -210,6 +224,7 @@ Gambar 4.5: Daftar Materi Pusat Pengetahuan AI (Knowledge Base)
 Pada Gambar 4.5, kita dapat melihat daftar seluruh data informasi yang dipelajari oleh asisten AI untuk menjawab pertanyaan seputar syarat sewa, tarif, dan aturan rental.
 
 Untuk menambah materi baru ke dalam Knowledge Base AI, ikuti langkah-langkah berikut:
+
 1. Klik menu AI Assistant, lalu pilih tab Knowledge Base.
 2. Klik tombol biru Tambah Materi di pojok kanan atas.
 3. Layar pop-up formulir penambahan materi akan muncul.
@@ -223,6 +238,7 @@ Gambar 4.6: Formulir Penambahan Materi Baru Knowledge Base AI
 Pada Gambar 4.6, kita dapat mengisi judul topik, kategori, dan jawaban detail yang wajib diingat oleh asisten AI.
 
 Untuk mengisi dan menyimpan materi AI, ikuti langkah-langkah berikut:
+
 1. Masukkan Judul Materi pada kolom input atas (contoh: Syarat Sewa Turis Mancanegara / WNA).
 2. Pilih Kategori yang relevan dari menu dropdown (Syarat Sewa, Fasilitas, atau Tarif Luar Kota).
 3. Tuliskan penjelasan jawaban secara lengkap dan jelas pada kotak Teks Materi.
@@ -237,6 +253,7 @@ Gambar 4.7: Dasbor Pemantauan Antrean Tugas Server (Queue Worker)
 Pada Gambar 4.7, kita dapat melihat status pengiriman pesan WhatsApp massal dan antrean tugas server latar belakang agar tidak ada pesan pelanggan yang terlewat.
 
 Untuk memantau dan mengelola antrean pesan, ikuti langkah-langkah berikut:
+
 1. Klik menu Monitor Antrian pada bilah menu kiri.
 2. Periksa status ringkasan:
    - Pending: Pesan yang sedang menunggu giliran kirim.
@@ -254,6 +271,7 @@ Gambar 4.8: Widget Percakapan Floating Cepat Staf
 Pada Gambar 4.8, kita dapat menggunakan widget chat melayang di pojok kanan bawah untuk berkomunikasi langsung dengan pelanggan atau mengecek riwayat pesan WhatsApp masuk tanpa harus berpindah halaman.
 
 Untuk menggunakan Chat Widget, ikuti langkah-langkah berikut:
+
 1. Klik ikon gelembung pesan di pojok kanan bawah layar aplikasi.
 2. Kotak percakapan interaktif akan terbuka secara melayang di atas halaman kerja Anda.
 3. Pilih kontak pelanggan yang ingin dibalas pada daftar pesan.
@@ -270,6 +288,7 @@ Gambar 5.1: Katalog Jenis & Tarif Sewa Model Motor
 Pada Gambar 5.1, kita dapat melihat daftar model motor rental, kapasitas mesin, kapasitas tangki, serta tarif sewa harian, mingguan, dan bulanan.
 
 Untuk mengelola katalog tipe motor, ikuti langkah-langkah berikut:
+
 1. Buka grup menu Motor pada bilah navigasi, lalu klik Jenis Motor.
 2. Klik tombol Tambah Jenis Motor di pojok kanan atas untuk memasukkan model motor baru.
 3. Masukkan nama motor, cc mesin, tipe transmisi (matic/manual), dan tarif harga sewa.
@@ -284,6 +303,7 @@ Gambar 5.2: Manajemen Unit Fisik Kendaraan & Status Plat Nomor
 Pada Gambar 5.2, kita dapat memantau seluruh armada motor fisik yang ada di garasi, mencakup plat nomor kendaraan, warna, tahun, dan kondisi kesiapan operasional.
 
 Untuk mengelola unit motor fisik, ikuti langkah-langkah berikut:
+
 1. Buka grup menu Motor pada bilah navigasi, lalu klik Unit Motor.
 2. Untuk mendaftarkan motor baru, klik tombol Tambah Unit.
 3. Pilih jenis motor yang sesuai, masukkan plat nomor kendaraan, nomor rangka, warna bodi, dan kilometer awal motor.
@@ -299,6 +319,7 @@ Gambar 5.3: Halaman Manajemen Artikel Informasi & Blog Wisata
 Pada Gambar 5.3, kita dapat membuat artikel panduan wisata, tips berkendara, atau info promo sewa motor untuk meningkatkan pengunjung website publik Rosanti Bike.
 
 Untuk membuat artikel baru, ikuti langkah-langkah berikut:
+
 1. Klik menu Artikel Blog pada bilah menu di sebelah kiri.
 2. Klik tombol Tulis Artikel Baru di pojok kanan atas.
 3. Masukkan judul artikel, unggah gambar sampul, dan tulis isi artikel pada editor teks.
@@ -314,6 +335,7 @@ Gambar 5.4: Daftar Akun Administrator & Hak Akses Pengguna
 Pada Gambar 5.4, kita dapat melihat seluruh akun staf yang memiliki izin mengakses panel admin dan status keaktifan masing-masing akun.
 
 Untuk mengelola akun admin, ikuti langkah-langkah berikut:
+
 1. Klik menu Daftar Admin pada bilah menu di sebelah kiri.
 2. Untuk menambah staf baru, klik tombol Tambah Admin di pojok kanan atas.
 3. Layar pop-up formulir pendaftaran admin akan terbuka.
@@ -327,6 +349,7 @@ Gambar 5.5: Formulir Pendaftaran Akun Staf Admin Baru
 Pada Gambar 5.5, kita dapat mengisi data diri staf baru serta menentukan hak akses (role) yang diberikan.
 
 Untuk mengisi data staf baru, ikuti langkah-langkah berikut:
+
 1. Masukkan Nama Lengkap staf pada kolom input pertama.
 2. Masukkan Alamat Email aktif yang akan digunakan untuk login.
 3. Masukkan Nomor WhatsApp staf yang bersangkutan.
@@ -343,6 +366,7 @@ Gambar 5.6: Halaman Pengaturan Profil Usaha & Rekening Bank
 Pada Gambar 5.6, kita dapat memperbarui identitas bisnis rental, nomor WhatsApp resmi kantor, alamat garasi penjemputan, serta nomor rekening tujuan pembayaran pelanggan.
 
 Untuk memperbarui konfigurasi usaha, ikuti langkah-langkah berikut:
+
 1. Klik menu Pengaturan pada bilah menu paling bawah di sebelah kiri.
 2. Pada bagian Profil Usaha, perbarui nama rental, nomor telepon kantor, dan email resmi.
 3. Pada bagian Alamat & Garasi, masukkan alamat lengkap kantor penyerahan motor.
@@ -354,6 +378,7 @@ Untuk memperbarui konfigurasi usaha, ikuti langkah-langkah berikut:
 ## BAB 6. STANDAR OPERASIONAL PROSEDUR (SOP) & PENUTUP
 
 ### 6.1 Prosedur Serah Terima & Pengembalian Unit Motor
+
 1. Pemeriksaan Identitas Asli: Petugas wajib memeriksa keaslian identitas KTP/Paspor fisik dan menahan salah satu dokumen asli sebagai jaminan sewa resmi.
 2. Dokumentasi Kondisi Fisik 4 Sisi: Petugas lapangan wajib mengambil foto kondisi motor dari 4 sisi bersama penyewa sebelum kunci motor diserahkan.
 3. Penyediaan Perlengkapan: Setiap sewa motor wajib dilengkapi dengan 2 helm SNI bersih dan 1 paket jas hujan.
@@ -363,10 +388,11 @@ Untuk memperbarui konfigurasi usaha, ikuti langkah-langkah berikut:
 
 Dengan diterbitkannya Buku Panduan Pengguna ini, seluruh jajaran pengelola dan staf operasional Rosanti Bike Motorent menyatakan siap mematuhi dan menjalankan seluruh standar operasional di atas dengan penuh tanggung jawab, disiplin, dan berintegritas tinggi.
 
-| Disusun Oleh, | Disetujui & Disahkan Oleh, |
-| :---: | :---: |
+|                         Disusun Oleh,                         |                    Disetujui & Disahkan Oleh,                    |
+| :-----------------------------------------------------------: | :--------------------------------------------------------------: |
 | <br><br><br><u>Tim Pengembang Sistem</u><br>Lead IT Developer | <br><br><br><u>Direktur Operasional</u><br>Rosanti Bike Motorent |
 
 ---
+
 SEMOGA BERMANFAAT & SUKSES SELALU  
 ROSANTI BIKE MOTORENT (C) 2026

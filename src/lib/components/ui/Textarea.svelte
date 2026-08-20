@@ -34,6 +34,6 @@
         {required}
         {disabled}
         bind:value
-        class="w-full px-3 py-2 bg-bg-tertiary border border-border rounded-md text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed transition-colors resize-y"
+        class="w-full px-3 py-2 bg-bg-tertiary border border-border rounded-md text-text-primary focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors resize-y"
     ></textarea>
 </div>

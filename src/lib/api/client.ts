@@ -111,7 +111,11 @@ function handleError(error: any): never {
       clearToken(); // bersihkan sisa legacy storage
       if (browser && window.location.pathname !== "/login") {
         window.location.href = "/login";
-      } else if (message && typeof message === "string" && message.length < 100) {
+      } else if (
+        message &&
+        typeof message === "string" &&
+        message.length < 100
+      ) {
         toast.error(message);
       }
     } else if (status === 429) {
