@@ -10,16 +10,16 @@
     let { variant = "default", class: className = "", text }: Props = $props();
 
     const variantClasses: Record<Variant, string> = {
-        success: "bg-success/10 text-success",
-        warning: "bg-warning/10 text-warning",
-        danger: "bg-danger/10 text-danger",
-        info: "bg-info/10 text-info",
-        default: "bg-bg-tertiary text-text-secondary",
+        success: "bg-emerald-50 text-emerald-700 border border-emerald-200/80",
+        warning: "bg-amber-50 text-amber-700 border border-amber-200/80",
+        danger: "bg-red-50 text-red-700 border border-red-200/80",
+        info: "bg-blue-50 text-[#0071e3] border border-blue-200/80",
+        default: "bg-bg-tertiary text-text-secondary border border-black/6",
     };
 </script>
 
 <span
-    class="inline-flex items-center px-2.5 py-1 text-xs font-bold tracking-wide rounded-lg {variantClasses[
+    class="inline-flex items-center px-2.5 py-0.5 text-[10.5px] font-bold uppercase tracking-wider rounded-full {variantClasses[
         variant
     ]} {className}"
 >

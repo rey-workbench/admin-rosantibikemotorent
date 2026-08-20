@@ -10,15 +10,15 @@
     let { variant = "info", message, class: className = "" }: Props = $props();
 
     const variantClasses: Record<Variant, string> = {
-        success: "bg-success/10 border-success/30 text-success",
-        danger: "bg-danger/10 border-danger/30 text-danger",
-        warning: "bg-warning/10 border-warning/30 text-warning",
-        info: "bg-info/10 border-info/30 text-info",
+        success: "bg-emerald-50 border border-emerald-200/80 text-emerald-800",
+        danger: "bg-red-50 border border-red-200/80 text-red-800",
+        warning: "bg-amber-50 border border-amber-200/80 text-amber-800",
+        info: "bg-blue-50 border border-blue-200/80 text-blue-800",
     };
 </script>
 
 <div
-    class="px-4 py-3 rounded-md border text-sm {variantClasses[
+    class="px-4 py-3 rounded-xl border text-xs font-medium {variantClasses[
         variant
     ]} {className}"
 >

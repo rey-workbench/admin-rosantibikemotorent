@@ -21,7 +21,7 @@
     import { goto } from "$app/navigation";
     import { toast } from "$lib/stores/toast";
     import { slide } from "svelte/transition";
-    
+
     const navItems = [
         { path: "/", label: "Dashboard", icon: LayoutDashboard },
         {
@@ -78,40 +78,50 @@
 </script>
 
 <aside
-    class="w-64 bg-bg-primary max-[768px]:hidden min-[769px]:flex flex-col shrink-0 h-screen sticky top-0 border-r border-transparent shadow-sm z-20"
+    class="w-64 bg-white max-[768px]:hidden min-[769px]:flex flex-col shrink-0 h-screen sticky top-0 border-r border-black/6 shadow-[1px_0_10px_rgba(0,0,0,0.02)] z-20"
 >
-    <div class="p-8 pb-4">
+    <!-- Logo & Portal Tag -->
+    <div class="px-6 py-6 border-b border-black/5">
         <a
             href="/"
-            class="flex items-center gap-3 no-underline text-text-primary group"
+            class="flex flex-col gap-1.5 no-underline group"
         >
-            <div
-                class="w-8 h-8 rounded-lg bg-primary text-white flex items-center justify-center shadow-lg shadow-primary/30 group-hover:scale-105 transition-transform"
-            >
-                <Bike size={18} />
+            <img
+                src="/logo.webp"
+                alt="Rosantibike Logo"
+                class="h-9 w-auto object-contain transition-opacity group-hover:opacity-85"
+                onerror={(e) => {
+                    (e.currentTarget as HTMLElement).style.display = 'none';
+                }}
+            />
+            <div class="flex items-center gap-1.5">
+                <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">
+                    Admin Portal
+                </span>
+                <span class="w-1.5 h-1.5 rounded-full bg-success"></span>
             </div>
-            <span class="font-bold text-xl tracking-tight">Rosantibike</span>
         </a>
     </div>
 
-    <nav class="flex-1 overflow-y-auto px-4 py-4 space-y-1 scrollbar-hide">
+    <!-- Navigation List -->
+    <nav class="flex-1 overflow-y-auto px-3.5 py-4 space-y-1 scrollbar-hide">
         {#each navItems as item}
             {@const Icon = item.icon}
             {#if item.children}
                 <div class="flex flex-col">
                     <button
                         onclick={() => toggleMenu(item.label)}
-                        class="w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 font-medium group
+                        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all duration-200 text-sm font-medium group cursor-pointer
                         {isParentActive(item)
-                            ? 'text-primary bg-primary/5'
-                            : 'text-text-secondary hover:text-primary hover:bg-bg-tertiary'}"
+                            ? 'text-primary bg-primary/8 font-semibold'
+                            : 'text-text-secondary hover:text-text-primary hover:bg-black/3'}"
                     >
                         <div class="flex items-center gap-3">
                             <Icon
-                                size={20}
+                                size={18}
                                 class={isParentActive(item)
-                                    ? "stroke-[2.5px]"
-                                    : "stroke-2"}
+                                    ? "stroke-[2.2px] text-primary"
+                                    : "stroke-2 text-text-muted group-hover:text-text-primary"}
                             />
                             <span>{item.label}</span>
                         </div>
@@ -124,29 +134,29 @@
 
                     {#if expandedMenus[item.label]}
                         <div
-                            class="mt-1 ml-4 border-l border-border/50 pl-2 space-y-1"
-                            transition:slide={{ duration: 200 }}
+                            class="mt-1 ml-4 border-l border-black/10 pl-2 space-y-1"
+                            transition:slide={{ duration: 180 }}
                         >
                             {#each item.children as child}
                                 {@const ChildIcon = child.icon}
                                 <a
                                     href={child.path}
-                                    class="flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200 text-sm font-medium relative group
+                                    class="flex items-center gap-2.5 px-3 py-2 rounded-lg transition-all duration-200 text-xs font-medium relative group
                                     {isActive(child.path)
-                                        ? 'text-primary bg-primary/5'
-                                        : 'text-text-secondary hover:text-primary hover:bg-bg-tertiary'}"
+                                        ? 'text-primary bg-primary/10 font-semibold'
+                                        : 'text-text-secondary hover:text-text-primary hover:bg-black/3'}"
                                 >
                                     <ChildIcon
-                                        size={18}
+                                        size={16}
                                         class={isActive(child.path)
-                                            ? "stroke-[2.5px]"
-                                            : "stroke-2"}
+                                            ? "stroke-[2.2px] text-primary"
+                                            : "stroke-2 text-text-muted group-hover:text-text-primary"}
                                     />
                                     <span>{child.label}</span>
 
                                     {#if isActive(child.path)}
                                         <div
-                                            class="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-primary rounded-l-full"
+                                            class="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-4 bg-primary rounded-l-full"
                                         ></div>
                                     {/if}
                                 </a>
@@ -157,22 +167,22 @@
             {:else}
                 <a
                     href={item.path}
-                    class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 font-medium group relative
+                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-200 text-sm font-medium group relative
                     {isActive(item.path)
-                        ? 'text-primary bg-primary/5'
-                        : 'text-text-secondary hover:text-primary hover:bg-bg-tertiary'}"
+                        ? 'text-primary bg-primary/8 font-semibold'
+                        : 'text-text-secondary hover:text-text-primary hover:bg-black/3'}"
                 >
                     <Icon
-                        size={20}
+                        size={18}
                         class={isActive(item.path)
-                            ? "stroke-[2.5px]"
-                            : "stroke-2"}
+                            ? "stroke-[2.2px] text-primary"
+                            : "stroke-2 text-text-muted group-hover:text-text-primary"}
                     />
                     <span>{item.label}</span>
 
                     {#if isActive(item.path)}
                         <div
-                            class="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-primary rounded-l-full"
+                            class="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-primary rounded-l-full"
                         ></div>
                     {/if}
                 </a>
@@ -180,16 +190,28 @@
         {/each}
     </nav>
 
-    <div class="p-4 mt-auto">
-        <div class="mt-4 pt-4 border-t border-border/50 space-y-1">
-            <button
-                class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-text-secondary hover:text-danger hover:bg-danger/5 transition-all duration-200 font-medium text-left"
-                onclick={handleLogout}
-            >
-                <LogOut size={20} />
-                <span>Keluar</span>
-            </button>
-        </div>
+    <!-- Admin Profile & Logout Footer -->
+    <div class="p-3.5 mt-auto border-t border-black/5 bg-bg-primary/50">
+        {#if $authStore.admin}
+            <div class="px-3 py-2 mb-1 flex items-center justify-between">
+                <div class="flex flex-col min-w-0">
+                    <span class="text-xs font-semibold text-text-primary truncate">
+                        {$authStore.admin.nama || $authStore.admin.username}
+                    </span>
+                    <span class="text-[10px] text-text-muted capitalize">
+                        {$authStore.admin.username}
+                    </span>
+                </div>
+            </div>
+        {/if}
+
+        <button
+            class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-text-secondary hover:text-danger hover:bg-danger/10 transition-all duration-200 text-xs font-medium text-left cursor-pointer"
+            onclick={handleLogout}
+        >
+            <LogOut size={16} />
+            <span>Keluar Sesi</span>
+        </button>
     </div>
 </aside>
 

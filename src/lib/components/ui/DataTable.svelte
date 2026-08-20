@@ -9,18 +9,18 @@
     let { columns, children }: Props = $props();
 </script>
 
-<div class="overflow-x-auto">
-    <table class="w-full">
+<div class="overflow-x-auto rounded-xl border border-black/6 bg-white">
+    <table class="w-full text-left border-collapse">
         <thead>
-            <tr class="bg-bg-tertiary/30">
+            <tr class="bg-bg-primary border-b border-black/6">
                 {#each columns as col}
-                    <th class="text-left px-4 py-3 font-semibold text-text-secondary text-sm border-b border-border {col.class || ''}">
+                    <th class="px-4 py-3 font-semibold text-text-secondary text-[11px] uppercase tracking-wider {col.class || ''}">
                         {col.label}
                     </th>
                 {/each}
             </tr>
         </thead>
-        <tbody>
+        <tbody class="divide-y divide-black/4">
             {@render children()}
         </tbody>
     </table>

@@ -32,7 +32,7 @@
     // Secondary items for the "Menu" drawer
     const menuItems = [
         { path: "/availability", label: "Ketersediaan", icon: Calendar },
-        { path: "/motor", label: "Jenis Motor", icon: Truck }, // Alternate entry for Jenis
+        { path: "/motor", label: "Jenis Motor", icon: Truck },
         { path: "/queue", label: "Antrian", icon: ListOrdered },
         { path: "/blog", label: "Blog", icon: FileText },
         { path: "/admin", label: "Admin", icon: Users },
@@ -68,12 +68,11 @@
 </script>
 
 <!-- Spacer to prevent content from being hidden behind nav -->
-<!-- This might be handled in layout, but a safer bet is to have a div of same height -->
 <div class="h-16 min-[769px]:hidden"></div>
 
 <!-- Mobile Bottom Nav -->
 <nav
-    class="bottom-nav fixed bottom-0 left-0 w-full bg-white dark:bg-bg-secondary border-t border-border z-40 min-[769px]:hidden safe-area-bottom shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]"
+    class="bottom-nav fixed bottom-0 left-0 w-full bg-white/90 backdrop-blur-xl border-t border-black/8 z-40 min-[769px]:hidden safe-area-bottom shadow-[0_-4px_20px_rgba(0,0,0,0.03)]"
 >
     <div class="flex items-center justify-around h-16 px-2">
         {#each mainTabs as tab}
@@ -83,16 +82,16 @@
                 onclick={closeMenu}
                 class="flex flex-col items-center justify-center w-full h-full gap-1 transition-colors duration-200
                 {isActive(tab.path) && !isMenuOpen
-                    ? 'text-primary'
-                    : 'text-text-secondary hover:text-primary'}"
+                    ? 'text-primary font-semibold'
+                    : 'text-text-secondary hover:text-text-primary'}"
             >
                 <Icon
                     size={20}
-                    strokeWidth={isActive(tab.path) && !isMenuOpen ? 2.5 : 2}
+                    strokeWidth={isActive(tab.path) && !isMenuOpen ? 2.3 : 1.8}
                     class="transition-transform duration-200 {isActive(
                         tab.path,
                     ) && !isMenuOpen
-                        ? 'scale-110'
+                        ? 'scale-105'
                         : ''}"
                 />
                 <span class="text-[10px] font-medium leading-none"
@@ -104,14 +103,14 @@
         <!-- Menu Toggle -->
         <button
             onclick={toggleMenu}
-            class="flex flex-col items-center justify-center w-full h-full gap-1 transition-colors duration-200 {isMenuOpen
-                ? 'text-primary'
-                : 'text-text-secondary hover:text-primary'}"
+            class="flex flex-col items-center justify-center w-full h-full gap-1 transition-colors duration-200 cursor-pointer {isMenuOpen
+                ? 'text-primary font-semibold'
+                : 'text-text-secondary hover:text-text-primary'}"
         >
             {#if isMenuOpen}
-                <X size={20} strokeWidth={2.5} />
+                <X size={20} strokeWidth={2.3} />
             {:else}
-                <Menu size={20} strokeWidth={2} />
+                <Menu size={20} strokeWidth={1.8} />
             {/if}
             <span class="text-[10px] font-medium leading-none">Menu</span>
         </button>
@@ -121,32 +120,32 @@
 <!-- Full Screen Menu Overlay -->
 {#if isMenuOpen}
     <button
-        class="fixed inset-0 bg-black/50 z-30 md:hidden backdrop-blur-sm border-none cursor-default"
+        class="fixed inset-0 bg-black/40 z-30 md:hidden backdrop-blur-sm border-none cursor-default"
         onclick={closeMenu}
         aria-label="Close menu"
         transition:fade={{ duration: 200 }}
     ></button>
 
     <div
-        class="fixed bottom-16 left-0 w-full bg-white dark:bg-bg-secondary rounded-t-2xl z-30 md:hidden border-t border-border shadow-2xl overflow-hidden max-h-[80vh] flex flex-col"
-        transition:slide={{ duration: 300, axis: "y" }}
+        class="fixed bottom-16 left-0 w-full bg-white rounded-t-xl z-30 md:hidden border-t border-black/8 shadow-2xl overflow-hidden max-h-[80vh] flex flex-col"
+        transition:slide={{ duration: 280, axis: "y" }}
     >
-        <div class="p-4 border-b border-border/50 bg-bg-tertiary/30">
-            <h3 class="font-bold text-lg text-text-primary">Menu Lainnya</h3>
+        <div class="p-4 border-b border-black/6 bg-bg-primary">
+            <h3 class="font-bold text-base text-text-primary font-display">Menu Tambahan</h3>
         </div>
 
-        <div class="p-4 grid grid-cols-3 gap-4 overflow-y-auto">
+        <div class="p-4 grid grid-cols-3 gap-3 overflow-y-auto">
             {#each menuItems as item}
                 {@const Icon = item.icon}
                 <a
                     href={item.path}
                     onclick={closeMenu}
-                    class="flex flex-col items-center justify-center p-3 rounded-xl gap-2 bg-bg-tertiary hover:bg-primary/5 hover:text-primary transition-colors border border-transparent hover:border-primary/10"
+                    class="flex flex-col items-center justify-center p-3 rounded-2xl gap-2 bg-bg-primary hover:bg-primary/8 hover:text-primary transition-all border border-black/4"
                 >
                     <div
-                        class="w-10 h-10 rounded-full bg-white dark:bg-bg-secondary flex items-center justify-center shadow-sm text-primary"
+                        class="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-sm text-primary"
                     >
-                        <Icon size={20} />
+                        <Icon size={19} />
                     </div>
                     <span
                         class="text-xs font-medium text-center text-text-secondary"
@@ -156,13 +155,13 @@
             {/each}
         </div>
 
-        <div class="p-4 border-t border-border/50 bg-bg-tertiary/30">
+        <div class="p-4 border-t border-black/6 bg-bg-primary">
             <button
                 onclick={handleLogout}
-                class="w-full flex items-center justify-center gap-2 p-3 rounded-xl bg-red-50 text-red-600 font-medium hover:bg-red-100 transition-colors"
+                class="w-full flex items-center justify-center gap-2 p-3 rounded-xl bg-red-50 text-red-700 font-medium hover:bg-red-100 transition-colors text-xs cursor-pointer"
             >
-                <LogOut size={18} />
-                <span>Keluar</span>
+                <LogOut size={16} />
+                <span>Keluar Sesi</span>
             </button>
         </div>
     </div>

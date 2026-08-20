@@ -1,54 +1,58 @@
 @import "tailwindcss";
 @plugin "flowbite-typography";
 
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('/fonts/QGYvz_MVcBeNP4NJtEtq.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('/fonts/LDIoaomQNQcsA88c7O9yZ4KMCoOg4Ko20yw.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 @theme {
-  /* Branding Colors */
-  --color-primary: #4361ee;
-  /* Vibrant Blue from Logip */
-  --color-primary-hover: #3a53d0;
-  --color-accent: #8b5cf6;
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-display: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+  /* Branding Colors - Apple Design System (Sinkron Landing) */
+  --color-primary: #0071e3;
+  --color-primary-hover: #0077ed;
+  --color-accent: #1d1d1f;
 
   /* Semantic Colors */
   --color-success: #10b981;
-  /* Soft Green */
   --color-warning: #f59e0b;
-  /* Warm Amber */
   --color-danger: #ef4444;
-  /* Soft Red */
-  --color-info: #3b82f6;
-  /* Sky Blue */
+  --color-info: #0071e3;
 
-  /* Backgrounds */
-  --color-bg-primary: #f8f9fb;
-  /* Very light cool gray - Page Background */
+  /* Backgrounds (Apple Neutral Scale) */
+  --color-bg-primary: #f5f5f7;
   --color-bg-secondary: #ffffff;
-  /* Pure White - Cards/Panels */
-  --color-bg-tertiary: #f3f4f6;
-  /* Gray 100 - Inputs/Hover states */
+  --color-bg-tertiary: #ebebed;
 
   /* Typography */
-  --color-text-primary: #1f2937;
-  /* Gray 900 - Headings */
-  --color-text-secondary: #6b7280;
-  /* Gray 500 - Body */
-  --color-text-muted: #9ca3af;
-  /* Gray 400 - Low contrast */
+  --color-text-primary: #1d1d1f;
+  --color-text-secondary: #59595e;
+  --color-text-muted: #86868b;
 
   /* Borders & Dividers */
-  --color-border: #e5e7eb;
-  /* Gray 200 */
-  --color-input: #f3f4f6;
-  /* Gray 100 - Input background */
+  --color-border: #d2d2d7;
+  --color-input: #fbfbfd;
 
   /* Border Radius */
   --radius-sm: 0.5rem;
-  /* 8px */
-  --radius-md: 1rem;
-  /* 16px - Increased for softer look */
-  --radius-lg: 1.5rem;
-  /* 24px - Large cards */
-  --radius-xl: 2rem;
-  /* 32px */
+  --radius-md: 0.875rem;
+  --radius-lg: 1.25rem;
+  --radius-xl: 1.75rem;
 }
 
 /* Base styles */
@@ -60,13 +64,25 @@ body {
   background-color: var(--color-bg-primary);
   color: var(--color-text-primary);
   font-family:
-    "Outfit",
+    "Plus Jakarta Sans",
     "Inter",
     system-ui,
     -apple-system,
     sans-serif;
   margin: 0;
   -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family:
+    "Outfit",
+    "Plus Jakarta Sans",
+    sans-serif;
 }
 
 /* App layout */
@@ -76,10 +92,7 @@ body {
 
 /* Sidebar styles */
 .sidebar {
-  @apply w-72 bg-bg-secondary flex flex-col shrink-0 h-screen sticky top-0 border-r border-transparent;
-  /* Removed border, relying on contrast or potential shadow if needed */
-  box-shadow: 1px 0 0 0 var(--color-border);
-  /* clean crisp line */
+  @apply w-72 bg-bg-secondary flex flex-col shrink-0 h-screen sticky top-0 border-r border-black/6;
 }
 
 .sidebar-header {
@@ -87,11 +100,11 @@ body {
 }
 
 .sidebar-logo {
-  @apply flex items-center gap-3 text-text-primary no-underline font-bold text-xl tracking-tight;
+  @apply flex items-center gap-3 text-text-primary no-underline font-bold text-xl tracking-tight font-display;
 }
 
 .sidebar-logo-icon {
-  @apply w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white shadow-lg shadow-primary/30;
+  @apply w-10 h-10 rounded-xl bg-accent flex items-center justify-center text-white shadow-md shadow-black/10;
 }
 
 .sidebar-nav {
@@ -103,19 +116,19 @@ body {
 }
 
 .nav-section-title {
-  @apply px-3 text-xs uppercase tracking-wider text-text-muted font-bold mb-3;
+  @apply px-3 text-[11px] uppercase tracking-wider text-text-muted font-bold mb-3;
 }
 
 .nav-item {
-  @apply flex items-center gap-3 px-4 py-3 rounded-xl text-text-secondary no-underline transition-all duration-200 font-medium;
+  @apply flex items-center gap-3 px-4 py-2.5 rounded-xl text-text-secondary no-underline transition-all duration-200 font-medium text-sm;
 }
 
 .nav-item:hover {
-  @apply bg-bg-primary text-primary;
+  @apply bg-black/5 text-text-primary;
 }
 
 .nav-item.active {
-  @apply bg-primary text-white shadow-md shadow-primary/25;
+  @apply bg-accent text-white shadow-sm shadow-black/10 font-semibold;
 }
 
 .nav-item.active .nav-item-icon {

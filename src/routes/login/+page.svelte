@@ -4,16 +4,14 @@
     import { authStore } from "$lib/stores/auth";
     import {
         LogIn,
-        ShieldCheck,
         Lock,
         User,
         Eye,
         EyeOff,
         ArrowLeft,
         AlertCircle,
-        CheckCircle2,
     } from "@lucide/svelte";
-    import { fly, fade } from "svelte/transition";
+    import { fly } from "svelte/transition";
 
     let username = $state("");
     let password = $state("");
@@ -58,7 +56,7 @@
 </svelte:head>
 
 <div
-    class="min-h-screen w-full flex flex-col justify-between bg-[#f5f5f7] text-[#1d1d1f] relative overflow-hidden font-sans selection:bg-[#0071e3] selection:text-white"
+    class="min-h-screen w-full flex flex-col justify-between bg-bg-primary text-[#1d1d1f] relative overflow-hidden font-sans selection:bg-[#0071e3] selection:text-white"
 >
     <!-- Background Subtle Radial Atmosphere (Apple Style) -->
     <div
@@ -72,16 +70,11 @@
     <header class="w-full max-w-6xl mx-auto px-6 py-6 flex items-center justify-between relative z-10">
         <a
             href="https://rosantibikemotorent.com"
-            class="inline-flex items-center gap-2 text-xs font-semibold tracking-wide text-[#59595e] hover:text-[#1d1d1f] transition-colors group"
+            class="inline-flex items-center gap-2 text-xs font-semibold tracking-wide text-text-secondary hover:text-[#1d1d1f] transition-colors group"
         >
             <ArrowLeft size={16} class="transition-transform group-hover:-translate-x-1" />
             <span>Kembali ke Website</span>
         </a>
-
-        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/5 border border-black/5 text-[11px] font-semibold uppercase tracking-wider text-[#59595e]">
-            <span class="w-1.5 h-1.5 rounded-full bg-success animate-pulse"></span>
-            <span>Admin Gateway</span>
-        </div>
     </header>
 
     <!-- Main Content Area -->
@@ -101,13 +94,10 @@
             </a>
 
             <div class="space-y-1">
-                <p class="text-[11px] font-bold uppercase tracking-[0.22em] text-[#0071e3]">
-                    Management Portal
-                </p>
                 <h1 class="text-3xl font-bold tracking-tight text-[#1d1d1f] font-display">
                     Masuk ke Dashboard
                 </h1>
-                <p class="text-sm text-[#59595e] font-normal max-w-xs mt-1">
+                <p class="text-sm text-text-secondary font-normal max-w-xs mt-1">
                     Kelola armada, pesanan rental, dan automasi WhatsApp
                 </p>
             </div>
@@ -115,7 +105,7 @@
 
         <!-- Glassmorphism Form Card -->
         <div
-            class="w-full bg-white/90 backdrop-blur-2xl border border-black/8 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.07)] rounded-[2rem] p-7 md:p-9"
+            class="w-full bg-white/90 backdrop-blur-2xl border border-black/8 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.07)] rounded-4xl p-7 md:p-9"
             in:fly={{ y: 20, duration: 650, delay: 100 }}
         >
             {#if errorMessage}
@@ -133,13 +123,13 @@
                 <div class="space-y-1.5">
                     <label
                         for="username"
-                        class="block text-xs font-semibold uppercase tracking-wider text-[#59595e]"
+                        class="block text-xs font-semibold uppercase tracking-wider text-text-secondary"
                     >
                         Username Admin
                     </label>
                     <div class="relative group">
                         <div
-                            class="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#86868b] transition-colors pointer-events-none flex items-center"
+                            class="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted transition-colors pointer-events-none flex items-center"
                         >
                             <User size={17} />
                         </div>
@@ -151,7 +141,7 @@
                             required
                             disabled={isLoading}
                             autocomplete="username"
-                            class="w-full pl-10.5 pr-4 py-3 bg-[#fbfbfd] hover:bg-white border border-black/10 focus:ring-4 focus:ring-[#0071e3]/10 rounded-xl text-sm font-medium text-[#1d1d1f] outline-none transition-all disabled:opacity-50"
+                            class="w-full pl-10.5 pr-4 py-3 bg-input hover:bg-white border border-black/10 focus:ring-4 focus:ring-[#0071e3]/10 rounded-xl text-sm font-medium text-[#1d1d1f] outline-none transition-all disabled:opacity-50"
                         />
                     </div>
                 </div>
@@ -161,14 +151,14 @@
                     <div class="flex items-center justify-between">
                         <label
                             for="password"
-                            class="block text-xs font-semibold uppercase tracking-wider text-[#59595e]"
+                            class="block text-xs font-semibold uppercase tracking-wider text-text-secondary"
                         >
                             Kata Sandi
                         </label>
                     </div>
                     <div class="relative group">
                         <div
-                            class="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#86868b] transition-colors pointer-events-none flex items-center"
+                            class="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted transition-colors pointer-events-none flex items-center"
                         >
                             <Lock size={17} />
                         </div>
@@ -180,12 +170,12 @@
                             required
                             disabled={isLoading}
                             autocomplete="current-password"
-                            class="w-full pl-10.5 pr-11 py-3 bg-[#fbfbfd] hover:bg-white border border-black/10 focus:ring-4 focus:ring-[#0071e3]/10 rounded-xl text-sm font-medium text-[#1d1d1f] outline-none transition-all disabled:opacity-50"
+                            class="w-full pl-10.5 pr-11 py-3 bg-input hover:bg-white border border-black/10 focus:ring-4 focus:ring-[#0071e3]/10 rounded-xl text-sm font-medium text-[#1d1d1f] outline-none transition-all disabled:opacity-50"
                         />
                         <button
                             type="button"
                             onclick={() => (showPassword = !showPassword)}
-                            class="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#86868b] hover:text-[#1d1d1f] transition-colors p-1 cursor-pointer"
+                            class="absolute right-3.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-[#1d1d1f] transition-colors p-1 cursor-pointer"
                             aria-label={showPassword ? "Sembunyikan sandi" : "Tampilkan sandi"}
                         >
                             {#if showPassword}
@@ -199,7 +189,7 @@
 
                 <!-- Options -->
                 <div class="flex items-center justify-between text-xs pt-1">
-                    <label class="flex items-center gap-2 cursor-pointer select-none text-[#59595e] hover:text-[#1d1d1f] transition-colors">
+                    <label class="flex items-center gap-2 cursor-pointer select-none text-text-secondary hover:text-[#1d1d1f] transition-colors">
                         <input
                             type="checkbox"
                             bind:checked={rememberMe}
@@ -207,11 +197,6 @@
                         />
                         <span>Simpan sesi login</span>
                     </label>
-
-                    <span class="text-[11px] text-[#86868b] font-medium flex items-center gap-1">
-                        <ShieldCheck size={13} class="text-[#0071e3]" />
-                        256-bit SSL
-                    </span>
                 </div>
 
                 <!-- Submit Button -->
@@ -230,17 +215,11 @@
                 </button>
             </form>
         </div>
-
-        <!-- Security Footer Badge -->
-        <div class="mt-8 flex items-center gap-2 text-xs text-[#86868b]" in:fade={{ duration: 400, delay: 200 }}>
-            <CheckCircle2 size={14} class="text-success" />
-            <span>Koneksi aman terenkripsi JWT Guard & HTTP-Only Cookie</span>
-        </div>
     </main>
 
     <!-- Footer Copyright -->
-    <footer class="w-full text-center py-6 text-xs text-[#86868b]/70 relative z-10">
-        &copy; {new Date().getFullYear()} Rosantibike Motorent. All rights reserved.
+    <footer class="w-full text-center py-6 text-xs text-text-muted/70 relative z-10">
+        &copy; {new Date().getFullYear()} Rosantibike Motorent.
     </footer>
 </div>
 

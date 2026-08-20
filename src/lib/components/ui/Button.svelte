@@ -36,25 +36,25 @@
     }: Props = $props();
 
     const baseClasses =
-        "inline-flex items-center justify-center gap-2 font-semibold transition-all duration-200 cursor-pointer no-underline disabled:opacity-50 disabled:cursor-not-allowed active:scale-95";
+        "inline-flex items-center justify-center gap-2 font-semibold transition-all duration-180 cursor-pointer no-underline disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]";
 
     const variantClasses: Record<Variant, string> = {
         primary:
-            "bg-primary text-white hover:bg-primary-hover shadow-md shadow-primary/25 hover:shadow-lg hover:shadow-primary/30",
+            "bg-primary text-white hover:bg-primary-hover shadow-sm shadow-primary/20 hover:shadow-md",
         secondary:
-            "bg-white border border-border/50 text-text-secondary hover:bg-bg-primary hover:text-text-primary shadow-sm hover:shadow-md",
+            "bg-white border border-black/10 text-text-primary hover:bg-bg-primary shadow-xs",
         success:
-            "bg-success text-white hover:bg-success/90 shadow-md shadow-success/25",
-        danger: "bg-danger text-white hover:bg-danger/90 shadow-md shadow-danger/25",
+            "bg-success text-white hover:bg-success/90 shadow-sm shadow-success/20",
+        danger: "bg-danger text-white hover:bg-danger/90 shadow-sm shadow-danger/20",
         warning:
-            "bg-warning text-white hover:bg-warning/90 shadow-md shadow-warning/25",
-        ghost: "bg-transparent text-text-secondary hover:bg-bg-tertiary hover:text-text-primary",
+            "bg-warning text-white hover:bg-warning/90 shadow-sm shadow-warning/20",
+        ghost: "bg-transparent text-text-secondary hover:bg-black/5 hover:text-text-primary",
     };
 
     const sizeClasses: Record<Size, string> = {
-        sm: "px-3 py-1.5 text-sm rounded-xl",
-        md: "px-5 py-2.5 text-sm rounded-2xl",
-        lg: "px-6 py-3 text-base rounded-2xl",
+        sm: "px-3 py-1.5 text-xs rounded-lg",
+        md: "px-4 py-2.25 text-sm rounded-xl",
+        lg: "px-5 py-2.75 text-base rounded-xl",
         icon: "p-2 rounded-full",
     };
 

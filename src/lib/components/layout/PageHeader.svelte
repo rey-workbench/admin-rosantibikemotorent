@@ -21,9 +21,9 @@
             </Button>
         {/if}
         <div>
-            <h1 class="text-2xl font-bold text-text-primary">{title}</h1>
+            <h1 class="text-2xl md:text-3xl font-bold text-text-primary tracking-tight font-display">{title}</h1>
             {#if subtitle}
-                <p class="text-text-secondary text-sm mt-1">{subtitle}</p>
+                <p class="text-text-secondary text-sm mt-0.5">{subtitle}</p>
             {/if}
         </div>
     </div>
