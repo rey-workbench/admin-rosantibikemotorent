@@ -80,26 +80,20 @@
 <aside
     class="w-64 bg-white max-[768px]:hidden min-[769px]:flex flex-col shrink-0 h-screen sticky top-0 border-r border-black/6 shadow-[1px_0_10px_rgba(0,0,0,0.02)] z-20"
 >
-    <!-- Logo & Portal Tag -->
-    <div class="px-6 py-6 border-b border-black/5">
+    <!-- Logo -->
+    <div class="px-6 py-5 border-b border-black/6">
         <a
             href="/"
-            class="flex flex-col gap-1.5 no-underline group"
+            class="flex items-center no-underline group"
         >
             <img
                 src="/logo.webp"
                 alt="Rosantibike Logo"
-                class="h-9 w-auto object-contain transition-opacity group-hover:opacity-85"
+                class="h-8 w-auto object-contain transition-opacity group-hover:opacity-85"
                 onerror={(e) => {
                     (e.currentTarget as HTMLElement).style.display = 'none';
                 }}
             />
-            <div class="flex items-center gap-1.5">
-                <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">
-                    Admin Portal
-                </span>
-                <span class="w-1.5 h-1.5 rounded-full bg-success"></span>
-            </div>
         </a>
     </div>
 
@@ -111,24 +105,24 @@
                 <div class="flex flex-col">
                     <button
                         onclick={() => toggleMenu(item.label)}
-                        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all duration-200 text-sm font-medium group cursor-pointer
+                        class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all duration-200 text-sm font-semibold group cursor-pointer
                         {isParentActive(item)
-                            ? 'text-primary bg-primary/8 font-semibold'
-                            : 'text-text-secondary hover:text-text-primary hover:bg-black/3'}"
+                            ? 'text-text-primary bg-black/4'
+                            : 'text-[#48484a] hover:text-text-primary hover:bg-black/4'}"
                     >
                         <div class="flex items-center gap-3">
                             <Icon
                                 size={18}
                                 class={isParentActive(item)
-                                    ? "stroke-[2.2px] text-primary"
-                                    : "stroke-2 text-text-muted group-hover:text-text-primary"}
+                                    ? "stroke-[2.2px] text-text-primary"
+                                    : "stroke-2 text-[#8e8e93] group-hover:text-text-primary"}
                             />
                             <span>{item.label}</span>
                         </div>
                         {#if expandedMenus[item.label]}
-                            <ChevronDown size={14} class="opacity-50" />
+                            <ChevronDown size={14} class="opacity-60" />
                         {:else}
-                            <ChevronRight size={14} class="opacity-50" />
+                            <ChevronRight size={14} class="opacity-60" />
                         {/if}
                     </button>
 
@@ -141,24 +135,18 @@
                                 {@const ChildIcon = child.icon}
                                 <a
                                     href={child.path}
-                                    class="flex items-center gap-2.5 px-3 py-2 rounded-lg transition-all duration-200 text-xs font-medium relative group
+                                    class="flex items-center gap-2.5 px-3 py-2 rounded-lg transition-all duration-200 text-xs font-semibold group
                                     {isActive(child.path)
-                                        ? 'text-primary bg-primary/10 font-semibold'
-                                        : 'text-text-secondary hover:text-text-primary hover:bg-black/3'}"
+                                        ? 'text-primary bg-primary/10'
+                                        : 'text-text-secondary hover:text-text-primary hover:bg-black/4'}"
                                 >
                                     <ChildIcon
                                         size={16}
                                         class={isActive(child.path)
                                             ? "stroke-[2.2px] text-primary"
-                                            : "stroke-2 text-text-muted group-hover:text-text-primary"}
+                                            : "stroke-2 text-[#8e8e93] group-hover:text-text-primary"}
                                     />
                                     <span>{child.label}</span>
-
-                                    {#if isActive(child.path)}
-                                        <div
-                                            class="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-4 bg-primary rounded-l-full"
-                                        ></div>
-                                    {/if}
                                 </a>
                             {/each}
                         </div>
@@ -167,24 +155,18 @@
             {:else}
                 <a
                     href={item.path}
-                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-200 text-sm font-medium group relative
+                    class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl transition-all duration-200 text-sm font-semibold group
                     {isActive(item.path)
-                        ? 'text-primary bg-primary/8 font-semibold'
-                        : 'text-text-secondary hover:text-text-primary hover:bg-black/3'}"
+                        ? 'bg-accent text-white shadow-xs'
+                        : 'text-[#48484a] hover:text-text-primary hover:bg-black/4'}"
                 >
                     <Icon
                         size={18}
                         class={isActive(item.path)
-                            ? "stroke-[2.2px] text-primary"
-                            : "stroke-2 text-text-muted group-hover:text-text-primary"}
+                            ? "stroke-[2.2px] text-white"
+                            : "stroke-2 text-[#8e8e93] group-hover:text-text-primary"}
                     />
                     <span>{item.label}</span>
-
-                    {#if isActive(item.path)}
-                        <div
-                            class="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-primary rounded-l-full"
-                        ></div>
-                    {/if}
                 </a>
             {/if}
         {/each}
