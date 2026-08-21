@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { toast } from '$lib/stores/toast';
   import { onMount } from "svelte";
   import { page } from "$app/state";
   import { transaksiApi } from "$lib/api";
@@ -40,7 +41,7 @@
         durasiHari: data.durasiHari || duration,
       };
     } catch (err: any) {
-      console.error(err);
+      toast.error(err);
       error = err?.response?.data?.userErrorMsg || err?.response?.data?.message;
     } finally {
       isLoading = false;

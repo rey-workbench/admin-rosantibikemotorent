@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { toast } from '$lib/stores/toast';
   import { onMount } from "svelte";
   import { Plus, Eye, Trash2, Check, ClipboardList } from "@lucide/svelte";
   import { formatCurrency, formatDateShort } from "$lib/utils";
@@ -44,7 +45,7 @@
       });
       transaksis = res.data || [];
     } catch (error) {
-      console.error("Error loading transaksi:", error);
+      toast.error("Error loading transaksi:", error);
     } finally {
       isLoading = false;
     }
@@ -65,7 +66,7 @@
       await transaksiApi.selesaiSewa(id);
       await loadData();
     } catch (error) {
-      console.error("Error completing transaksi:", error);
+      toast.error("Error completing transaksi:", error);
     }
   }
 
@@ -84,7 +85,7 @@
       await transaksiApi.delete(id);
       await loadData();
     } catch (error) {
-      console.error("Error deleting:", error);
+      toast.error("Error deleting:", error);
     }
   }
 

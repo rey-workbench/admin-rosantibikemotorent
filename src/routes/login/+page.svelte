@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { toast } from '$lib/stores/toast';
     import { goto } from "$app/navigation";
     import { authApi } from "$lib/api";
     import { authStore } from "$lib/stores/auth";
@@ -30,7 +31,7 @@
             authStore.login(response.admin, response.token);
             goto("/");
         } catch (err: any) {
-            console.error("Login error:", err);
+            toast.error("Login error:", err);
             const status = err.response?.status;
             const resMsg = err.response?.data?.message;
             if (status === 429) {

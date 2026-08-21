@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { toast } from '$lib/stores/toast';
     import { onMount } from "svelte";
     import { Plus, Pencil, Trash2, Search, Bike } from "@lucide/svelte";
     import { jenisMotorApi } from "$lib/api";
@@ -32,7 +33,7 @@
             });
             jenisMotors = res.data || [];
         } catch (error: any) {
-            console.error("Error loading jenis motor:", error);
+            toast.error("Error loading jenis motor:", error);
         } finally {
             isLoading = false;
         }
@@ -52,7 +53,7 @@
             await jenisMotorApi.delete(id);
             await loadData();
         } catch (error: any) {
-            console.error("Error deleting:", error);
+            toast.error("Error deleting:", error);
         }
     }
 

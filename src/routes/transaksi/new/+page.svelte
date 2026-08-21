@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { toast } from '$lib/stores/toast';
   import { goto } from "$app/navigation";
   import { onMount } from "svelte";
     import { unitMotorApi, transaksiApi } from "$lib/api";
@@ -48,7 +49,7 @@
       estimasiBiaya = res.totalBiaya;
       rincian = res.rincian;
     } catch (err) {
-      console.error(err);
+      toast.error(err);
       estimasiBiaya = null;
       rincian = null;
     } finally {
@@ -80,7 +81,7 @@
       });
       goto("/transaksi");
     } catch (err: any) {
-      console.error(err);
+      toast.error(err);
       errorMsg =
         err?.response?.data?.userErrorMsg || err?.response?.data?.message;
     } finally {

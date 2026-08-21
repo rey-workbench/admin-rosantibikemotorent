@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { toast } from '$lib/stores/toast';
     import { onMount } from "svelte";
     import {
         Truck,
@@ -32,7 +33,7 @@
             transaksis = activeTxRes.data || [];
             historyTransaksis = historyTxRes.data || [];
         } catch (error) {
-            console.error("Error loading dashboard data:", error);
+            toast.error("Error loading dashboard data:", error);
         } finally {
             isLoading = false;
         }

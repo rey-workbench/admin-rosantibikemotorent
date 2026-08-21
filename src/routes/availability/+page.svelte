@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { toast } from '$lib/stores/toast';
         import { onMount, onDestroy } from "svelte";
     import { unitMotorApi } from "$lib/api";
     import { fade } from "svelte/transition";
@@ -71,7 +72,7 @@
         try {
             brands = await unitMotorApi.getBrands();
         } catch (e) {
-            console.error(e);
+            toast.error(e);
         }
     }
 
@@ -93,7 +94,7 @@
                 params as any,
             );
         } catch (e: any) {
-            console.error(e);
+            toast.error(e);
             error = e?.response?.data?.userErrorMsg;
         } finally {
             isLoading = false;

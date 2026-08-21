@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { toast } from '$lib/stores/toast';
   import { goto } from "$app/navigation";
   import { onMount } from "svelte";
   import { page } from "$app/state";
@@ -26,7 +27,7 @@
       platNomor = unit.platNomor;
       jenisId = unit.jenisId || "";
     } catch (err: any) {
-      console.error(err);
+      toast.error(err);
     } finally {
       isLoading = false;
     }
@@ -42,7 +43,7 @@
       });
       goto("/motor/unit");
     } catch (err: any) {
-      console.error(err);
+      toast.error(err);
     } finally {
       isSaving = false;
     }

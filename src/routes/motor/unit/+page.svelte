@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { toast } from '$lib/stores/toast';
   import { onMount } from "svelte";
   import { Plus, Pencil, Trash2, Truck } from "@lucide/svelte";
   import { formatCurrency } from "$lib/utils";
@@ -53,7 +54,7 @@
       const res = await unitMotorApi.getAll({ limit: 100 });
       units = res.data || [];
     } catch (error: any) {
-      console.error("Error loading unit motor:", error);
+      toast.error("Error loading unit motor:", error);
     } finally {
       isLoading = false;
     }
@@ -73,7 +74,7 @@
       await unitMotorApi.delete(id);
       await loadData();
     } catch (error: any) {
-      console.error("Error deleting:", error);
+      toast.error("Error deleting:", error);
     }
   }
 </script>

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { toast } from '$lib/stores/toast';
     import { goto } from "$app/navigation";
     import { onMount } from "svelte";
     import { unitMotorApi, jenisMotorApi } from "$lib/api";
@@ -21,7 +22,7 @@
         try {
             await unitMotorApi.create({ platNomor, jenisId });
             goto("/motor/unit");
-        } catch (err: any) { console.error(err); }
+        } catch (err: any) { toast.error(err); }
         finally { isSaving = false; }
     }
 </script>

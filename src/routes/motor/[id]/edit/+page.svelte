@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { toast } from '$lib/stores/toast';
   import { goto } from "$app/navigation";
   import { onMount } from "svelte";
   import { page } from "$app/state";
@@ -34,7 +35,7 @@
         imageUrl = motor.gambar;
       }
     } catch (err: any) {
-      console.error(err);
+      toast.error(err);
     } finally {
       isLoading = false;
     }
@@ -64,7 +65,7 @@
       await jenisMotorApi.update(motorId, formData);
       goto("/motor");
     } catch (err: any) {
-      console.error(err);
+      toast.error(err);
     } finally {
       isSaving = false;
     }

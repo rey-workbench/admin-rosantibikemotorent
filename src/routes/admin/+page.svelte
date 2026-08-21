@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { toast } from '$lib/stores/toast';
     import { onMount } from "svelte";
     import { Plus, Pencil, Trash2, UserCog } from "@lucide/svelte";
     import { adminApi } from "$lib/api";
@@ -34,7 +35,7 @@
         try {
             admins = await adminApi.getAll();
         } catch (err: any) {
-            console.error("Error loading admins:", err);
+            toast.error("Error loading admins:", err);
         } finally {
             isLoading = false;
         }
@@ -86,7 +87,7 @@
             closeModal();
             await loadData();
         } catch (err: any) {
-            console.error("Save error:", err);
+            toast.error("Save error:", err);
         } finally {
             isSaving = false;
         }
@@ -106,7 +107,7 @@
             await adminApi.delete(id);
             await loadData();
         } catch (err: any) {
-            console.error("Error deleting:", err);
+            toast.error("Error deleting:", err);
         }
     }
 </script>

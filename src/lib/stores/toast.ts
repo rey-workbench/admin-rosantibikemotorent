@@ -26,12 +26,14 @@ function createToastStore() {
     remove: (id: string) => {
       update((toasts) => toasts.filter((t) => t.id !== id));
     },
-    success: (msg: string, duration = 3000) =>
-      toast.add(msg, "success", duration),
-    error: (msg: string, duration = 3000) => toast.add(msg, "error", duration),
-    info: (msg: string, duration = 3000) => toast.add(msg, "info", duration),
-    warning: (msg: string, duration = 3000) =>
-      toast.add(msg, "warning", duration),
+    success: (...args: any[]) =>
+      toast.add(args.map(a => typeof a === 'string' ? a : (a?.message || String(a))).join(' '), "success", 3000),
+    error: (...args: any[]) =>
+      toast.add(args.map(a => typeof a === 'string' ? a : (a?.message || String(a))).join(' '), "error", 3000),
+    info: (...args: any[]) =>
+      toast.add(args.map(a => typeof a === 'string' ? a : (a?.message || String(a))).join(' '), "info", 3000),
+    warning: (...args: any[]) =>
+      toast.add(args.map(a => typeof a === 'string' ? a : (a?.message || String(a))).join(' '), "warning", 3000),
   };
 }
 

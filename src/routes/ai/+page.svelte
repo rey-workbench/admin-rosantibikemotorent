@@ -116,7 +116,7 @@
         try {
             knowledgeBase = await aiApi.getKnowledge();
         } catch (e: any) {
-            console.error(e);
+            toast.error(e);
         }
     }
 
@@ -142,7 +142,7 @@
                 timestamp: Date.now()
             }];
         } catch (e: any) {
-            console.error(e);
+            toast.error(e);
         } finally {
             loading = false;
         }
@@ -195,7 +195,7 @@
             isModalOpen = false;
             await fetchKnowledge();
         } catch (e: any) {
-            console.error(e);
+            toast.error(e);
         } finally {
             loading = false;
         }
@@ -216,7 +216,7 @@
             toast.success("Item berhasil dihapus");
             await fetchKnowledge();
         } catch (e: any) {
-            console.error(e);
+            toast.error(e);
         }
     }
 

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { toast } from '$lib/stores/toast';
   import { onMount, onDestroy } from "svelte";
   import { Send, Phone, X } from "@lucide/svelte";
   import { whatsappMessages } from "$lib/stores/websocket";
@@ -45,7 +46,7 @@
       await whatsappApi.sendMessage(selectedChat, messageInput);
       messageInput = "";
     } catch (error: any) {
-      console.error("Error sending message:", error);
+      toast.error("Error sending message:", error);
     } finally {
       isSending = false;
     }

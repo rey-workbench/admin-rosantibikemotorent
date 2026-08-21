@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { toast } from '$lib/stores/toast';
   import { goto } from "$app/navigation";
   import { Link, Upload as UploadIcon } from "@lucide/svelte";
   import { jenisMotorApi } from "$lib/api";
@@ -38,7 +39,7 @@
       await jenisMotorApi.create(formData);
       goto("/motor");
     } catch (err: any) {
-      console.error(err);
+      toast.error(err);
     } finally {
       isSaving = false;
     }

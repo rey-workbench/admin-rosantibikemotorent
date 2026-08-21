@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { toast } from '$lib/stores/toast';
   import { goto } from "$app/navigation";
   import { blogApi } from "$lib/api";
   import { Form, Input, Textarea } from "$lib/components/ui";
@@ -17,7 +18,7 @@
       await blogApi.create(formData);
       goto("/blog");
     } catch (err: any) {
-      console.error(err);
+      toast.error(err);
     } finally {
       isSaving = false;
     }

@@ -37,7 +37,7 @@
         try {
             templates = await whatsappApi.getAllTemplates();
         } catch (error: any) {
-            console.error("Error loading templates:", error);
+            toast.error("Error loading templates:", error);
         } finally {
             isLoading = false;
         }
@@ -92,7 +92,7 @@
             showModal = false;
             loadTemplates();
         } catch (error: any) {
-            console.error("Error saving template:", error);
+            toast.error("Error saving template:", error);
         } finally {
             isSaving = false;
         }
@@ -113,7 +113,7 @@
             toast.success("Template dihapus");
             loadTemplates();
         } catch (error: any) {
-            console.error("Error deleting template:", error);
+            toast.error("Error deleting template:", error);
         }
     }
 </script>

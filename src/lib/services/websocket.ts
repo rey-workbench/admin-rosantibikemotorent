@@ -139,7 +139,7 @@ class WebSocketService {
     });
 
     this.socket.on("connect_error", (error) => {
-      console.error("[Socket] Connection error:", error.message);
+      console.warn("[Socket] Connection error:", error.message);
     });
 
     this.socket.io.on("reconnect_attempt", (attempt) => {

@@ -58,7 +58,7 @@
       const res = await whatsappApi.getStatus();
       whatsappStatus.set(res);
     } catch (error: any) {
-      console.error("Error loading status:", error);
+      toast.error("Error loading status:", error);
     } finally {
       isLoading = false;
     }
@@ -88,7 +88,7 @@
         toast.success("QR Code berhasil diambil");
       }
     } catch (error: any) {
-      console.error("Error getting QR:", error);
+      toast.error("Error getting QR:", error);
     } finally {
       isLoadingQr = false;
     }
@@ -107,7 +107,7 @@
       await whatsappApi.logout();
       await loadStatus();
     } catch (error: any) {
-      console.error("Error logging out:", error);
+      toast.error("Error logging out:", error);
     }
   }
 
@@ -125,7 +125,7 @@
       await whatsappApi.resetSession();
       await loadStatus();
     } catch (error: any) {
-      console.error("Error resetting:", error);
+      toast.error("Error resetting:", error);
     }
   }
 
@@ -139,7 +139,7 @@
       await whatsappApi.sendMessage(phone, message);
       message = "";
     } catch (error: any) {
-      console.error("Error sending message:", error);
+      toast.error("Error sending message:", error);
     } finally {
       isSending = false;
     }

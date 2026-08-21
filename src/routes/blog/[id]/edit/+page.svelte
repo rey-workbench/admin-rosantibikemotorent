@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { toast } from '$lib/stores/toast';
   import { goto } from "$app/navigation";
   import { onMount } from "svelte";
   import { page } from "$app/state";
@@ -20,7 +21,7 @@
       judul = blog.judul;
       konten = blog.konten || "";
     } catch (err: any) {
-      console.error(err);
+      toast.error(err);
     } finally {
       isLoading = false;
     }
@@ -36,7 +37,7 @@
       await blogApi.update(blogId, formData);
       goto("/blog");
     } catch (err: any) {
-      console.error(err);
+      toast.error(err);
     } finally {
       isSaving = false;
     }

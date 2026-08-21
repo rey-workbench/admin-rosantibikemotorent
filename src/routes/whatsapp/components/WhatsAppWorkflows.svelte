@@ -73,7 +73,7 @@
       const data = await whatsappApi.getAllWorkflows();
       workflows = data;
     } catch (err: any) {
-      console.error(err);
+      toast.error(err);
     }
   }
 
@@ -81,7 +81,7 @@
     try {
       templates = await whatsappApi.getAllTemplates();
     } catch (err: any) {
-      console.error("Gagal memuat templates", err);
+      toast.error("Gagal memuat templates", err);
     }
   }
 
@@ -226,7 +226,7 @@
       await loadWorkflows();
       showConfigModal = false;
     } catch (e: any) {
-      console.error(e);
+      toast.error(e);
     } finally {
       isSaving = false;
     }
@@ -246,7 +246,7 @@
       selectedId = null;
       await loadWorkflows();
     } catch (err: any) {
-      console.error(err);
+      toast.error(err);
     }
   }
 </script>

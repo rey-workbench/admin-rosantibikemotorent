@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { toast } from '$lib/stores/toast';
     import { onMount } from "svelte";
     import { RefreshCw, Trash2, Play, Pause, ListOrdered } from "@lucide/svelte";
     import { queueApi } from "$lib/api";
@@ -36,7 +37,7 @@
             queues = res || [];
         } catch (err: any) {
             error = err.response?.data?.userErrorMsg || err.response?.data?.message;
-            console.error("Error loading queues:", err);
+            toast.error("Error loading queues:", err);
         } finally {
             if (showLoading) isLoading = false;
         }
@@ -67,7 +68,7 @@
             }
             await loadData();
         } catch (err) {
-            console.error("Error:", err);
+            toast.error("Error:", err);
         }
     }
 
@@ -85,7 +86,7 @@
             await queueApi.cleanQueue(queueName);
             await loadData();
         } catch (err) {
-            console.error("Error:", err);
+            toast.error("Error:", err);
         }
     }
 </script>

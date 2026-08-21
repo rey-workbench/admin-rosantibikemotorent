@@ -25,7 +25,7 @@ export const handle: Handle = async ({ event, resolve }) => {
         event.cookies.delete("accessToken", { path: "/" });
       }
     } catch (e) {
-      console.error("Auth verification failed:", e);
+      console.warn("Auth verification failed:", e);
     }
   }
 
@@ -52,7 +52,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 };
 
 export const handleError = ({ error }: { error: unknown }) => {
-  console.error("Admin server error:", error);
+  console.warn("Admin server error:", error);
   return {
     message: "Terjadi kesalahan internal.",
   };

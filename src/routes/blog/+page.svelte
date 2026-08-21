@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { toast } from '$lib/stores/toast';
   import { onMount } from "svelte";
   import { Plus, Pencil, Trash2, FileText } from "@lucide/svelte";
   import { formatDateShort } from "$lib/utils";
@@ -43,7 +44,7 @@
       });
       blogs = res.data || [];
     } catch (error: any) {
-      console.error("Error loading blogs:", error);
+      toast.error("Error loading blogs:", error);
     } finally {
       isLoading = false;
     }
@@ -63,7 +64,7 @@
       await blogApi.delete(id);
       await loadData();
     } catch (error: any) {
-      console.error("Error deleting blog:", error);
+      toast.error("Error deleting blog:", error);
     }
   }
 

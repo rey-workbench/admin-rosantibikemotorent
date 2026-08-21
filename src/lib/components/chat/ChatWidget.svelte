@@ -174,7 +174,7 @@
           };
         });
     } catch (e) {
-      console.error(e);
+      toast.error(e);
     }
   }
 
@@ -192,7 +192,7 @@
       chatMessages = Array.isArray(messagesData) ? messagesData : [];
       await whatsappApi.sendSeen(phone);
     } catch (e) {
-      console.error("[ChatWidget] Error loading messages:", e);
+      toast.error("[ChatWidget] Error loading messages:", e);
       chatMessages = [];
     } finally {
       if (!isBackground) isLoadingMessages = false;
