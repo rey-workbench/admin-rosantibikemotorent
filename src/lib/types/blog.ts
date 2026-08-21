@@ -16,13 +16,13 @@ export interface BlogPost {
   updatedAt: string;
 }
 
-export interface BlogKategori {
+interface BlogKategori {
   id: string;
   nama: string;
   slug: string;
 }
 
-export interface BlogTag {
+interface BlogTag {
   id: string;
   nama: string;
   slug: string;

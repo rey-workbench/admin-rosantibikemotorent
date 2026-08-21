@@ -47,7 +47,10 @@
           // Update optimistic message with real ID and status
           // Find the optimistic message (assuming it's the last one with a temp id or we match body)
           const index = chatMessages.findIndex(
-            (m) => m.id._serialized.startsWith("temp_") && m.body === (data as any).body,
+            (m) =>
+              ((typeof m.id === "object" && m.id?._serialized?.startsWith("temp_")) ||
+                (typeof m.id === "string" && m.id.startsWith("temp_"))) &&
+              m.body === (data as any).body,
           );
           if (index !== -1) {
             const updated = { ...chatMessages[index] };
@@ -71,9 +74,13 @@
         // If message is for current chat, append it
         if (selectedId && fromId === selectedId) {
           // Avoid duplicates
-          if (
-            !chatMessages.some((m) => m.id._serialized === data.id._serialized)
-          ) {
+            const targetMsgId = (data as any).id?._serialized || (data as any).id;
+            if (
+              !chatMessages.some((m) => {
+                const currentId = m.id?._serialized || m.id;
+                return currentId === targetMsgId;
+              })
+            ) {
             chatMessages = [...chatMessages, data];
             whatsappApi.sendSeen(data.from);
           }

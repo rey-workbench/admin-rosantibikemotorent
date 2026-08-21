@@ -22,7 +22,7 @@ const API_BASE_URL = rawUrl.endsWith("/api") ? rawUrl : `${rawUrl}/api`;
 //
 // getToken() dipertahankan untuk kompatibilitas (mis. WebSocket) namun
 // tidak membaca storage apa pun — token httpOnly tidak bisa diakses JS.
-export function getToken(): string | null {
+function getToken(): string | null {
   return null;
 }
 
