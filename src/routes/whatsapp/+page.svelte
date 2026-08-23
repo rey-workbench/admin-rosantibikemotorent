@@ -19,7 +19,6 @@
   import { confirm } from "$lib/stores/confirm";
   import WhatsAppTemplates from "./components/WhatsAppTemplates.svelte";
   import WhatsAppWorkflows from "./components/WhatsAppWorkflows.svelte";
-  import WhatsAppChatWidget from "./components/WhatsAppChatWidget.svelte";
 
   let status = $derived($whatsappStatus);
   let qrCode = $derived($whatsappStatus?.qrCode || null);
@@ -329,5 +328,3 @@
   <WhatsAppWorkflows />
 {/if}
 
-<!-- WhatsApp Chat Widget (floating) -->
-<WhatsAppChatWidget />

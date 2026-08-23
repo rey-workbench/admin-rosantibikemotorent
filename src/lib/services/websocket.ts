@@ -19,7 +19,6 @@ import {
   socketConnected,
   whatsappStatus,
   queueUpdates,
-  whatsappMessages,
   transaksiNotifications,
   motorStatusUpdates,
   connectionState,
@@ -165,7 +164,6 @@ class WebSocketService {
     });
 
     this.socket.on(WS_CHANNELS.WHATSAPP_MESSAGE, (data: WhatsAppMessageEvent) => {
-      whatsappMessages.update((messages) => [data, ...messages].slice(0, 100));
       this.whatsappMessageHandlers.forEach((handler) => handler(data));
     });
 

@@ -88,7 +88,15 @@
 
         if (data.type === "incoming") {
           loadContacts();
-          if (!isOpen) toast.info(`Pesan dari ${(data as any).notifyName || fromId}`);
+          if (!isOpen) {
+            toast.info(`Pesan dari ${(data as any).notifyName || fromId}`);
+            if ("Notification" in window && Notification.permission === "granted") {
+              new Notification((data as any).notifyName || fromId, {
+                body: (data as any).body,
+                icon: "/favicon.png",
+              });
+            }
+          }
         }
       }),
       websocketService.onWhatsAppStatus((data: any) => {
@@ -116,6 +124,9 @@
   // --- Lifecycle ---
   onMount(async () => {
     setupWebSocket();
+    if ("Notification" in window && Notification.permission === "default") {
+      Notification.requestPermission();
+    }
     if (isOpen) {
       loadContacts();
       const status = await whatsappApi.getStatus();

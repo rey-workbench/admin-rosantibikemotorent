@@ -5,7 +5,6 @@ import type {
   QueueUpdate,
   TransaksiEvent,
   MotorStatusUpdate,
-  WhatsAppMessageEvent,
 } from "$lib/types";
 
 export const socketConnected = writable<boolean>(false);
@@ -19,7 +18,6 @@ export const whatsappStatus = writable<WhatsappStatus>({
 });
 
 export const queueUpdates = writable<QueueUpdate | null>(null);
-export const whatsappMessages = writable<WhatsAppMessageEvent[]>([]);
 export const transaksiNotifications = writable<TransaksiEvent[]>([]);
 export const motorStatusUpdates = writable<MotorStatusUpdate | null>(null);
 
