@@ -1,5 +1,20 @@
 import { io, type Socket } from "socket.io-client";
 import { browser } from "$app/environment";
+
+const WS_CHANNELS = {
+  WHATSAPP_MESSAGE: "whatsapp:message",
+  WHATSAPP_MESSAGE_SENT: "whatsapp:message-sent",
+  WHATSAPP_STATUS: "whatsapp:status",
+  WHATSAPP_QRCODE: "whatsapp:qrcode",
+  QUEUE_UPDATE: "queue:update",
+  TRANSAKSI_CREATED: "transaksi-created",
+  TRANSAKSI_UPDATED: "transaksi-updated",
+  TRANSAKSI_DELETED: "transaksi-deleted",
+  TRANSAKSI_SELESAI: "transaksi-selesai",
+  MOTOR_STATUS_UPDATE: "motor-status-update",
+  UNIT_MOTOR_UPDATE: "unit-motor:update",
+  DENDA_NOTIFICATION: "denda-notification",
+} as const;
 import {
   socketConnected,
   whatsappStatus,
@@ -149,16 +164,16 @@ class WebSocketService {
       }));
     });
 
-    this.socket.on("whatsapp:message", (data: WhatsAppMessageEvent) => {
+    this.socket.on(WS_CHANNELS.WHATSAPP_MESSAGE, (data: WhatsAppMessageEvent) => {
       whatsappMessages.update((messages) => [data, ...messages].slice(0, 100));
       this.whatsappMessageHandlers.forEach((handler) => handler(data));
     });
 
-    this.socket.on("whatsapp:message-sent", (data: WhatsAppMessageSent) => {
+    this.socket.on(WS_CHANNELS.WHATSAPP_MESSAGE_SENT, (data: WhatsAppMessageSent) => {
       this.whatsappMessageSentHandlers.forEach((handler) => handler(data));
     });
 
-    this.socket.on("whatsapp:status", (data: any) => {
+    this.socket.on(WS_CHANNELS.WHATSAPP_STATUS, (data: any) => {
       const rawStatus =
         data?.connectionStatus || data?.status || "disconnected";
 
@@ -193,7 +208,7 @@ class WebSocketService {
       this.whatsappStatusHandlers.forEach((handler) => handler(mappedStatus));
     });
 
-    this.socket.on("whatsapp:qrcode", (data: unknown) => {
+    this.socket.on(WS_CHANNELS.WHATSAPP_QRCODE, (data: unknown) => {
       const qrCode =
         typeof data === "string"
           ? data
@@ -213,7 +228,7 @@ class WebSocketService {
       );
     });
 
-    this.socket.on("queue:update", (data: QueueUpdate) => {
+    this.socket.on(WS_CHANNELS.QUEUE_UPDATE, (data: QueueUpdate) => {
       queueUpdates.set(data);
       this.queueUpdateHandlers.forEach((handler) => handler(data));
     });
@@ -225,33 +240,33 @@ class WebSocketService {
       },
     );
 
-    this.socket.on("transaksi-created", (data: TransaksiEvent) => {
+    this.socket.on(WS_CHANNELS.TRANSAKSI_CREATED, (data: TransaksiEvent) => {
       transaksiNotifications.update((list) => [data, ...list].slice(0, 50));
       this.transaksiCreatedHandlers.forEach((handler) => handler(data));
     });
 
-    this.socket.on("transaksi-updated", (data: TransaksiEvent) => {
+    this.socket.on(WS_CHANNELS.TRANSAKSI_UPDATED, (data: TransaksiEvent) => {
       this.transaksiUpdatedHandlers.forEach((handler) => handler(data));
     });
 
-    this.socket.on("transaksi-deleted", (data: { id: string }) => {
+    this.socket.on(WS_CHANNELS.TRANSAKSI_DELETED, (data: { id: string }) => {
       this.transaksiDeletedHandlers.forEach((handler) => handler(data));
     });
 
-    this.socket.on("transaksi-selesai", (data: TransaksiEvent) => {
+    this.socket.on(WS_CHANNELS.TRANSAKSI_SELESAI, (data: TransaksiEvent) => {
       this.transaksiSelesaiHandlers.forEach((handler) => handler(data));
     });
 
-    this.socket.on("motor-status-update", (data: MotorStatusUpdate) => {
+    this.socket.on(WS_CHANNELS.MOTOR_STATUS_UPDATE, (data: MotorStatusUpdate) => {
       motorStatusUpdates.set(data);
       this.motorStatusUpdateHandlers.forEach((handler) => handler(data));
     });
 
-    this.socket.on("unit-motor:update", (data: UnitMotorUpdate) => {
+    this.socket.on(WS_CHANNELS.UNIT_MOTOR_UPDATE, (data: UnitMotorUpdate) => {
       this.unitMotorUpdateHandlers.forEach((handler) => handler(data));
     });
 
-    this.socket.on("denda-notification", (data: DendaNotification) => {
+    this.socket.on(WS_CHANNELS.DENDA_NOTIFICATION, (data: DendaNotification) => {
       this.dendaNotificationHandlers.forEach((handler) => handler(data));
     });
   }
