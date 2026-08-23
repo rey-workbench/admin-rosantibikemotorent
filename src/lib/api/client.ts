@@ -20,12 +20,6 @@ const API_BASE_URL = rawUrl.endsWith("/api") ? rawUrl : `${rawUrl}/api`;
 // dikirim otomatis oleh browser (credentials: "include").
 // TIDAK menyimpan token di localStorage/sessionStorage (anti XSS theft).
 //
-// getToken() dipertahankan untuk kompatibilitas (mis. WebSocket) namun
-// tidak membaca storage apa pun — token httpOnly tidak bisa diakses JS.
-function getToken(): string | null {
-  return null;
-}
-
 export function clearToken(): void {
   // Tidak ada lagi token di storage — bersihkan sisa legacy dari versi lama
   if (!browser) return;
