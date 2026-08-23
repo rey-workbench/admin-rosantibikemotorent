@@ -1,94 +1,88 @@
 <script lang="ts">
-  import { toast } from '$lib/stores/toast';
-    import { onMount } from "svelte";
-    import { RefreshCw, Trash2, Play, Pause, ListOrdered } from "@lucide/svelte";
-    import { queueApi } from "$lib/api";
-    import { websocketService } from "$lib/services/websocket";
-	import { queueUpdates, socketConnected } from "$lib/stores/websocket";
-    import {
-        Card,
-        CardBody,
-        CardHeader,
-        Button,
-        Badge,
-    } from "$lib/components/ui";
-    import { PageHeader } from "$lib/components/layout";
-    import { confirm } from "$lib/stores/confirm";
+import { ListOrdered, Pause, Play, RefreshCw, Trash2 } from '@lucide/svelte';
+import { onMount } from 'svelte';
+import { queueApi } from '$lib/api';
+import { PageHeader } from '$lib/components/layout';
+import { Badge, Button, Card, CardBody, CardHeader } from '$lib/components/ui';
+import { websocketService } from '$lib/services/websocket';
+import { confirm } from '$lib/stores/confirm';
+import { toast } from '$lib/stores/toast';
+import { queueUpdates, socketConnected } from '$lib/stores/websocket';
 
-    interface QueueStats {
-        name: string;
-        waiting: number;
-        active: number;
-        completed: number;
-        failed: number;
-        delayed: number;
-        paused: boolean;
-    }
+interface QueueStats {
+	name: string;
+	waiting: number;
+	active: number;
+	completed: number;
+	failed: number;
+	delayed: number;
+	paused: boolean;
+}
 
-    let queues: QueueStats[] = $state([]);
-    let isLoading = $state(true);
-    let error = $state("");
+let queues: QueueStats[] = $state([]);
+let isLoading = $state(true);
+let error = $state('');
 
-    async function loadData(showLoading = true) {
-        if (showLoading) isLoading = true;
-        error = "";
-        try {
-            const res = await queueApi.getStatus();
-            queues = res || [];
-        } catch (err: any) {
-            error = err.response?.data?.userErrorMsg || err.response?.data?.message;
-            toast.error("Error loading queues:", err);
-        } finally {
-            if (showLoading) isLoading = false;
-        }
-    }
+async function loadData(showLoading = true) {
+	if (showLoading) isLoading = true;
+	error = '';
+	try {
+		const res = await queueApi.getStatus();
+		queues = res || [];
+	} catch (err: any) {
+		error = err.response?.data?.userErrorMsg || err.response?.data?.message;
+		toast.error('Error loading queues:', err);
+	} finally {
+		if (showLoading) isLoading = false;
+	}
+}
 
-    onMount(() => {
-        // Hubungkan websocket jika belum terhubung
-        websocketService.connect();
-        
-        loadData(true);
+onMount(() => {
+	// Hubungkan websocket jika belum terhubung
+	websocketService.connect();
 
-        // Subscribe to real-time queue updates
-        const unsubscribe = queueUpdates.subscribe((update: any) => {
-            if (update) {
-                loadData(false);
-            }
-        });
+	loadData(true);
 
-        return () => unsubscribe();
-    });
+	// Subscribe to real-time queue updates
+	const unsubscribe = queueUpdates.subscribe((update: any) => {
+		if (update) {
+			loadData(false);
+		}
+	});
 
-    async function handlePauseResume(queueName: string, isPaused: boolean) {
-        try {
-            if (isPaused) {
-                await queueApi.resumeQueue(queueName);
-            } else {
-                await queueApi.pauseQueue(queueName);
-            }
-            await loadData();
-        } catch (err) {
-            toast.error("Error:", err);
-        }
-    }
+	return () => unsubscribe();
+});
 
-    async function handleCleanQueue(queueName: string) {
-        const ok = await confirm.show({
-            title: "Bersihkan Queue",
-            message: `Apakah Anda yakin ingin membersihkan semua job di queue "${queueName}"?`,
-            type: "warning",
-            confirmText: "Ya, Bersihkan",
-        });
+async function handlePauseResume(queueName: string, isPaused: boolean) {
+	try {
+		if (isPaused) {
+			await queueApi.resumeQueue(queueName);
+		} else {
+			await queueApi.pauseQueue(queueName);
+		}
+		await loadData();
+	} catch (err) {
+		toast.error('Error:', err);
+	}
+}
 
-        if (!ok) return;
+async function handleCleanQueue(queueName: string) {
+	const ok = await confirm.show({
+		title: 'Bersihkan Queue',
+		message: `Apakah Anda yakin ingin membersihkan semua job di queue "${queueName}"?`,
+		type: 'warning',
+		confirmText: 'Ya, Bersihkan'
+	});
 
-        try {
-            await queueApi.cleanQueue(queueName);
-            await loadData();
-        } catch (err) {
-            toast.error("Error:", err);
-        }
-    }
+	if (!ok) return;
+
+	try {
+		await queueApi.cleanQueue(queueName);
+		await loadData();
+	} catch (err) {
+		toast.error('Error:', err);
+	}
+}
 </script>
 
 <svelte:head>

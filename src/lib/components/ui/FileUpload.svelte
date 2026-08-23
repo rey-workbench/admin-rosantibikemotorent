@@ -1,29 +1,23 @@
 <script lang="ts">
-    import { Upload } from "@lucide/svelte";
+import { Upload } from '@lucide/svelte';
 
-    interface Props {
-        label: string;
-        preview?: string;
-        accept?: string;
-        onchange: (file: File) => void;
-        class?: string;
-    }
+interface Props {
+	label: string;
+	preview?: string;
+	accept?: string;
+	onchange: (file: File) => void;
+	class?: string;
+}
 
-    let {
-        label,
-        preview = "",
-        accept = "image/*",
-        onchange,
-        class: className = "",
-    }: Props = $props();
+let { label, preview = '', accept = 'image/*', onchange, class: className = '' }: Props = $props();
 
-    function handleChange(e: Event) {
-        const input = e.target as HTMLInputElement;
-        const file = input.files?.[0];
-        if (file) {
-            onchange(file);
-        }
-    }
+function handleChange(e: Event) {
+	const input = e.target as HTMLInputElement;
+	const file = input.files?.[0];
+	if (file) {
+		onchange(file);
+	}
+}
 </script>
 
 <div class="flex flex-col gap-1.5 {className}">

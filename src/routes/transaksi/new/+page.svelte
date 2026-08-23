@@ -1,93 +1,90 @@
 <script lang="ts">
-  import { toast } from '$lib/stores/toast';
-  import { goto } from "$app/navigation";
-  import { onMount } from "svelte";
-    import { unitMotorApi, transaksiApi } from "$lib/api";
-  import type { UnitMotor, StatusTransaksi } from "$lib/types";
-  import { Form, Input, Select } from "$lib/components/ui";
-  import { formatCurrency } from "$lib/utils/formatters";
+import { onMount } from 'svelte';
+import { goto } from '$app/navigation';
+import { transaksiApi, unitMotorApi } from '$lib/api';
+import { Form, Input, Select } from '$lib/components/ui';
+import { toast } from '$lib/stores/toast';
+import type { StatusTransaksi, UnitMotor } from '$lib/types';
+import { formatCurrency } from '$lib/utils/formatters';
 
-  let namaPenyewa = $state("");
-  let noWhatsapp = $state("");
-  let status = $state<StatusTransaksi>("PENDING_DP");
-  let unitId = $state("");
-  let tanggalMulai = $state("");
-  let tanggalSelesai = $state("");
-  let jamMulai = $state("08:00");
-  let jamSelesai = $state("08:00");
-  let helm = $state(0);
-  let jasHujan = $state(0);
+let namaPenyewa = $state('');
+let noWhatsapp = $state('');
+let status = $state<StatusTransaksi>('PENDING_DP');
+let unitId = $state('');
+let tanggalMulai = $state('');
+let tanggalSelesai = $state('');
+let jamMulai = $state('08:00');
+let jamSelesai = $state('08:00');
+let helm = $state(0);
+let jasHujan = $state(0);
 
-  let units: UnitMotor[] = $state([]);
-  let isSaving = $state(false);
-    let estimasiBiaya = $state<number | null>(null);
-  let rincian = $state<any>(null);
-  let errorMsg = $state<string | null>(null);
+let units: UnitMotor[] = $state([]);
+let isSaving = $state(false);
+let estimasiBiaya = $state<number | null>(null);
+let rincian = $state<any>(null);
+let errorMsg = $state<string | null>(null);
 
-  onMount(async () => {
-    const res = await unitMotorApi.getAll({ limit: 100 });
-    units = res.data || [];
-  });
+onMount(async () => {
+	const res = await unitMotorApi.getAll({ limit: 100 });
+	units = res.data || [];
+});
 
-  async function handleCalculate() {
-    if (!unitId || !tanggalMulai || !tanggalSelesai) {
-      estimasiBiaya = null;
-      rincian = null;
-      return;
-    }
-    
-    try {
-      const res = await transaksiApi.calculatePrice({
-        unitId,
-        tanggalMulai,
-        tanggalSelesai,
-        jamMulai,
-        jamSelesai,
-        helm: Number(helm),
-        jasHujan: Number(jasHujan),
-      });
-      estimasiBiaya = res.totalBiaya;
-      rincian = res.rincian;
-    } catch (err) {
-      toast.error(err);
-      estimasiBiaya = null;
-      rincian = null;
-    } finally {
-      
-    }
-  }
+async function handleCalculate() {
+	if (!unitId || !tanggalMulai || !tanggalSelesai) {
+		estimasiBiaya = null;
+		rincian = null;
+		return;
+	}
 
-  $effect(() => {
-    
-    handleCalculate();
-  });
+	try {
+		const res = await transaksiApi.calculatePrice({
+			unitId,
+			tanggalMulai,
+			tanggalSelesai,
+			jamMulai,
+			jamSelesai,
+			helm: Number(helm),
+			jasHujan: Number(jasHujan)
+		});
+		estimasiBiaya = res.totalBiaya;
+		rincian = res.rincian;
+	} catch (err) {
+		toast.error(err);
+		estimasiBiaya = null;
+		rincian = null;
+	} finally {
+	}
+}
 
-  async function handleSubmit(e: Event) {
-    e.preventDefault();
-    isSaving = true;
-    errorMsg = null;
-    try {
-      await transaksiApi.create({
-        namaPenyewa,
-        noWhatsapp,
-        unitId,
-        tanggalMulai,
-        tanggalSelesai,
-        jamMulai,
-        jamSelesai,
-        helm: Number(helm),
-        jasHujan: Number(jasHujan),
-        status,
-      });
-      goto("/transaksi");
-    } catch (err: any) {
-      toast.error(err);
-      errorMsg =
-        err?.response?.data?.userErrorMsg || err?.response?.data?.message;
-    } finally {
-      isSaving = false;
-    }
-  }
+$effect(() => {
+	handleCalculate();
+});
+
+async function handleSubmit(e: Event) {
+	e.preventDefault();
+	isSaving = true;
+	errorMsg = null;
+	try {
+		await transaksiApi.create({
+			namaPenyewa,
+			noWhatsapp,
+			unitId,
+			tanggalMulai,
+			tanggalSelesai,
+			jamMulai,
+			jamSelesai,
+			helm: Number(helm),
+			jasHujan: Number(jasHujan),
+			status
+		});
+		goto('/transaksi');
+	} catch (err: any) {
+		toast.error(err);
+		errorMsg = err?.response?.data?.userErrorMsg || err?.response?.data?.message;
+	} finally {
+		isSaving = false;
+	}
+}
 </script>
 
 <Form

@@ -1,164 +1,147 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import { RefreshCw, Power, Send, QrCode } from "@lucide/svelte";
-  import { whatsappApi } from "$lib/api";
-  import { socketConnected, whatsappStatus } from "$lib/stores/websocket";
-  import { websocketService } from "$lib/services/websocket";
-	import { toast } from "$lib/stores/toast";
-    import type { WhatsappConnectionStatus } from "$lib/types";
-  import {
-    Card,
-    CardBody,
-    CardHeader,
-    Button,
-    Badge,
-    Input,
-    Tabs,
-  } from "$lib/components/ui";
-  import { PageHeader } from "$lib/components/layout";
-  import { confirm } from "$lib/stores/confirm";
-  import WhatsAppTemplates from "./components/WhatsAppTemplates.svelte";
-  import WhatsAppWorkflows from "./components/WhatsAppWorkflows.svelte";
+import { Power, QrCode, RefreshCw, Send } from '@lucide/svelte';
+import { onMount } from 'svelte';
+import { whatsappApi } from '$lib/api';
+import { PageHeader } from '$lib/components/layout';
+import { Badge, Button, Card, CardBody, CardHeader, Input, Tabs } from '$lib/components/ui';
+import { websocketService } from '$lib/services/websocket';
+import { confirm } from '$lib/stores/confirm';
+import { toast } from '$lib/stores/toast';
+import { socketConnected, whatsappStatus } from '$lib/stores/websocket';
+import type { WhatsappConnectionStatus } from '$lib/types';
+import WhatsAppTemplates from './components/WhatsAppTemplates.svelte';
+import WhatsAppWorkflows from './components/WhatsAppWorkflows.svelte';
 
-  let status = $derived($whatsappStatus);
-  let qrCode = $derived($whatsappStatus?.qrCode || null);
-  let isLoading = $state(true);
-  let isSending = $state(false);
-  let isLoadingQr = $state(false);
-  let phone = $state("");
-  let message = $state("");
-  let activeTab = $state("connection"); // 'connection' | 'templates'
+let status = $derived($whatsappStatus);
+let qrCode = $derived($whatsappStatus?.qrCode || null);
+let isLoading = $state(true);
+let isSending = $state(false);
+let isLoadingQr = $state(false);
+let phone = $state('');
+let message = $state('');
+let activeTab = $state('connection'); // 'connection' | 'templates'
 
-  onMount(() => {
-    if (!$socketConnected) {
-      loadStatus();
-    }
+onMount(() => {
+	if (!$socketConnected) {
+		loadStatus();
+	}
 
-    // Subscribe to real-time transaksi notifications
-    const unsubscribe = websocketService.onTransaksiCreated((transaksi: any) => {
-      toast.success(
-        `Booking baru: ${transaksi.namaPenyewa} - ${transaksi.unitMotor.platNomor}`,
-      );
-    });
+	// Subscribe to real-time transaksi notifications
+	const unsubscribe = websocketService.onTransaksiCreated((transaksi: any) => {
+		toast.success(`Booking baru: ${transaksi.namaPenyewa} - ${transaksi.unitMotor.platNomor}`);
+	});
 
-    return () => {
-      unsubscribe();
-    };
-  });
+	return () => {
+		unsubscribe();
+	};
+});
 
-  $effect(() => {
-    if ($socketConnected) {
-      loadStatus();
-    }
-  });
+$effect(() => {
+	if ($socketConnected) {
+		loadStatus();
+	}
+});
 
-  async function loadStatus() {
-    try {
-      const res = await whatsappApi.getStatus();
-      whatsappStatus.set(res);
-    } catch (error: any) {
-      toast.error("Error loading status:", error);
-    } finally {
-      isLoading = false;
-    }
-  }
+async function loadStatus() {
+	try {
+		const res = await whatsappApi.getStatus();
+		whatsappStatus.set(res);
+	} catch (error: any) {
+		toast.error('Error loading status:', error);
+	} finally {
+		isLoading = false;
+	}
+}
 
-  async function getQrCode() {
-    if (status?.status === "connected") {
-      toast.success("WhatsApp sudah terhubung!");
-      return;
-    }
+async function getQrCode() {
+	if (status?.status === 'connected') {
+		toast.success('WhatsApp sudah terhubung!');
+		return;
+	}
 
-    isLoadingQr = true;
-    try {
-      const res = await whatsappApi.getQrCode();
-      const newQrCode = res.qrcode;
-      whatsappStatus.update((s: any) => ({
-        ...s,
-        qrCode: newQrCode,
-        hasQrCode: !!newQrCode,
-        status: newQrCode ? "connecting" : s.status,
-      }));
-      if (!newQrCode) {
-        toast.warning(
-          "QR Code belum tersedia. Browser sedang disiapkan, mohon tunggu sebentar...",
-        );
-      } else {
-        toast.success("QR Code berhasil diambil");
-      }
-    } catch (error: any) {
-      toast.error("Error getting QR:", error);
-    } finally {
-      isLoadingQr = false;
-    }
-  }
+	isLoadingQr = true;
+	try {
+		const res = await whatsappApi.getQrCode();
+		const newQrCode = res.qrcode;
+		whatsappStatus.update((s: any) => ({
+			...s,
+			qrCode: newQrCode,
+			hasQrCode: !!newQrCode,
+			status: newQrCode ? 'connecting' : s.status
+		}));
+		if (!newQrCode) {
+			toast.warning('QR Code belum tersedia. Browser sedang disiapkan, mohon tunggu sebentar...');
+		} else {
+			toast.success('QR Code berhasil diambil');
+		}
+	} catch (error: any) {
+		toast.error('Error getting QR:', error);
+	} finally {
+		isLoadingQr = false;
+	}
+}
 
-  async function handleLogout() {
-    const ok = await confirm.show({
-      title: "Logout WhatsApp",
-      message: "Apakah Anda yakin ingin keluar dari sesi WhatsApp ini?",
-      type: "danger",
-      confirmText: "Ya, Logout",
-    });
+async function handleLogout() {
+	const ok = await confirm.show({
+		title: 'Logout WhatsApp',
+		message: 'Apakah Anda yakin ingin keluar dari sesi WhatsApp ini?',
+		type: 'danger',
+		confirmText: 'Ya, Logout'
+	});
 
-    if (!ok) return;
-    try {
-      await whatsappApi.logout();
-      await loadStatus();
-    } catch (error: any) {
-      toast.error("Error logging out:", error);
-    }
-  }
+	if (!ok) return;
+	try {
+		await whatsappApi.logout();
+		await loadStatus();
+	} catch (error: any) {
+		toast.error('Error logging out:', error);
+	}
+}
 
-  async function handleReset() {
-    const ok = await confirm.show({
-      title: "Reset Sesi WhatsApp",
-      message:
-        "Reset sesi WhatsApp akan menutup koneksi dan memulai ulang. Anda mungkin perlu scan QR lagi.",
-      type: "warning",
-      confirmText: "Ya, Reset",
-    });
+async function handleReset() {
+	const ok = await confirm.show({
+		title: 'Reset Sesi WhatsApp',
+		message:
+			'Reset sesi WhatsApp akan menutup koneksi dan memulai ulang. Anda mungkin perlu scan QR lagi.',
+		type: 'warning',
+		confirmText: 'Ya, Reset'
+	});
 
-    if (!ok) return;
-    try {
-      await whatsappApi.resetSession();
-      await loadStatus();
-    } catch (error: any) {
-      toast.error("Error resetting:", error);
-    }
-  }
+	if (!ok) return;
+	try {
+		await whatsappApi.resetSession();
+		await loadStatus();
+	} catch (error: any) {
+		toast.error('Error resetting:', error);
+	}
+}
 
-  async function handleSend() {
-    if (!phone || !message) {
-      toast.warning("Masukkan nomor telepon dan pesan");
-      return;
-    }
-    isSending = true;
-    try {
-      await whatsappApi.sendMessage(phone, message);
-      message = "";
-    } catch (error: any) {
-      toast.error("Error sending message:", error);
-    } finally {
-      isSending = false;
-    }
-  }
+async function handleSend() {
+	if (!phone || !message) {
+		toast.warning('Masukkan nomor telepon dan pesan');
+		return;
+	}
+	isSending = true;
+	try {
+		await whatsappApi.sendMessage(phone, message);
+		message = '';
+	} catch (error: any) {
+		toast.error('Error sending message:', error);
+	} finally {
+		isSending = false;
+	}
+}
 
-  function getStatusVariant(
-    s: WhatsappConnectionStatus,
-  ): "success" | "warning" | "danger" {
-    const variants: Record<
-      WhatsappConnectionStatus,
-      "success" | "warning" | "danger"
-    > = {
-      connected: "success",
-      connecting: "warning",
-      disconnected: "danger",
-      error: "danger",
-      qr_timeout: "danger",
-    };
-    return variants[s] || "danger";
-  }
+function getStatusVariant(s: WhatsappConnectionStatus): 'success' | 'warning' | 'danger' {
+	const variants: Record<WhatsappConnectionStatus, 'success' | 'warning' | 'danger'> = {
+		connected: 'success',
+		connecting: 'warning',
+		disconnected: 'danger',
+		error: 'danger',
+		qr_timeout: 'danger'
+	};
+	return variants[s] || 'danger';
+}
 </script>
 
 <svelte:head>

@@ -1,43 +1,33 @@
 <script lang="ts">
-    interface Props {
-        id: string;
-        label?: string;
-        type?:
-            | "text"
-            | "email"
-            | "password"
-            | "number"
-            | "tel"
-            | "date"
-            | "time"
-            | "datetime-local";
-        value: string | number;
-        placeholder?: string;
-        required?: boolean;
-        disabled?: boolean;
-        min?: number | string;
-        max?: number | string;
-        class?: string;
-        oninput?: (e: Event & { currentTarget: HTMLInputElement }) => void;
-        onkeydown?: (
-            e: KeyboardEvent & { currentTarget: HTMLInputElement },
-        ) => void;
-    }
+interface Props {
+	id: string;
+	label?: string;
+	type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'date' | 'time' | 'datetime-local';
+	value: string | number;
+	placeholder?: string;
+	required?: boolean;
+	disabled?: boolean;
+	min?: number | string;
+	max?: number | string;
+	class?: string;
+	oninput?: (e: Event & { currentTarget: HTMLInputElement }) => void;
+	onkeydown?: (e: KeyboardEvent & { currentTarget: HTMLInputElement }) => void;
+}
 
-    let {
-        id,
-        label,
-        type = "text",
-        value = $bindable(),
-        placeholder = "",
-        required = false,
-        disabled = false,
-        min,
-        max,
-        class: className = "",
-        oninput,
-        onkeydown,
-    }: Props = $props();
+let {
+	id,
+	label,
+	type = 'text',
+	value = $bindable(),
+	placeholder = '',
+	required = false,
+	disabled = false,
+	min,
+	max,
+	class: className = '',
+	oninput,
+	onkeydown
+}: Props = $props();
 </script>
 
 <div class="flex flex-col gap-1.5 {className}">

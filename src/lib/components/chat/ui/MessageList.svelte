@@ -1,54 +1,52 @@
 <script lang="ts">
-    import {
-        MessageSquare,
-        Loader2,
-        MapPin,
-        Reply,
-        Check,
-        CheckCheck,
-        FileText,
-        Play,
-        Image,
-    } from "@lucide/svelte";
+import {
+	Check,
+	CheckCheck,
+	FileText,
+	Image,
+	Loader2,
+	MapPin,
+	MessageSquare,
+	Play,
+	Reply
+} from '@lucide/svelte';
 
-    let {
-        messages = [],
-        isLoading = false,
-                selectedContact = null,
-        onReply = (_msg: any) => {},
-    } = $props<{
-        messages: any[];
-        isLoading?: boolean;
-        currentUser?: any;
-        selectedContact?: { name?: string; avatarColor?: string } | null;
-        onReply?: (msg: any) => void;
-    }>();
+let {
+	messages = [],
+	isLoading = false,
+	selectedContact = null,
+	onReply = (_msg: any) => {}
+} = $props<{
+	messages: any[];
+	isLoading?: boolean;
+	currentUser?: any;
+	selectedContact?: { name?: string; avatarColor?: string } | null;
+	onReply?: (msg: any) => void;
+}>();
 
-    // Helper to get initials
-    function getInitials(name: string) {
-        return name ? name.charAt(0).toUpperCase() : "?";
-    }
+// Helper to get initials
+function getInitials(name: string) {
+	return name ? name.charAt(0).toUpperCase() : '?';
+}
 
-    // Format time
-    function formatTime(timestamp: number) {
-        if (!timestamp) return "";
-        return new Date(timestamp * 1000).toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-        });
-    }
+// Format time
+function formatTime(timestamp: number) {
+	if (!timestamp) return '';
+	return new Date(timestamp * 1000).toLocaleTimeString([], {
+		hour: '2-digit',
+		minute: '2-digit'
+	});
+}
 
-    // Scroll to bottom effect
-    let container: HTMLDivElement;
-    $effect(() => {
-        if (messages && container) {
-            requestAnimationFrame(() => {
-                if (container) container.scrollTop = container.scrollHeight;
-            });
-        }
-    });
-
-    
+// Scroll to bottom effect
+let container: HTMLDivElement;
+$effect(() => {
+	if (messages && container) {
+		requestAnimationFrame(() => {
+			if (container) container.scrollTop = container.scrollHeight;
+		});
+	}
+});
 </script>
 
 <div

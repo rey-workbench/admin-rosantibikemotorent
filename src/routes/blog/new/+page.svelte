@@ -1,28 +1,28 @@
 <script lang="ts">
-  import { toast } from '$lib/stores/toast';
-  import { goto } from "$app/navigation";
-  import { blogApi } from "$lib/api";
-  import { Form, Input, Textarea } from "$lib/components/ui";
+import { goto } from '$app/navigation';
+import { blogApi } from '$lib/api';
+import { Form, Input, Textarea } from '$lib/components/ui';
+import { toast } from '$lib/stores/toast';
 
-  let judul = $state("");
-  let konten = $state("");
-  let isSaving = $state(false);
+let judul = $state('');
+let konten = $state('');
+let isSaving = $state(false);
 
-  async function handleSubmit(e: Event) {
-    e.preventDefault();
-    isSaving = true;
-    try {
-      const formData = new FormData();
-      formData.append("judul", judul);
-      formData.append("konten", konten);
-      await blogApi.create(formData);
-      goto("/blog");
-    } catch (err: any) {
-      toast.error(err);
-    } finally {
-      isSaving = false;
-    }
-  }
+async function handleSubmit(e: Event) {
+	e.preventDefault();
+	isSaving = true;
+	try {
+		const formData = new FormData();
+		formData.append('judul', judul);
+		formData.append('konten', konten);
+		await blogApi.create(formData);
+		goto('/blog');
+	} catch (err: any) {
+		toast.error(err);
+	} finally {
+		isSaving = false;
+	}
+}
 </script>
 
 <Form

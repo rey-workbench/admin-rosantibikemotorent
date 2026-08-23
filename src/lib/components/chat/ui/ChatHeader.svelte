@@ -1,32 +1,33 @@
 <script lang="ts">
-  import { ChevronLeft, Maximize2, Minimize2, X } from "@lucide/svelte";
+import { ChevronLeft, Maximize2, Minimize2, X } from '@lucide/svelte';
 
-  let {
-    title,
-    isFullscreen,
-    showBack = false,
-    onBack = () => {},
-    onToggleFullscreen = () => {},
-    onClose = () => {},
-    onLogout = () => {},
-    onReset = () => {},
-    contact,
-    sessionStatus = "disconnected",
-  } = $props<{
-    title: string;
-    isFullscreen: boolean;
-    showBack?: boolean;
-    contact?: any;
-    sessionStatus?: string;
-    onBack?: () => void;
-    onToggleFullscreen?: () => void;
-    onClose?: () => void;
-    onLogout?: () => void;
-    onReset?: () => void;
-  }>();
+let {
+	title,
+	isFullscreen,
+	showBack = false,
+	onBack = () => {},
+	onToggleFullscreen = () => {},
+	onClose = () => {},
+	onLogout = () => {},
+	onReset = () => {},
+	contact,
+	sessionStatus = 'disconnected'
+} = $props<{
+	title: string;
+	isFullscreen: boolean;
+	showBack?: boolean;
+	contact?: any;
+	sessionStatus?: string;
+	onBack?: () => void;
+	onToggleFullscreen?: () => void;
+	onClose?: () => void;
+	onLogout?: () => void;
+	onReset?: () => void;
+}>();
 
-  import { RefreshCw, LogOut, MoreVertical } from "@lucide/svelte";
-  let showMenu = $state(false);
+import { LogOut, MoreVertical, RefreshCw } from '@lucide/svelte';
+
+let showMenu = $state(false);
 </script>
 
 <div

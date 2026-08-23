@@ -1,75 +1,73 @@
 <script lang="ts">
-  import { toast } from '$lib/stores/toast';
-  import { goto } from "$app/navigation";
-  import { onMount } from "svelte";
-  import { page } from "$app/state";
-  import { Link, Upload as UploadIcon } from "@lucide/svelte";
-  import { jenisMotorApi } from "$lib/api";
-  import type { JenisMotor } from "$lib/types";
-  import { Form, Input, FileUpload } from "$lib/components/ui";
+import { Link, Upload as UploadIcon } from '@lucide/svelte';
+import { onMount } from 'svelte';
+import { goto } from '$app/navigation';
+import { page } from '$app/state';
+import { jenisMotorApi } from '$lib/api';
+import { FileUpload, Form, Input } from '$lib/components/ui';
+import { toast } from '$lib/stores/toast';
+import type { JenisMotor } from '$lib/types';
 
-  let motor: JenisMotor | null = $state(null);
-  let merk = $state("");
-  let model = $state("");
-  let cc = $state<number | "">("");
-  let hargaSewa = $state<number | "">("");
-  let uploadType = $state<"file" | "url">("file");
-  let imageFile: File | null = $state(null);
-  let imageUrl = $state("");
-  let imagePreview = $state("");
-  let isLoading = $state(true);
-  let isSaving = $state(false);
+let motor: JenisMotor | null = $state(null);
+let merk = $state('');
+let model = $state('');
+let cc = $state<number | ''>('');
+let hargaSewa = $state<number | ''>('');
+let uploadType = $state<'file' | 'url'>('file');
+let imageFile: File | null = $state(null);
+let imageUrl = $state('');
+let imagePreview = $state('');
+let isLoading = $state(true);
+let isSaving = $state(false);
 
-  const motorId = $derived(page.params.id ?? "");
+const motorId = $derived(page.params.id ?? '');
 
-  onMount(async () => {
-    try {
-      motor = await jenisMotorApi.getById(motorId);
-      merk = motor.merk;
-      model = motor.model;
-      cc = motor.cc;
-      hargaSewa = motor.hargaSewa || "";
-      imagePreview = motor.gambar || "";
-      if (motor.gambar?.startsWith("http")) {
-        uploadType = "url";
-        imageUrl = motor.gambar;
-      }
-    } catch (err: any) {
-      toast.error(err);
-    } finally {
-      isLoading = false;
-    }
-  });
+onMount(async () => {
+	try {
+		motor = await jenisMotorApi.getById(motorId);
+		merk = motor.merk;
+		model = motor.model;
+		cc = motor.cc;
+		hargaSewa = motor.hargaSewa || '';
+		imagePreview = motor.gambar || '';
+		if (motor.gambar?.startsWith('http')) {
+			uploadType = 'url';
+			imageUrl = motor.gambar;
+		}
+	} catch (err: any) {
+		toast.error(err);
+	} finally {
+		isLoading = false;
+	}
+});
 
-  function handleImageChange(file: File) {
-    imageFile = file;
-    imagePreview = URL.createObjectURL(file);
-  }
-  function handleUrlChange() {
-    if (uploadType === "url") imagePreview = imageUrl;
-  }
+function handleImageChange(file: File) {
+	imageFile = file;
+	imagePreview = URL.createObjectURL(file);
+}
+function handleUrlChange() {
+	if (uploadType === 'url') imagePreview = imageUrl;
+}
 
-  async function handleSubmit(e: Event) {
-    e.preventDefault();
-    isSaving = true;
-    try {
-      const formData = new FormData();
-      formData.append("merk", merk);
-      formData.append("model", model);
-      formData.append("cc", String(cc));
-      formData.append("hargaSewa", String(hargaSewa));
-      if (uploadType === "file" && imageFile)
-        formData.append("file", imageFile);
-      else if (uploadType === "url" && imageUrl)
-        formData.append("gambar", imageUrl);
-      await jenisMotorApi.update(motorId, formData);
-      goto("/motor");
-    } catch (err: any) {
-      toast.error(err);
-    } finally {
-      isSaving = false;
-    }
-  }
+async function handleSubmit(e: Event) {
+	e.preventDefault();
+	isSaving = true;
+	try {
+		const formData = new FormData();
+		formData.append('merk', merk);
+		formData.append('model', model);
+		formData.append('cc', String(cc));
+		formData.append('hargaSewa', String(hargaSewa));
+		if (uploadType === 'file' && imageFile) formData.append('file', imageFile);
+		else if (uploadType === 'url' && imageUrl) formData.append('gambar', imageUrl);
+		await jenisMotorApi.update(motorId, formData);
+		goto('/motor');
+	} catch (err: any) {
+		toast.error(err);
+	} finally {
+		isSaving = false;
+	}
+}
 </script>
 
 <Form

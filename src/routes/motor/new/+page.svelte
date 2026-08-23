@@ -1,49 +1,47 @@
 <script lang="ts">
-  import { toast } from '$lib/stores/toast';
-  import { goto } from "$app/navigation";
-  import { Link, Upload as UploadIcon } from "@lucide/svelte";
-  import { jenisMotorApi } from "$lib/api";
-  import { Form, Input, FileUpload } from "$lib/components/ui";
+import { Link, Upload as UploadIcon } from '@lucide/svelte';
+import { goto } from '$app/navigation';
+import { jenisMotorApi } from '$lib/api';
+import { FileUpload, Form, Input } from '$lib/components/ui';
+import { toast } from '$lib/stores/toast';
 
-  let merk = $state("");
-  let model = $state("");
-  let cc = $state<number | "">("");
-  let hargaSewa = $state<number | "">("");
-  let uploadType = $state<"file" | "url">("file");
-  let imageFile: File | null = $state(null);
-  let imageUrl = $state("");
-  let imagePreview = $state("");
-  let isSaving = $state(false);
+let merk = $state('');
+let model = $state('');
+let cc = $state<number | ''>('');
+let hargaSewa = $state<number | ''>('');
+let uploadType = $state<'file' | 'url'>('file');
+let imageFile: File | null = $state(null);
+let imageUrl = $state('');
+let imagePreview = $state('');
+let isSaving = $state(false);
 
-  function handleImageChange(file: File) {
-    imageFile = file;
-    imagePreview = URL.createObjectURL(file);
-  }
-  function handleUrlChange() {
-    if (uploadType === "url") imagePreview = imageUrl;
-  }
+function handleImageChange(file: File) {
+	imageFile = file;
+	imagePreview = URL.createObjectURL(file);
+}
+function handleUrlChange() {
+	if (uploadType === 'url') imagePreview = imageUrl;
+}
 
-  async function handleSubmit(e: Event) {
-    e.preventDefault();
-    isSaving = true;
-    try {
-      const formData = new FormData();
-      formData.append("merk", merk);
-      formData.append("model", model);
-      formData.append("cc", String(cc));
-      formData.append("hargaSewa", String(hargaSewa));
-      if (uploadType === "file" && imageFile)
-        formData.append("file", imageFile);
-      else if (uploadType === "url" && imageUrl)
-        formData.append("gambar", imageUrl);
-      await jenisMotorApi.create(formData);
-      goto("/motor");
-    } catch (err: any) {
-      toast.error(err);
-    } finally {
-      isSaving = false;
-    }
-  }
+async function handleSubmit(e: Event) {
+	e.preventDefault();
+	isSaving = true;
+	try {
+		const formData = new FormData();
+		formData.append('merk', merk);
+		formData.append('model', model);
+		formData.append('cc', String(cc));
+		formData.append('hargaSewa', String(hargaSewa));
+		if (uploadType === 'file' && imageFile) formData.append('file', imageFile);
+		else if (uploadType === 'url' && imageUrl) formData.append('gambar', imageUrl);
+		await jenisMotorApi.create(formData);
+		goto('/motor');
+	} catch (err: any) {
+		toast.error(err);
+	} finally {
+		isSaving = false;
+	}
+}
 </script>
 
 <Form

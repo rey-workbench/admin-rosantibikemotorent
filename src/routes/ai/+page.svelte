@@ -1,231 +1,260 @@
 <script lang="ts">
-    import { onMount } from "svelte";
-    import { Brain, Send, Save, Plus, Trash2, Edit2, Search, Database, Settings, HelpCircle, CheckCheck } from "@lucide/svelte";
-    import PageHeader from "$lib/components/layout/PageHeader.svelte";
-    import { Button, Input, Select, Textarea, Modal, Tabs, Badge, Card } from "$lib/components/ui";
-    import { aiApi } from "$lib/api";
-	import { toast } from "$lib/stores/toast";
-    import type { AiKnowledge } from "$lib/types";
-        import { confirm } from "$lib/stores/confirm";
+import {
+	Brain,
+	CheckCheck,
+	Database,
+	Edit2,
+	HelpCircle,
+	Plus,
+	Save,
+	Search,
+	Send,
+	Settings,
+	Trash2
+} from '@lucide/svelte';
+import { onMount } from 'svelte';
+import { aiApi } from '$lib/api';
+import PageHeader from '$lib/components/layout/PageHeader.svelte';
+import { Badge, Button, Card, Input, Modal, Select, Tabs, Textarea } from '$lib/components/ui';
+import { confirm } from '$lib/stores/confirm';
+import { toast } from '$lib/stores/toast';
+import type { AiKnowledge } from '$lib/types';
 
-    // --- State Management ---
-    let activeTab = $state("playground");
-    let loading = $state(false);
+// --- State Management ---
+let activeTab = $state('playground');
+let loading = $state(false);
 
-    // Playground State
-    let testMessage = $state("");
-    let chatHistory = $state<{ role: "user" | "bot"; text: string; debug?: any; timestamp?: number }[]>([]);
-    let isWnaTest = $state(false);
+// Playground State
+let testMessage = $state('');
+let chatHistory = $state<{ role: 'user' | 'bot'; text: string; debug?: any; timestamp?: number }[]>(
+	[]
+);
+let isWnaTest = $state(false);
 
-    // --- WhatsApp Message Parser ---
-    function parseWhatsAppText(text: string): { type: 'text' | 'bold' | 'italic' | 'code' | 'newlines'; content: string }[] {
-        if (!text) return [];
-        
-        const segments: { type: 'text' | 'bold' | 'italic' | 'code' | 'newlines'; content: string }[] = [];
-        let remaining = text;
-        
-        // Pattern untuk parsing: *bold*, _italic_, ```code```
-        const patterns = [
-            { regex: /\*([^*]+)\*/, type: 'bold' as const },
-            { regex: /_([^_]+)_/, type: 'italic' as const },
-            { regex: /```([^`]+)```/, type: 'code' as const },
-        ];
-        
-        // Proses baris baru terlebih dahulu
-        const lines = remaining.split('\n');
-        
-        lines.forEach((line, lineIndex) => {
-            if (lineIndex > 0) {
-                segments.push({ type: 'newlines', content: '\n' });
-            }
-            
-            let lineRemaining = line;
-            let hasMatch = true;
-            
-            while (hasMatch && lineRemaining) {
-                hasMatch = false;
-                let earliestMatch: { index: number; length: number; type: 'bold' | 'italic' | 'code'; content: string } | null = null;
-                
-                for (const { regex, type } of patterns) {
-                    const match = lineRemaining.match(regex);
-                    if (match && match.index !== undefined) {
-                        if (!earliestMatch || match.index < earliestMatch.index) {
-                            earliestMatch = {
-                                index: match.index,
-                                length: match[0].length,
-                                type,
-                                content: match[1]
-                            };
-                        }
-                    }
-                }
-                
-                if (earliestMatch) {
-                    // Add text before match
-                    if (earliestMatch.index > 0) {
-                        segments.push({ type: 'text', content: lineRemaining.slice(0, earliestMatch.index) });
-                    }
-                    // Add formatted content
-                    segments.push({ type: earliestMatch.type, content: earliestMatch.content });
-                    // Continue with remaining
-                    lineRemaining = lineRemaining.slice(earliestMatch.index + earliestMatch.length);
-                    hasMatch = true;
-                }
-            }
-            
-            // Add remaining text
-            if (lineRemaining) {
-                segments.push({ type: 'text', content: lineRemaining });
-            }
-        });
-        
-        return segments;
-    }
+// --- WhatsApp Message Parser ---
+function parseWhatsAppText(
+	text: string
+): { type: 'text' | 'bold' | 'italic' | 'code' | 'newlines'; content: string }[] {
+	if (!text) return [];
 
-    // Format timestamp untuk tampilan WhatsApp
-    function formatTimestamp(ts: number): string {
-        return new Date(ts).toLocaleTimeString('id-ID', {
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-    }
+	const segments: { type: 'text' | 'bold' | 'italic' | 'code' | 'newlines'; content: string }[] =
+		[];
+	let remaining = text;
 
-    // Knowledge State
-    let knowledgeBase = $state<AiKnowledge[]>([]);
-    let searchQuery = $state("");
-    let isModalOpen = $state(false);
-    let editingItem = $state<any>(null);
-    let formData = $state({
-        category: "general",
-        question: "",
-        answer: "",
-        keywords: "",
-        priority: 0
-    });
+	// Pattern untuk parsing: *bold*, _italic_, ```code```
+	const patterns = [
+		{ regex: /\*([^*]+)\*/, type: 'bold' as const },
+		{ regex: /_([^_]+)_/, type: 'italic' as const },
+		{ regex: /```([^`]+)```/, type: 'code' as const }
+	];
 
-    const tabs = [
-        { id: "playground", label: "AI Playground" },
-        { id: "knowledge", label: "Knowledge Base" }
-    ];
+	// Proses baris baru terlebih dahulu
+	const lines = remaining.split('\n');
 
-    onMount(async () => {
-        await fetchKnowledge();
-    });
+	lines.forEach((line, lineIndex) => {
+		if (lineIndex > 0) {
+			segments.push({ type: 'newlines', content: '\n' });
+		}
 
-    async function fetchKnowledge() {
-        try {
-            knowledgeBase = await aiApi.getKnowledge();
-        } catch (e: any) {
-            toast.error(e);
-        }
-    }
+		let lineRemaining = line;
+		let hasMatch = true;
 
-    // --- AI Playground Actions ---
-    async function handleSendMessage() {
-        if (!testMessage.trim() || loading) return;
+		while (hasMatch && lineRemaining) {
+			hasMatch = false;
+			let earliestMatch: {
+				index: number;
+				length: number;
+				type: 'bold' | 'italic' | 'code';
+				content: string;
+			} | null = null;
 
-        const msg = testMessage;
-        const now = Date.now();
-        chatHistory = [...chatHistory, { role: "user", text: msg, timestamp: now }];
-        testMessage = "";
-        loading = true;
+			for (const { regex, type } of patterns) {
+				const match = lineRemaining.match(regex);
+				if (match && match.index !== undefined) {
+					if (!earliestMatch || match.index < earliestMatch.index) {
+						earliestMatch = {
+							index: match.index,
+							length: match[0].length,
+							type,
+							content: match[1]
+						};
+					}
+				}
+			}
 
-        try {
-            const data = await aiApi.test({ 
-                message: msg,
-                isWNA: isWnaTest 
-            });
-            chatHistory = [...chatHistory, { 
-                role: "bot", 
-                text: data.response || "Maaf, AI tidak memberikan jawaban.",
-                debug: data.debug,
-                timestamp: Date.now()
-            }];
-        } catch (e: any) {
-            toast.error(e);
-        } finally {
-            loading = false;
-        }
-    }
+			if (earliestMatch) {
+				// Add text before match
+				if (earliestMatch.index > 0) {
+					segments.push({ type: 'text', content: lineRemaining.slice(0, earliestMatch.index) });
+				}
+				// Add formatted content
+				segments.push({ type: earliestMatch.type, content: earliestMatch.content });
+				// Continue with remaining
+				lineRemaining = lineRemaining.slice(earliestMatch.index + earliestMatch.length);
+				hasMatch = true;
+			}
+		}
 
-    // --- Knowledge Base Actions ---
-    function openModal(item: any = null) {
-        editingItem = item;
-        if (item) {
-            formData = {
-                category: item.category,
-                question: item.question,
-                answer: item.answer,
-                keywords: item.keywords.join(", "),
-                priority: item.priority
-            };
-        } else {
-            formData = {
-                category: "general",
-                question: "",
-                answer: "",
-                keywords: "",
-                priority: 0
-            };
-        }
-        isModalOpen = true;
-    }
+		// Add remaining text
+		if (lineRemaining) {
+			segments.push({ type: 'text', content: lineRemaining });
+		}
+	});
 
-    async function saveKnowledge() {
-        if (!formData.question || !formData.answer) {
-            toast.warning("Pertanyaan dan jawaban wajib diisi");
-            return;
-        }
+	return segments;
+}
 
-        loading = true;
-        const payload = {
-            ...formData,
-            keywords: formData.keywords.split(",").map(k => k.trim()).filter(k => k),
-            priority: Number(formData.priority)
-        };
+// Format timestamp untuk tampilan WhatsApp
+function formatTimestamp(ts: number): string {
+	return new Date(ts).toLocaleTimeString('id-ID', {
+		hour: '2-digit',
+		minute: '2-digit'
+	});
+}
 
-        try {
-            if (editingItem) {
-                await aiApi.updateKnowledge(editingItem.id, payload);
-                toast.success("Knowledge base berhasil diperbarui");
-            } else {
-                await aiApi.createKnowledge(payload);
-                toast.success("Knowledge baru berhasil ditambahkan");
-            }
-            isModalOpen = false;
-            await fetchKnowledge();
-        } catch (e: any) {
-            toast.error(e);
-        } finally {
-            loading = false;
-        }
-    }
+// Knowledge State
+let knowledgeBase = $state<AiKnowledge[]>([]);
+let searchQuery = $state('');
+let isModalOpen = $state(false);
+let editingItem = $state<any>(null);
+let formData = $state({
+	category: 'general',
+	question: '',
+	answer: '',
+	keywords: '',
+	priority: 0
+});
 
-    async function deleteItem(id: string) {
-        const ok = await confirm.show({
-            title: "Hapus Knowledge?",
-            message: "Data yang dihapus tidak dapat dikembalikan.",
-            type: "danger",
-            confirmText: "Hapus Sekarang"
-        });
+const tabs = [
+	{ id: 'playground', label: 'AI Playground' },
+	{ id: 'knowledge', label: 'Knowledge Base' }
+];
 
-        if (!ok) return;
+onMount(async () => {
+	await fetchKnowledge();
+});
 
-        try {
-            await aiApi.deleteKnowledge(id);
-            toast.success("Item berhasil dihapus");
-            await fetchKnowledge();
-        } catch (e: any) {
-            toast.error(e);
-        }
-    }
+async function fetchKnowledge() {
+	try {
+		knowledgeBase = await aiApi.getKnowledge();
+	} catch (e: any) {
+		toast.error(e);
+	}
+}
 
-    const filteredKnowledge = $derived(
-        (Array.isArray(knowledgeBase) ? knowledgeBase : []).filter(item => 
-            (item.question?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
-            (item.category?.toLowerCase() || "").includes(searchQuery.toLowerCase())
-        )
-    );
+// --- AI Playground Actions ---
+async function handleSendMessage() {
+	if (!testMessage.trim() || loading) return;
+
+	const msg = testMessage;
+	const now = Date.now();
+	chatHistory = [...chatHistory, { role: 'user', text: msg, timestamp: now }];
+	testMessage = '';
+	loading = true;
+
+	try {
+		const data = await aiApi.test({
+			message: msg,
+			isWNA: isWnaTest
+		});
+		chatHistory = [
+			...chatHistory,
+			{
+				role: 'bot',
+				text: data.response || 'Maaf, AI tidak memberikan jawaban.',
+				debug: data.debug,
+				timestamp: Date.now()
+			}
+		];
+	} catch (e: any) {
+		toast.error(e);
+	} finally {
+		loading = false;
+	}
+}
+
+// --- Knowledge Base Actions ---
+function openModal(item: any = null) {
+	editingItem = item;
+	if (item) {
+		formData = {
+			category: item.category,
+			question: item.question,
+			answer: item.answer,
+			keywords: item.keywords.join(', '),
+			priority: item.priority
+		};
+	} else {
+		formData = {
+			category: 'general',
+			question: '',
+			answer: '',
+			keywords: '',
+			priority: 0
+		};
+	}
+	isModalOpen = true;
+}
+
+async function saveKnowledge() {
+	if (!formData.question || !formData.answer) {
+		toast.warning('Pertanyaan dan jawaban wajib diisi');
+		return;
+	}
+
+	loading = true;
+	const payload = {
+		...formData,
+		keywords: formData.keywords
+			.split(',')
+			.map((k) => k.trim())
+			.filter((k) => k),
+		priority: Number(formData.priority)
+	};
+
+	try {
+		if (editingItem) {
+			await aiApi.updateKnowledge(editingItem.id, payload);
+			toast.success('Knowledge base berhasil diperbarui');
+		} else {
+			await aiApi.createKnowledge(payload);
+			toast.success('Knowledge baru berhasil ditambahkan');
+		}
+		isModalOpen = false;
+		await fetchKnowledge();
+	} catch (e: any) {
+		toast.error(e);
+	} finally {
+		loading = false;
+	}
+}
+
+async function deleteItem(id: string) {
+	const ok = await confirm.show({
+		title: 'Hapus Knowledge?',
+		message: 'Data yang dihapus tidak dapat dikembalikan.',
+		type: 'danger',
+		confirmText: 'Hapus Sekarang'
+	});
+
+	if (!ok) return;
+
+	try {
+		await aiApi.deleteKnowledge(id);
+		toast.success('Item berhasil dihapus');
+		await fetchKnowledge();
+	} catch (e: any) {
+		toast.error(e);
+	}
+}
+
+const filteredKnowledge = $derived(
+	(Array.isArray(knowledgeBase) ? knowledgeBase : []).filter(
+		(item) =>
+			(item.question?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
+			(item.category?.toLowerCase() || '').includes(searchQuery.toLowerCase())
+	)
+);
 </script>
 
 <div class="space-y-6">

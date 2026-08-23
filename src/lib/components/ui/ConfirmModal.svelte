@@ -1,55 +1,55 @@
 <script lang="ts">
-    import { Button } from "./";
-    import { AlertTriangle, Info, CheckCircle2, XCircle } from "@lucide/svelte";
-    import { fade, scale } from "svelte/transition";
+import { AlertTriangle, CheckCircle2, Info, XCircle } from '@lucide/svelte';
+import { fade, scale } from 'svelte/transition';
+import { Button } from './';
 
-    interface Props {
-        open: boolean;
-        title: string;
-        message: string;
-        type?: "info" | "warning" | "danger" | "success";
-        confirmText?: string;
-        cancelText?: string;
-        loading?: boolean;
-        onconfirm: () => void;
-        oncancel: () => void;
-    }
+interface Props {
+	open: boolean;
+	title: string;
+	message: string;
+	type?: 'info' | 'warning' | 'danger' | 'success';
+	confirmText?: string;
+	cancelText?: string;
+	loading?: boolean;
+	onconfirm: () => void;
+	oncancel: () => void;
+}
 
-    let {
-        open,
-        title,
-        message,
-        type = "info",
-        confirmText = "Konfirmasi",
-        cancelText = "Batal",
-        loading = false,
-        onconfirm,
-        oncancel,
-    }: Props = $props();
+let {
+	open,
+	title,
+	message,
+	type = 'info',
+	confirmText = 'Konfirmasi',
+	cancelText = 'Batal',
+	loading = false,
+	onconfirm,
+	oncancel
+}: Props = $props();
 
-    const icons = {
-        info: { component: Info, color: "text-blue-500", bg: "bg-blue-50" },
-        warning: {
-            component: AlertTriangle,
-            color: "text-amber-500",
-            bg: "bg-amber-50",
-        },
-        danger: { component: XCircle, color: "text-red-500", bg: "bg-red-50" },
-        success: {
-            component: CheckCircle2,
-            color: "text-emerald-500",
-            bg: "bg-emerald-50",
-        },
-    };
+const icons = {
+	info: { component: Info, color: 'text-blue-500', bg: 'bg-blue-50' },
+	warning: {
+		component: AlertTriangle,
+		color: 'text-amber-500',
+		bg: 'bg-amber-50'
+	},
+	danger: { component: XCircle, color: 'text-red-500', bg: 'bg-red-50' },
+	success: {
+		component: CheckCircle2,
+		color: 'text-emerald-500',
+		bg: 'bg-emerald-50'
+	}
+};
 
-    const confirmVariants = {
-        info: "primary",
-        warning: "warning",
-        danger: "danger",
-        success: "success",
-    } as const;
+const confirmVariants = {
+	info: 'primary',
+	warning: 'warning',
+	danger: 'danger',
+	success: 'success'
+} as const;
 
-    const currentIcon = $derived(icons[type]);
+const currentIcon = $derived(icons[type]);
 </script>
 
 {#if open}

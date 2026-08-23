@@ -1,27 +1,27 @@
 <script lang="ts">
-  import "../app.css";
-  import { onMount, onDestroy } from "svelte";
-  import { page } from "$app/state";
-  import Sidebar from "$lib/components/layout/Sidebar.svelte";
-  import BottomNav from "$lib/components/layout/BottomNav.svelte";
-  import ChatWidget from "$lib/components/chat/ChatWidget.svelte";
-  import { Toast, ConfirmModal } from "$lib/components/ui";
-  import { authStore } from "$lib/stores/auth";
-  import { confirm } from "$lib/stores/confirm";
-  import { websocketService } from "$lib/services/websocket";
+import '../app.css';
+import { onDestroy, onMount } from 'svelte';
+import { page } from '$app/state';
+import ChatWidget from '$lib/components/chat/ChatWidget.svelte';
+import BottomNav from '$lib/components/layout/BottomNav.svelte';
+import Sidebar from '$lib/components/layout/Sidebar.svelte';
+import { ConfirmModal, Toast } from '$lib/components/ui';
+import { websocketService } from '$lib/services/websocket';
+import { authStore } from '$lib/stores/auth';
+import { confirm } from '$lib/stores/confirm';
 
-  let { children } = $props();
+let { children } = $props();
 
-  onMount(() => {
-    authStore.init();
-    websocketService.connect();
-  });
+onMount(() => {
+	authStore.init();
+	websocketService.connect();
+});
 
-  onDestroy(() => {
-    websocketService.disconnect();
-  });
+onDestroy(() => {
+	websocketService.disconnect();
+});
 
-  const isLoginPage = $derived(page.url.pathname === "/login");
+const isLoginPage = $derived(page.url.pathname === '/login');
 </script>
 
 <svelte:head>

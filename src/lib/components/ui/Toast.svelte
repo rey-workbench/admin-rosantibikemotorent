@@ -1,53 +1,47 @@
 <script lang="ts">
-        import {
-        X,
-        CheckCircle,
-        AlertCircle,
-        Info,
-        AlertTriangle,
-    } from "@lucide/svelte";
-    import { fly } from "svelte/transition";
-    import { flip } from "svelte/animate";
-    import { toast as toastStore } from "$lib/stores/toast";
+import { AlertCircle, AlertTriangle, CheckCircle, Info, X } from '@lucide/svelte';
+import { flip } from 'svelte/animate';
+import { fly } from 'svelte/transition';
+import { toast as toastStore } from '$lib/stores/toast';
 
-    function getIcon(type: string) {
-        switch (type) {
-            case "success":
-                return CheckCircle;
-            case "error":
-                return AlertCircle;
-            case "warning":
-                return AlertTriangle;
-            default:
-                return Info;
-        }
-    }
+function getIcon(type: string) {
+	switch (type) {
+		case 'success':
+			return CheckCircle;
+		case 'error':
+			return AlertCircle;
+		case 'warning':
+			return AlertTriangle;
+		default:
+			return Info;
+	}
+}
 
-    function getIconColorClass(type: string) {
-        switch (type) {
-            case "success":
-                return "text-success";
-            case "error":
-                return "text-danger";
-            case "warning":
-                return "text-warning";
-            default:
-                return "text-info";
-        }
-    }
+function getIconColorClass(type: string) {
+	switch (type) {
+		case 'success':
+			return 'text-success';
+		case 'error':
+			return 'text-danger';
+		case 'warning':
+			return 'text-warning';
+		default:
+			return 'text-info';
+	}
+}
 
-    function getBgColorClass(type: string) {
-        switch (type) {
-            case "success":
-                return "bg-success/10";
-            case "error":
-                return "bg-danger/10";
-            case "warning":
-                return "bg-warning/10";
-            default:
-                return "bg-info/10";
-        }
-    }
+function getBgColorClass(type: string) {
+	switch (type) {
+		case 'success':
+			return 'bg-success/10';
+		case 'error':
+			return 'bg-danger/10';
+		case 'warning':
+			return 'bg-warning/10';
+		default:
+			return 'bg-info/10';
+	}
+}
 </script>
 
 <div

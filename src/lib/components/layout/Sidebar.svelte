@@ -1,80 +1,77 @@
 <script lang="ts">
-    import { page } from "$app/state";
-    import {
-        LayoutDashboard,
-        Truck,
-        ClipboardList,
-        FileText,
-        MessageSquare,
-        ListOrdered,
-        Settings,
-        Users,
-        Bike,
-        LogOut,
-        ChevronDown,
-        ChevronRight,
-        Calendar,
-        Brain,
-    } from "@lucide/svelte";
-    import { authApi } from "$lib/api";
-    import { authStore } from "$lib/stores/auth";
-    import { goto } from "$app/navigation";
-    import { toast } from "$lib/stores/toast";
-    import { slide } from "svelte/transition";
+import {
+	Bike,
+	Brain,
+	Calendar,
+	ChevronDown,
+	ChevronRight,
+	ClipboardList,
+	FileText,
+	LayoutDashboard,
+	ListOrdered,
+	LogOut,
+	MessageSquare,
+	Settings,
+	Truck,
+	Users
+} from '@lucide/svelte';
+import { slide } from 'svelte/transition';
+import { goto } from '$app/navigation';
+import { page } from '$app/state';
+import { authApi } from '$lib/api';
+import { authStore } from '$lib/stores/auth';
+import { toast } from '$lib/stores/toast';
 
-    const navItems = [
-        { path: "/", label: "Dashboard", icon: LayoutDashboard },
-        {
-            label: "Motor",
-            icon: Bike,
-            children: [
-                { path: "/motor/unit", label: "Unit Motor", icon: Truck },
-                { path: "/motor", label: "Jenis Motor", icon: Bike },
-            ],
-        },
-        { path: "/transaksi", label: "Transaksi", icon: ClipboardList },
-        { path: "/availability", label: "Ketersediaan", icon: Calendar },
-        { path: "/blog", label: "Artikel Blog", icon: FileText },
-        { path: "/whatsapp", label: "WhatsApp", icon: MessageSquare },
-        { path: "/ai", label: "AI Assistant", icon: Brain },
-        { path: "/queue", label: "Monitor Antrian", icon: ListOrdered },
-        { path: "/admin", label: "Daftar Admin", icon: Users },
-        { path: "/settings", label: "Pengaturan", icon: Settings },
-    ];
+const navItems = [
+	{ path: '/', label: 'Dashboard', icon: LayoutDashboard },
+	{
+		label: 'Motor',
+		icon: Bike,
+		children: [
+			{ path: '/motor/unit', label: 'Unit Motor', icon: Truck },
+			{ path: '/motor', label: 'Jenis Motor', icon: Bike }
+		]
+	},
+	{ path: '/transaksi', label: 'Transaksi', icon: ClipboardList },
+	{ path: '/availability', label: 'Ketersediaan', icon: Calendar },
+	{ path: '/blog', label: 'Artikel Blog', icon: FileText },
+	{ path: '/whatsapp', label: 'WhatsApp', icon: MessageSquare },
+	{ path: '/ai', label: 'AI Assistant', icon: Brain },
+	{ path: '/queue', label: 'Monitor Antrian', icon: ListOrdered },
+	{ path: '/admin', label: 'Daftar Admin', icon: Users },
+	{ path: '/settings', label: 'Pengaturan', icon: Settings }
+];
 
-    let expandedMenus = $state<Record<string, boolean>>({
-        Motor: page.url.pathname.startsWith("/motor"),
-    });
+let expandedMenus = $state<Record<string, boolean>>({
+	Motor: page.url.pathname.startsWith('/motor')
+});
 
-    function toggleMenu(label: string) {
-        expandedMenus[label] = !expandedMenus[label];
-    }
+function toggleMenu(label: string) {
+	expandedMenus[label] = !expandedMenus[label];
+}
 
-    function isActive(path: string): boolean {
-        if (path === "/") return page.url.pathname === "/";
-        if (path === "/motor" && page.url.pathname.startsWith("/motor/unit")) {
-            return false;
-        }
-        return (
-            page.url.pathname === path ||
-            page.url.pathname.startsWith(path + "/")
-        );
-    }
+function isActive(path: string): boolean {
+	if (path === '/') return page.url.pathname === '/';
+	if (path === '/motor' && page.url.pathname.startsWith('/motor/unit')) {
+		return false;
+	}
+	return page.url.pathname === path || page.url.pathname.startsWith(path + '/');
+}
 
-    function isParentActive(item: any): boolean {
-        if (!item.children) return isActive(item.path);
-        return item.children.some((child: any) => isActive(child.path));
-    }
+function isParentActive(item: any): boolean {
+	if (!item.children) return isActive(item.path);
+	return item.children.some((child: any) => isActive(child.path));
+}
 
-    async function handleLogout() {
-        try {
-            await authApi.logout();
-        } catch (e) {
-            toast.error("Gagal logout, coba lagi");
-        }
-        authStore.logout();
-        goto("/login");
-    }
+async function handleLogout() {
+	try {
+		await authApi.logout();
+	} catch (e) {
+		toast.error('Gagal logout, coba lagi');
+	}
+	authStore.logout();
+	goto('/login');
+}
 </script>
 
 <aside

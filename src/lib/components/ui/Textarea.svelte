@@ -1,25 +1,25 @@
 <script lang="ts">
-    interface Props {
-        id: string;
-        label: string;
-        value: string;
-        rows?: number;
-        placeholder?: string;
-        required?: boolean;
-        disabled?: boolean;
-        class?: string;
-    }
+interface Props {
+	id: string;
+	label: string;
+	value: string;
+	rows?: number;
+	placeholder?: string;
+	required?: boolean;
+	disabled?: boolean;
+	class?: string;
+}
 
-    let {
-        id,
-        label,
-        value = $bindable(),
-        rows = 4,
-        placeholder = "",
-        required = false,
-        disabled = false,
-        class: className = "",
-    }: Props = $props();
+let {
+	id,
+	label,
+	value = $bindable(),
+	rows = 4,
+	placeholder = '',
+	required = false,
+	disabled = false,
+	class: className = ''
+}: Props = $props();
 </script>
 
 <div class="flex flex-col gap-1.5 {className}">

@@ -1,18 +1,18 @@
 export interface Admin {
-  id: string;
-  username: string;
-  nama: string;
-  email?: string;
-  createdAt?: string;
+	id: string;
+	username: string;
+	nama: string;
+	email?: string;
+	createdAt?: string;
 }
 
 export interface LoginCredentials {
-  username: string;
-  password: string;
+	username: string;
+	password: string;
 }
 
 export interface AuthResponse {
-  admin: Admin;
-  token: string;
-  message: string;
+	admin: Admin;
+	token: string;
+	message: string;
 }

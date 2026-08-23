@@ -1,115 +1,124 @@
 <script lang="ts">
-  import { toast } from '$lib/stores/toast';
-    import { onMount } from "svelte";
-    import { Plus, Pencil, Trash2, UserCog } from "@lucide/svelte";
-    import { adminApi } from "$lib/api";
-    import type { Admin } from "$lib/types";
-    import { Card, CardBody, Button, Modal, Input, DataTable, Loading, EmptyState } from "$lib/components/ui";
-    import { confirm } from "$lib/stores/confirm";
-  import { PageHeader } from "$lib/components";
+import { Pencil, Plus, Trash2, UserCog } from '@lucide/svelte';
+import { onMount } from 'svelte';
+import { adminApi } from '$lib/api';
+import { PageHeader } from '$lib/components';
+import {
+	Button,
+	Card,
+	CardBody,
+	DataTable,
+	EmptyState,
+	Input,
+	Loading,
+	Modal
+} from '$lib/components/ui';
+import { confirm } from '$lib/stores/confirm';
+import { toast } from '$lib/stores/toast';
+import type { Admin } from '$lib/types';
 
-    let admins: Admin[] = $state([]);
-    let isLoading = $state(true);
-    let showModal = $state(false);
-    let editingAdmin: Admin | null = $state(null);
-    let isSaving = $state(false);
+let admins: Admin[] = $state([]);
+let isLoading = $state(true);
+let showModal = $state(false);
+let editingAdmin: Admin | null = $state(null);
+let isSaving = $state(false);
 
-    let formUsername = $state("");
-    let formNama = $state("");
-    let formEmail = $state("");
-    let formPassword = $state("");
+let formUsername = $state('');
+let formNama = $state('');
+let formEmail = $state('');
+let formPassword = $state('');
 
-    const columns = [
-        { key: "username", label: "Username" },
-        { key: "nama", label: "Nama" },
-        { key: "email", label: "Email" },
-        { key: "aksi", label: "Aksi", class: "w-24" },
-    ];
+const columns = [
+	{ key: 'username', label: 'Username' },
+	{ key: 'nama', label: 'Nama' },
+	{ key: 'email', label: 'Email' },
+	{ key: 'aksi', label: 'Aksi', class: 'w-24' }
+];
 
-    onMount(async () => {
-        await loadData();
-    });
+onMount(async () => {
+	await loadData();
+});
 
-    async function loadData() {
-        isLoading = true;
-        try {
-            admins = await adminApi.getAll();
-        } catch (err: any) {
-            toast.error("Error loading admins:", err);
-        } finally {
-            isLoading = false;
-        }
-    }
+async function loadData() {
+	isLoading = true;
+	try {
+		admins = await adminApi.getAll();
+	} catch (err: any) {
+		toast.error('Error loading admins:', err);
+	} finally {
+		isLoading = false;
+	}
+}
 
-    function openCreateModal() {
-        editingAdmin = null;
-        formUsername = "";
-        formNama = "";
-        formEmail = "";
-        formPassword = "";
-        showModal = true;
-    }
+function openCreateModal() {
+	editingAdmin = null;
+	formUsername = '';
+	formNama = '';
+	formEmail = '';
+	formPassword = '';
+	showModal = true;
+}
 
-    function openEditModal(admin: Admin) {
-        editingAdmin = admin;
-        formUsername = admin.username;
-        formNama = admin.nama;
-        formEmail = admin.email || "";
-        formPassword = "";
-        showModal = true;
-    }
+function openEditModal(admin: Admin) {
+	editingAdmin = admin;
+	formUsername = admin.username;
+	formNama = admin.nama;
+	formEmail = admin.email || '';
+	formPassword = '';
+	showModal = true;
+}
 
-    function closeModal() {
-        showModal = false;
-        editingAdmin = null;
-    }
+function closeModal() {
+	showModal = false;
+	editingAdmin = null;
+}
 
-    async function handleSubmit(e: Event) {
-        e.preventDefault();
-        isSaving = true;
+async function handleSubmit(e: Event) {
+	e.preventDefault();
+	isSaving = true;
 
-        try {
-            if (editingAdmin) {
-                const updateData: Partial<Admin> = {
-                    username: formUsername,
-                    nama: formNama,
-                    email: formEmail || undefined,
-                };
-                await adminApi.update(editingAdmin.id, updateData);
-            } else {
-                await adminApi.create({
-                    username: formUsername,
-                    nama: formNama,
-                    email: formEmail || undefined,
-                    password: formPassword,
-                });
-            }
-            closeModal();
-            await loadData();
-        } catch (err: any) {
-            toast.error("Save error:", err);
-        } finally {
-            isSaving = false;
-        }
-    }
+	try {
+		if (editingAdmin) {
+			const updateData: Partial<Admin> = {
+				username: formUsername,
+				nama: formNama,
+				email: formEmail || undefined
+			};
+			await adminApi.update(editingAdmin.id, updateData);
+		} else {
+			await adminApi.create({
+				username: formUsername,
+				nama: formNama,
+				email: formEmail || undefined,
+				password: formPassword
+			});
+		}
+		closeModal();
+		await loadData();
+	} catch (err: any) {
+		toast.error('Save error:', err);
+	} finally {
+		isSaving = false;
+	}
+}
 
-    async function handleDelete(id: string) {
-        const ok = await confirm.show({
-            title: "Hapus Admin",
-            message: "Apakah Anda yakin ingin menghapus admin ini?",
-            type: "danger",
-            confirmText: "Ya, Hapus",
-        });
+async function handleDelete(id: string) {
+	const ok = await confirm.show({
+		title: 'Hapus Admin',
+		message: 'Apakah Anda yakin ingin menghapus admin ini?',
+		type: 'danger',
+		confirmText: 'Ya, Hapus'
+	});
 
-        if (!ok) return;
+	if (!ok) return;
 
-        try {
-            await adminApi.delete(id);
-            await loadData();
-        } catch (err: any) {
-            toast.error("Error deleting:", err);
-        }
-    }
+	try {
+		await adminApi.delete(id);
+		await loadData();
+	} catch (err: any) {
+		toast.error('Error deleting:', err);
+	}
+}
 </script>
 
 <svelte:head>

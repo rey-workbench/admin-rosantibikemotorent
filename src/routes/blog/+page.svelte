@@ -1,80 +1,72 @@
 <script lang="ts">
-  import { toast } from '$lib/stores/toast';
-  import { onMount } from "svelte";
-  import { Plus, Pencil, Trash2, FileText } from "@lucide/svelte";
-  import { formatDateShort } from "$lib/utils";
-  import { STATUS_ARTIKEL } from "$lib/constants";
-  import { blogApi } from "$lib/api";
-  import type { BlogPost } from "$lib/types";
-  import {
-    Card,
-    CardBody,
-    Button,
-    Badge,
-    DataTable,
-    Loading,
-    EmptyState,
-  } from "$lib/components/ui";
-  import { PageHeader } from "$lib/components/layout";
-  import { confirm } from "$lib/stores/confirm";
+import { FileText, Pencil, Plus, Trash2 } from '@lucide/svelte';
+import { onMount } from 'svelte';
+import { blogApi } from '$lib/api';
+import { PageHeader } from '$lib/components/layout';
+import { Badge, Button, Card, CardBody, DataTable, EmptyState, Loading } from '$lib/components/ui';
+import { STATUS_ARTIKEL } from '$lib/constants';
+import { confirm } from '$lib/stores/confirm';
+import { toast } from '$lib/stores/toast';
+import type { BlogPost } from '$lib/types';
+import { formatDateShort } from '$lib/utils';
 
-  let blogs: BlogPost[] = $state([]);
-  let isLoading = $state(true);
-  let statusFilter = $state("");
+let blogs: BlogPost[] = $state([]);
+let isLoading = $state(true);
+let statusFilter = $state('');
 
-  const columns = [
-    { key: "thumbnail", label: "Thumbnail" },
-    { key: "judul", label: "Judul" },
-    { key: "kategori", label: "Kategori" },
-    { key: "status", label: "Status" },
-    { key: "tanggal", label: "Tanggal" },
-    { key: "aksi", label: "Aksi", class: "w-24" },
-  ];
+const columns = [
+	{ key: 'thumbnail', label: 'Thumbnail' },
+	{ key: 'judul', label: 'Judul' },
+	{ key: 'kategori', label: 'Kategori' },
+	{ key: 'status', label: 'Status' },
+	{ key: 'tanggal', label: 'Tanggal' },
+	{ key: 'aksi', label: 'Aksi', class: 'w-24' }
+];
 
-  onMount(async () => {
-    await loadData();
-  });
+onMount(async () => {
+	await loadData();
+});
 
-  async function loadData() {
-    isLoading = true;
-    try {
-      const res = await blogApi.getAll({
-        limit: 100,
-        status: statusFilter || undefined,
-      });
-      blogs = res.data || [];
-    } catch (error: any) {
-      toast.error("Error loading blogs:", error);
-    } finally {
-      isLoading = false;
-    }
-  }
+async function loadData() {
+	isLoading = true;
+	try {
+		const res = await blogApi.getAll({
+			limit: 100,
+			status: statusFilter || undefined
+		});
+		blogs = res.data || [];
+	} catch (error: any) {
+		toast.error('Error loading blogs:', error);
+	} finally {
+		isLoading = false;
+	}
+}
 
-  async function handleDelete(id: string) {
-    const ok = await confirm.show({
-      title: "Hapus Artikel",
-      message: "Apakah Anda yakin ingin menghapus artikel ini?",
-      type: "danger",
-      confirmText: "Ya, Hapus",
-    });
+async function handleDelete(id: string) {
+	const ok = await confirm.show({
+		title: 'Hapus Artikel',
+		message: 'Apakah Anda yakin ingin menghapus artikel ini?',
+		type: 'danger',
+		confirmText: 'Ya, Hapus'
+	});
 
-    if (!ok) return;
+	if (!ok) return;
 
-    try {
-      await blogApi.delete(id);
-      await loadData();
-    } catch (error: any) {
-      toast.error("Error deleting blog:", error);
-    }
-  }
+	try {
+		await blogApi.delete(id);
+		await loadData();
+	} catch (error: any) {
+		toast.error('Error deleting blog:', error);
+	}
+}
 
-  function handleFilterChange() {
-    loadData();
-  }
+function handleFilterChange() {
+	loadData();
+}
 
-  function getStatusVariant(status: string) {
-    return status === STATUS_ARTIKEL.TERBIT ? "success" : "warning";
-  }
+function getStatusVariant(status: string) {
+	return status === STATUS_ARTIKEL.TERBIT ? 'success' : 'warning';
+}
 </script>
 
 <svelte:head>

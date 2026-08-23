@@ -1,14 +1,14 @@
 <script lang="ts">
-    import type { Snippet } from "svelte";
-    
-    interface Props {
-        icon?: any;
-        title: string;
-        description?: string;
-        action?: Snippet;
-    }
+import type { Snippet } from 'svelte';
 
-    let { icon: Icon, title, description, action }: Props = $props();
+interface Props {
+	icon?: any;
+	title: string;
+	description?: string;
+	action?: Snippet;
+}
+
+let { icon: Icon, title, description, action }: Props = $props();
 </script>
 
 <div class="empty-state">

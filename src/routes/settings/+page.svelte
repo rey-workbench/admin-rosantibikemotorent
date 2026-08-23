@@ -1,37 +1,30 @@
 <script lang="ts">
-  import { Settings as SettingsIcon, Save } from "@lucide/svelte";
-  import {
-    Card,
-    CardBody,
-    CardHeader,
-    Button,
-    Input,
-    Alert,
-  } from "$lib/components/ui";
-  import { PageHeader } from "$lib/components/layout";
+import { Save, Settings as SettingsIcon } from '@lucide/svelte';
+import { PageHeader } from '$lib/components/layout';
+import { Alert, Button, Card, CardBody, CardHeader, Input } from '$lib/components/ui';
 
-  let siteName = $state("Rosantibike Motorent");
-  let siteDescription = $state("Rental Motor Terpercaya");
-  let contactPhone = $state("");
-  let contactEmail = $state("");
-  let contactAddress = $state("");
+let siteName = $state('Rosantibike Motorent');
+let siteDescription = $state('Rental Motor Terpercaya');
+let contactPhone = $state('');
+let contactEmail = $state('');
+let contactAddress = $state('');
 
-  let isSaving = $state(false);
-  let success = $state("");
-  let error = $state("");
+let isSaving = $state(false);
+let success = $state('');
+let error = $state('');
 
-  async function handleSubmit(e: Event) {
-    e.preventDefault();
-    isSaving = true;
-    success = "";
-    error = "";
+async function handleSubmit(e: Event) {
+	e.preventDefault();
+	isSaving = true;
+	success = '';
+	error = '';
 
-    // TODO: Implement settings API
-    setTimeout(() => {
-      success = "Pengaturan berhasil disimpan";
-      isSaving = false;
-    }, 1000);
-  }
+	// TODO: Implement settings API
+	setTimeout(() => {
+		success = 'Pengaturan berhasil disimpan';
+		isSaving = false;
+	}, 1000);
+}
 </script>
 
 <svelte:head>

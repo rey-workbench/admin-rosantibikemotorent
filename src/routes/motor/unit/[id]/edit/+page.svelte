@@ -1,53 +1,53 @@
 <script lang="ts">
-  import { toast } from '$lib/stores/toast';
-  import { goto } from "$app/navigation";
-  import { onMount } from "svelte";
-  import { page } from "$app/state";
-  import { unitMotorApi, jenisMotorApi } from "$lib/api";
-  import type { JenisMotor, UnitMotor } from "$lib/types";
-  import { Form, Input, Select } from "$lib/components/ui";
+import { onMount } from 'svelte';
+import { goto } from '$app/navigation';
+import { page } from '$app/state';
+import { jenisMotorApi, unitMotorApi } from '$lib/api';
+import { Form, Input, Select } from '$lib/components/ui';
+import { toast } from '$lib/stores/toast';
+import type { JenisMotor, UnitMotor } from '$lib/types';
 
-  let unit: UnitMotor | null = $state(null);
-  let platNomor = $state("");
-  let jenisId = $state("");
-  let jenisMotors: JenisMotor[] = $state([]);
-  let isLoading = $state(true);
-  let isSaving = $state(false);
+let unit: UnitMotor | null = $state(null);
+let platNomor = $state('');
+let jenisId = $state('');
+let jenisMotors: JenisMotor[] = $state([]);
+let isLoading = $state(true);
+let isSaving = $state(false);
 
-  const unitId = $derived(page.params.id ?? "");
+const unitId = $derived(page.params.id ?? '');
 
-  onMount(async () => {
-    try {
-      const [unitRes, jenisRes] = await Promise.all([
-        unitMotorApi.getById(unitId),
-        jenisMotorApi.getAll({ limit: 100 }),
-      ]);
-      unit = unitRes;
-      jenisMotors = jenisRes.data || [];
-      platNomor = unit.platNomor;
-      jenisId = unit.jenisId || "";
-    } catch (err: any) {
-      toast.error(err);
-    } finally {
-      isLoading = false;
-    }
-  });
+onMount(async () => {
+	try {
+		const [unitRes, jenisRes] = await Promise.all([
+			unitMotorApi.getById(unitId),
+			jenisMotorApi.getAll({ limit: 100 })
+		]);
+		unit = unitRes;
+		jenisMotors = jenisRes.data || [];
+		platNomor = unit.platNomor;
+		jenisId = unit.jenisId || '';
+	} catch (err: any) {
+		toast.error(err);
+	} finally {
+		isLoading = false;
+	}
+});
 
-  async function handleSubmit(e: Event) {
-    e.preventDefault();
-    isSaving = true;
-    try {
-      await unitMotorApi.update(unitId, {
-        platNomor,
-        jenisId,
-      });
-      goto("/motor/unit");
-    } catch (err: any) {
-      toast.error(err);
-    } finally {
-      isSaving = false;
-    }
-  }
+async function handleSubmit(e: Event) {
+	e.preventDefault();
+	isSaving = true;
+	try {
+		await unitMotorApi.update(unitId, {
+			platNomor,
+			jenisId
+		});
+		goto('/motor/unit');
+	} catch (err: any) {
+		toast.error(err);
+	} finally {
+		isSaving = false;
+	}
+}
 </script>
 
 <Form

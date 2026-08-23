@@ -1,107 +1,105 @@
 <script lang="ts">
-  import { toast } from '$lib/stores/toast';
-    import { onMount } from "svelte";
-    import {
-        Truck,
-        CheckCircle2,
-        Clock,
-        MoreHorizontal,
-        Calendar as CalendarIcon,
-        ChevronDown,
-        Activity,
-    } from "@lucide/svelte";
-    import { formatDateShort, getStatusColor, getStatusDot } from "$lib/utils";
-    import { STATUS_TRANSAKSI } from "$lib/constants";
-    import { unitMotorApi, transaksiApi } from "$lib/api";
-    import type { UnitMotor, Transaksi } from "$lib/types";
-    import { authStore } from "$lib/stores/auth";
-    import { Loading } from "$lib/components/ui";
+import {
+	Activity,
+	Calendar as CalendarIcon,
+	CheckCircle2,
+	ChevronDown,
+	Clock,
+	MoreHorizontal,
+	Truck
+} from '@lucide/svelte';
+import { onMount } from 'svelte';
+import { transaksiApi, unitMotorApi } from '$lib/api';
+import { Loading } from '$lib/components/ui';
+import { STATUS_TRANSAKSI } from '$lib/constants';
+import { authStore } from '$lib/stores/auth';
+import { toast } from '$lib/stores/toast';
+import type { Transaksi, UnitMotor } from '$lib/types';
+import { formatDateShort, getStatusColor, getStatusDot } from '$lib/utils';
 
-    let units: UnitMotor[] = $state([]);
-    let transaksis: Transaksi[] = $state([]);
-    let historyTransaksis: Transaksi[] = $state([]);
-    let isLoading = $state(true);
+let units: UnitMotor[] = $state([]);
+let transaksis: Transaksi[] = $state([]);
+let historyTransaksis: Transaksi[] = $state([]);
+let isLoading = $state(true);
 
-    onMount(async () => {
-        try {
-            const [unitRes, activeTxRes, historyTxRes] = await Promise.all([
-                unitMotorApi.getAll({ limit: 100 }),
-                transaksiApi.getAll({ limit: 100 }),
-                transaksiApi.getHistory({ limit: 100 }),
-            ]);
-            units = unitRes.data || [];
-            transaksis = activeTxRes.data || [];
-            historyTransaksis = historyTxRes.data || [];
-        } catch (error) {
-            toast.error("Error loading dashboard data:", error);
-        } finally {
-            isLoading = false;
-        }
-    });
+onMount(async () => {
+	try {
+		const [unitRes, activeTxRes, historyTxRes] = await Promise.all([
+			unitMotorApi.getAll({ limit: 100 }),
+			transaksiApi.getAll({ limit: 100 }),
+			transaksiApi.getHistory({ limit: 100 })
+		]);
+		units = unitRes.data || [];
+		transaksis = activeTxRes.data || [];
+		historyTransaksis = historyTxRes.data || [];
+	} catch (error) {
+		toast.error('Error loading dashboard data:', error);
+	} finally {
+		isLoading = false;
+	}
+});
 
-    const completed = $derived(
-        historyTransaksis.filter((t) => t.status === STATUS_TRANSAKSI.SELESAI).length,
-    );
+const completed = $derived(
+	historyTransaksis.filter((t) => t.status === STATUS_TRANSAKSI.SELESAI).length
+);
 
-    const efficiency = $derived(
-        units.length > 0 ? Math.round((completed / units.length) * 100) : 0,
-    );
+const efficiency = $derived(units.length > 0 ? Math.round((completed / units.length) * 100) : 0);
 
-    const chartData = $derived.by(() => {
-        const days = 7;
-        const data = new Array(days).fill(0);
-        const labels = new Array(days).fill("");
-        const now = new Date();
-        const allTx = [...transaksis, ...historyTransaksis];
+const chartData = $derived.by(() => {
+	const days = 7;
+	const data = new Array(days).fill(0);
+	const labels = new Array(days).fill('');
+	const now = new Date();
+	const allTx = [...transaksis, ...historyTransaksis];
 
-        for (let i = 0; i < days; i++) {
-            const date = new Date();
-            date.setDate(now.getDate() - (days - 1 - i));
-            labels[i] = date.toLocaleDateString("en-GB", { day: "2-digit" });
+	for (let i = 0; i < days; i++) {
+		const date = new Date();
+		date.setDate(now.getDate() - (days - 1 - i));
+		labels[i] = date.toLocaleDateString('en-GB', { day: '2-digit' });
 
-            const count = allTx.filter((t) => {
-                const tDate = new Date(t.createdAt);
-                return (
-                    tDate.getDate() === date.getDate() &&
-                    tDate.getMonth() === date.getMonth() &&
-                    tDate.getFullYear() === date.getFullYear()
-                );
-            }).length;
-            data[i] = count;
-        }
-        return { data, labels };
-    });
+		const count = allTx.filter((t) => {
+			const tDate = new Date(t.createdAt);
+			return (
+				tDate.getDate() === date.getDate() &&
+				tDate.getMonth() === date.getMonth() &&
+				tDate.getFullYear() === date.getFullYear()
+			);
+		}).length;
+		data[i] = count;
+	}
+	return { data, labels };
+});
 
-    const chartPath = $derived.by(() => {
-        const { data } = chartData;
-        if (data.length === 0) return "";
+const chartPath = $derived.by(() => {
+	const { data } = chartData;
+	if (data.length === 0) return '';
 
-        const max = Math.max(...data, 5);
-        const width = 950;
-        const height = 150;
-        const stepX = width / (data.length - 1);
+	const max = Math.max(...data, 5);
+	const width = 950;
+	const height = 150;
+	const stepX = width / (data.length - 1);
 
-        const points = data.map((val, i) => {
-            const x = i * stepX;
-            const y = 200 - (val / max) * height;
-            return `${x},${y}`;
-        });
+	const points = data.map((val, i) => {
+		const x = i * stepX;
+		const y = 200 - (val / max) * height;
+		return `${x},${y}`;
+	});
 
-        if (points.length < 2) return "";
+	if (points.length < 2) return '';
 
-        let d = `M ${points[0]}`;
+	let d = `M ${points[0]}`;
 
-        for (let i = 0; i < points.length - 1; i++) {
-            const [x0, y0] = points[i].split(",").map(Number);
-            const [x1, y1] = points[i + 1].split(",").map(Number);
-            const midX = (x0 + x1) / 2;
-            d += ` C ${midX},${y0} ${midX},${y1} ${x1},${y1}`;
-        }
+	for (let i = 0; i < points.length - 1; i++) {
+		const [x0, y0] = points[i].split(',').map(Number);
+		const [x1, y1] = points[i + 1].split(',').map(Number);
+		const midX = (x0 + x1) / 2;
+		d += ` C ${midX},${y0} ${midX},${y1} ${x1},${y1}`;
+	}
 
-        const fillD = `${d} L 950,200 L 0,200 Z`;
+	const fillD = `${d} L 950,200 L 0,200 Z`;
 
-        return { stroke: d, fill: fillD };
-    });
+	return { stroke: d, fill: fillD };
+});
 </script>
 
 <svelte:head>

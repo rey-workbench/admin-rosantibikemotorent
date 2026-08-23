@@ -1,61 +1,61 @@
 <script lang="ts">
-    import { Search, Send, Check, CheckCheck, Plus } from "@lucide/svelte";
+import { Check, CheckCheck, Plus, Search, Send } from '@lucide/svelte';
 
-    // Props
-    let {
-        contacts = [],
-        onSelect = (_contact: any) => {},
-        onNewContact = () => {},
-        onDirectMessage = () => {},
-    } = $props<{
-        contacts: any[];
-        onSelect: (contact: any) => void;
-        onNewContact: () => void;
-        onDirectMessage: () => void;
-    }>();
+// Props
+let {
+	contacts = [],
+	onSelect = (_contact: any) => {},
+	onNewContact = () => {},
+	onDirectMessage = () => {}
+} = $props<{
+	contacts: any[];
+	onSelect: (contact: any) => void;
+	onNewContact: () => void;
+	onDirectMessage: () => void;
+}>();
 
-    let searchQuery = $state("");
-    let filteredContacts = $state<any[]>([]);
+let searchQuery = $state('');
+let filteredContacts = $state<any[]>([]);
 
-    $effect(() => {
-        if (!searchQuery) {
-            filteredContacts = contacts;
-        } else {
-            const q = searchQuery.toLowerCase();
-            filteredContacts = contacts.filter(
-                (c: any) =>
-                    (c.name && c.name.toLowerCase().includes(q)) ||
-                    (c.phone && c.phone.includes(q)) ||
-                    (c.id && c.id._serialized && c.id._serialized.includes(q)),
-            );
-        }
-    });
+$effect(() => {
+	if (!searchQuery) {
+		filteredContacts = contacts;
+	} else {
+		const q = searchQuery.toLowerCase();
+		filteredContacts = contacts.filter(
+			(c: any) =>
+				(c.name && c.name.toLowerCase().includes(q)) ||
+				(c.phone && c.phone.includes(q)) ||
+				(c.id && c.id._serialized && c.id._serialized.includes(q))
+		);
+	}
+});
 
-    function getInitials(name: string) {
-        return name ? name.charAt(0).toUpperCase() : "?";
-    }
+function getInitials(name: string) {
+	return name ? name.charAt(0).toUpperCase() : '?';
+}
 
-    function formatTime(timestamp: number) {
-        if (!timestamp) return "";
-        const date = new Date(timestamp * 1000);
-        const now = new Date();
-        const isToday =
-            date.getDate() === now.getDate() &&
-            date.getMonth() === now.getMonth() &&
-            date.getFullYear() === now.getFullYear();
+function formatTime(timestamp: number) {
+	if (!timestamp) return '';
+	const date = new Date(timestamp * 1000);
+	const now = new Date();
+	const isToday =
+		date.getDate() === now.getDate() &&
+		date.getMonth() === now.getMonth() &&
+		date.getFullYear() === now.getFullYear();
 
-        if (isToday) {
-            return date.toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-            });
-        } else {
-            return date.toLocaleDateString("id-ID", {
-                day: "numeric",
-                month: "short",
-            }); // e.g. 1 Feb
-        }
-    }
+	if (isToday) {
+		return date.toLocaleTimeString([], {
+			hour: '2-digit',
+			minute: '2-digit'
+		});
+	} else {
+		return date.toLocaleDateString('id-ID', {
+			day: 'numeric',
+			month: 'short'
+		}); // e.g. 1 Feb
+	}
+}
 </script>
 
 <div

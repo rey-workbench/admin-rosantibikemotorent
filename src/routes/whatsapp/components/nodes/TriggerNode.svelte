@@ -1,13 +1,13 @@
 <script lang="ts">
-  import { Handle, Position } from "@xyflow/svelte";
-  import { Zap, Terminal, HelpCircle } from "@lucide/svelte";
+import { HelpCircle, Terminal, Zap } from '@lucide/svelte';
+import { Handle, Position } from '@xyflow/svelte';
 
-  interface Props {
-    id: string;
-    data: { trigger?: string; keyword?: string };
-  }
+interface Props {
+	id: string;
+	data: { trigger?: string; keyword?: string };
+}
 
-  let { data, id }: Props = $props();
+let { data, id }: Props = $props();
 </script>
 
 <div class="w-56 bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden group">

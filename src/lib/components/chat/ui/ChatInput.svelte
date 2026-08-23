@@ -1,67 +1,66 @@
 <script lang="ts">
-    import { Paperclip, Send, Loader2, Image, MapPin, X } from "@lucide/svelte";
-    import { UserPlus } from "@lucide/svelte";
+import { Image, Loader2, MapPin, Paperclip, Send, UserPlus, X } from '@lucide/svelte';
 
-    let {
-        message = $bindable(""),
-        isSending = $bindable(false),
-        selectedFile = $bindable(null),
-        showLocationPicker = $bindable(false),
-        locationLatitude = $bindable(""),
-        locationLongitude = $bindable(""),
-        replyMessage = null,
-        onSend = () => {},
-        onSendSticker = (_file: File) => {},
-        onSendContact = (_name: string, _number: string) => {},
-        onCancelReply = () => {},
-        onTyping = (_isTyping: boolean) => {},
-    } = $props<{
-        message: string;
-        isSending: boolean;
-        selectedFile: File | null;
-        showLocationPicker: boolean;
-        locationLatitude: string;
-        locationLongitude: string;
-        replyMessage?: any;
-        onSend: () => void;
-        onSendSticker?: (file: File) => void;
-        onSendContact?: (name: string, number: string) => void;
-        onCancelReply?: () => void;
-        onTyping?: (isTyping: boolean) => void;
-    }>();
+let {
+	message = $bindable(''),
+	isSending = $bindable(false),
+	selectedFile = $bindable(null),
+	showLocationPicker = $bindable(false),
+	locationLatitude = $bindable(''),
+	locationLongitude = $bindable(''),
+	replyMessage = null,
+	onSend = () => {},
+	onSendSticker = (_file: File) => {},
+	onSendContact = (_name: string, _number: string) => {},
+	onCancelReply = () => {},
+	onTyping = (_isTyping: boolean) => {}
+} = $props<{
+	message: string;
+	isSending: boolean;
+	selectedFile: File | null;
+	showLocationPicker: boolean;
+	locationLatitude: string;
+	locationLongitude: string;
+	replyMessage?: any;
+	onSend: () => void;
+	onSendSticker?: (file: File) => void;
+	onSendContact?: (name: string, number: string) => void;
+	onCancelReply?: () => void;
+	onTyping?: (isTyping: boolean) => void;
+}>();
 
-    let isSticker = $state(false);
-    let showContactForm = $state(false);
-    let contactName = $state("");
-    let contactNumber = $state("");
+let isSticker = $state(false);
+let showContactForm = $state(false);
+let contactName = $state('');
+let contactNumber = $state('');
 
-    let fileInput: HTMLInputElement;
-    let typingTimeout: any;
+let fileInput: HTMLInputElement;
+let typingTimeout: any;
 
-    function handleFile(e: Event) {
-        const target = e.target as HTMLInputElement;
-        if (target.files?.length) {
-            selectedFile = target.files[0];
-        }
-    }
+function handleFile(e: Event) {
+	const target = e.target as HTMLInputElement;
+	if (target.files?.length) {
+		selectedFile = target.files[0];
+	}
+}
 
-    function handleKeyDown(e: KeyboardEvent) {
-        if (e.key === "Enter" && !e.shiftKey) {
-            e.preventDefault();
-            onSend();
-        }
-        handleTyping();
-    }
+function handleKeyDown(e: KeyboardEvent) {
+	if (e.key === 'Enter' && !e.shiftKey) {
+		e.preventDefault();
+		onSend();
+	}
+	handleTyping();
+}
 
-    function handleTyping() {
-        if (onTyping) {
-            onTyping(true);
-            clearTimeout(typingTimeout);
-            typingTimeout = setTimeout(() => {
-                onTyping && onTyping(false);
-            }, 2000);
-        }
-    }
+function handleTyping() {
+	if (onTyping) {
+		onTyping(true);
+		clearTimeout(typingTimeout);
+		typingTimeout = setTimeout(() => {
+			onTyping && onTyping(false);
+		}, 2000);
+	}
+}
 </script>
 
 <div

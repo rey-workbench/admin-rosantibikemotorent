@@ -1,34 +1,34 @@
 <script lang="ts">
-    import type { Snippet } from "svelte";
-    import { X } from "@lucide/svelte";
+import { X } from '@lucide/svelte';
+import type { Snippet } from 'svelte';
 
-    interface Props {
-        open: boolean;
-        title: string;
-        children: Snippet;
-        onclose: () => void;
-        size?: "sm" | "md" | "lg";
-    }
+interface Props {
+	open: boolean;
+	title: string;
+	children: Snippet;
+	onclose: () => void;
+	size?: 'sm' | 'md' | 'lg';
+}
 
-    let { open, title, children, onclose, size = "md" }: Props = $props();
+let { open, title, children, onclose, size = 'md' }: Props = $props();
 
-    const sizeClasses = {
-        sm: "max-w-sm",
-        md: "max-w-md",
-        lg: "max-w-lg",
-    };
+const sizeClasses = {
+	sm: 'max-w-sm',
+	md: 'max-w-md',
+	lg: 'max-w-lg'
+};
 
-    function handleBackdrop(e: MouseEvent) {
-        if (e.target === e.currentTarget) {
-            onclose();
-        }
-    }
+function handleBackdrop(e: MouseEvent) {
+	if (e.target === e.currentTarget) {
+		onclose();
+	}
+}
 
-    function handleKeydown(e: KeyboardEvent) {
-        if (e.key === "Escape") {
-            onclose();
-        }
-    }
+function handleKeydown(e: KeyboardEvent) {
+	if (e.key === 'Escape') {
+		onclose();
+	}
+}
 </script>
 
 <svelte:window onkeydown={handleKeydown} />

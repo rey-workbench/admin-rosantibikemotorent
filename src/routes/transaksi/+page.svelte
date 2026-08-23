@@ -1,103 +1,95 @@
 <script lang="ts">
-  import { toast } from '$lib/stores/toast';
-  import { onMount } from "svelte";
-  import { Plus, Eye, Trash2, Check, ClipboardList } from "@lucide/svelte";
-  import { formatCurrency, formatDateShort } from "$lib/utils";
-  import { STATUS_TRANSAKSI, TRANSAKSI_STATUS_VARIANTS } from "$lib/constants";
-  import { transaksiApi } from "$lib/api";
-  import type { Transaksi, StatusTransaksi } from "$lib/types";
-  import {
-    Card,
-    CardBody,
-    Button,
-    Badge,
-    DataTable,
-    Loading,
-    EmptyState,
-  } from "$lib/components/ui";
-  import { confirm } from "$lib/stores/confirm";
-  import PageHeader from "$lib/components/layout/PageHeader.svelte";
+import { Check, ClipboardList, Eye, Plus, Trash2 } from '@lucide/svelte';
+import { onMount } from 'svelte';
+import { transaksiApi } from '$lib/api';
+import PageHeader from '$lib/components/layout/PageHeader.svelte';
+import { Badge, Button, Card, CardBody, DataTable, EmptyState, Loading } from '$lib/components/ui';
+import { STATUS_TRANSAKSI, TRANSAKSI_STATUS_VARIANTS } from '$lib/constants';
+import { confirm } from '$lib/stores/confirm';
+import { toast } from '$lib/stores/toast';
+import type { StatusTransaksi, Transaksi } from '$lib/types';
+import { formatCurrency, formatDateShort } from '$lib/utils';
 
-  let transaksis: Transaksi[] = $state([]);
-  let isLoading = $state(true);
-  let statusFilter = $state<StatusTransaksi | "">("");
+let transaksis: Transaksi[] = $state([]);
+let isLoading = $state(true);
+let statusFilter = $state<StatusTransaksi | ''>('');
 
-  const columns = [
-    { key: "penyewa", label: "Penyewa" },
-    { key: "noHp", label: "No. HP" },
-    { key: "motor", label: "Motor" },
-    { key: "tanggal", label: "Tanggal" },
-    { key: "total", label: "Total" },
-    { key: "status", label: "Status" },
-    { key: "aksi", label: "Aksi", class: "w-32" },
-  ];
+const columns = [
+	{ key: 'penyewa', label: 'Penyewa' },
+	{ key: 'noHp', label: 'No. HP' },
+	{ key: 'motor', label: 'Motor' },
+	{ key: 'tanggal', label: 'Tanggal' },
+	{ key: 'total', label: 'Total' },
+	{ key: 'status', label: 'Status' },
+	{ key: 'aksi', label: 'Aksi', class: 'w-32' }
+];
 
-  onMount(async () => {
-    await loadData();
-  });
+onMount(async () => {
+	await loadData();
+});
 
-  async function loadData() {
-    isLoading = true;
-    try {
-      const res = await transaksiApi.getAll({
-        limit: 100,
-        status: statusFilter ? [statusFilter] : undefined,
-      });
-      transaksis = res.data || [];
-    } catch (error) {
-      toast.error("Error loading transaksi:", error);
-    } finally {
-      isLoading = false;
-    }
-  }
+async function loadData() {
+	isLoading = true;
+	try {
+		const res = await transaksiApi.getAll({
+			limit: 100,
+			status: statusFilter ? [statusFilter] : undefined
+		});
+		transaksis = res.data || [];
+	} catch (error) {
+		toast.error('Error loading transaksi:', error);
+	} finally {
+		isLoading = false;
+	}
+}
 
-  async function handleSelesai(id: string) {
-    const ok = await confirm.show({
-      title: "Selesaikan Sewa",
-      message: "Apakah Anda yakin ingin menyelesaikan transaksi ini?",
-      type: "success",
-      confirmText: "Ya, Selesai",
-      cancelText: "Batal",
-    });
+async function handleSelesai(id: string) {
+	const ok = await confirm.show({
+		title: 'Selesaikan Sewa',
+		message: 'Apakah Anda yakin ingin menyelesaikan transaksi ini?',
+		type: 'success',
+		confirmText: 'Ya, Selesai',
+		cancelText: 'Batal'
+	});
 
-    if (!ok) return;
+	if (!ok) return;
 
-    try {
-      await transaksiApi.selesaiSewa(id);
-      await loadData();
-    } catch (error) {
-      toast.error("Error completing transaksi:", error);
-    }
-  }
+	try {
+		await transaksiApi.selesaiSewa(id);
+		await loadData();
+	} catch (error) {
+		toast.error('Error completing transaksi:', error);
+	}
+}
 
-  async function handleDelete(id: string) {
-    const ok = await confirm.show({
-      title: "Hapus Transaksi",
-      message: "Apakah Anda yakin ingin menghapus transaksi ini?",
-      type: "danger",
-      confirmText: "Hapus Sekarang",
-      cancelText: "Batal",
-    });
+async function handleDelete(id: string) {
+	const ok = await confirm.show({
+		title: 'Hapus Transaksi',
+		message: 'Apakah Anda yakin ingin menghapus transaksi ini?',
+		type: 'danger',
+		confirmText: 'Hapus Sekarang',
+		cancelText: 'Batal'
+	});
 
-    if (!ok) return;
+	if (!ok) return;
 
-    try {
-      await transaksiApi.delete(id);
-      await loadData();
-    } catch (error) {
-      toast.error("Error deleting:", error);
-    }
-  }
+	try {
+		await transaksiApi.delete(id);
+		await loadData();
+	} catch (error) {
+		toast.error('Error deleting:', error);
+	}
+}
 
-  function getStatusVariant(status: StatusTransaksi) {
-    return TRANSAKSI_STATUS_VARIANTS[status] || "default";
-  }
+function getStatusVariant(status: StatusTransaksi) {
+	return TRANSAKSI_STATUS_VARIANTS[status] || 'default';
+}
 
-  $effect(() => {
-    if (statusFilter !== undefined) {
-      loadData();
-    }
-  });
+$effect(() => {
+	if (statusFilter !== undefined) {
+		loadData();
+	}
+});
 </script>
 
 <svelte:head>

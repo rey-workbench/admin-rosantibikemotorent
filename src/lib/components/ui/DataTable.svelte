@@ -1,12 +1,12 @@
 <script lang="ts">
-    import type { Snippet } from "svelte";
+import type { Snippet } from 'svelte';
 
-    interface Props {
-        columns: { key: string; label: string; class?: string }[];
-        children: Snippet;
-    }
+interface Props {
+	columns: { key: string; label: string; class?: string }[];
+	children: Snippet;
+}
 
-    let { columns, children }: Props = $props();
+let { columns, children }: Props = $props();
 </script>
 
 <div class="overflow-x-auto w-full">

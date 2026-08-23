@@ -1,70 +1,67 @@
 <script lang="ts">
-    import { page } from "$app/state";
-    import {
-        LayoutDashboard,
-        Bike,
-        ClipboardList,
-        MessageSquare,
-        Menu,
-        X,
-        Truck,
-        FileText,
-        ListOrdered,
-        Settings,
-        Users,
-        LogOut,
-        Calendar,
-    } from "@lucide/svelte";
-    import { slide, fade } from "svelte/transition";
-    import { authApi } from "$lib/api";
-    import { authStore } from "$lib/stores/auth";
-    import { goto } from "$app/navigation";
-    import { toast } from "$lib/stores/toast";
-    
-    // Main bottom tabs
-    const mainTabs = [
-        { path: "/", label: "Home", icon: LayoutDashboard },
-        { path: "/motor/unit", label: "Motor", icon: Bike },
-        { path: "/transaksi", label: "Transaksi", icon: ClipboardList },
-        { path: "/whatsapp", label: "Chat", icon: MessageSquare },
-    ];
+import {
+	Bike,
+	Calendar,
+	ClipboardList,
+	FileText,
+	LayoutDashboard,
+	ListOrdered,
+	LogOut,
+	Menu,
+	MessageSquare,
+	Settings,
+	Truck,
+	Users,
+	X
+} from '@lucide/svelte';
+import { fade, slide } from 'svelte/transition';
+import { goto } from '$app/navigation';
+import { page } from '$app/state';
+import { authApi } from '$lib/api';
+import { authStore } from '$lib/stores/auth';
+import { toast } from '$lib/stores/toast';
 
-    // Secondary items for the "Menu" drawer
-    const menuItems = [
-        { path: "/availability", label: "Ketersediaan", icon: Calendar },
-        { path: "/motor", label: "Jenis Motor", icon: Truck },
-        { path: "/queue", label: "Antrian", icon: ListOrdered },
-        { path: "/blog", label: "Blog", icon: FileText },
-        { path: "/admin", label: "Admin", icon: Users },
-        { path: "/settings", label: "Pengaturan", icon: Settings },
-    ];
+// Main bottom tabs
+const mainTabs = [
+	{ path: '/', label: 'Home', icon: LayoutDashboard },
+	{ path: '/motor/unit', label: 'Motor', icon: Bike },
+	{ path: '/transaksi', label: 'Transaksi', icon: ClipboardList },
+	{ path: '/whatsapp', label: 'Chat', icon: MessageSquare }
+];
 
-    let isMenuOpen = $state(false);
+// Secondary items for the "Menu" drawer
+const menuItems = [
+	{ path: '/availability', label: 'Ketersediaan', icon: Calendar },
+	{ path: '/motor', label: 'Jenis Motor', icon: Truck },
+	{ path: '/queue', label: 'Antrian', icon: ListOrdered },
+	{ path: '/blog', label: 'Blog', icon: FileText },
+	{ path: '/admin', label: 'Admin', icon: Users },
+	{ path: '/settings', label: 'Pengaturan', icon: Settings }
+];
 
-    function isActive(path: string): boolean {
-        return (
-            page.url.pathname === path ||
-            (path !== "/" && page.url.pathname.startsWith(path))
-        );
-    }
+let isMenuOpen = $state(false);
 
-    function toggleMenu() {
-        isMenuOpen = !isMenuOpen;
-    }
+function isActive(path: string): boolean {
+	return page.url.pathname === path || (path !== '/' && page.url.pathname.startsWith(path));
+}
 
-    function closeMenu() {
-        isMenuOpen = false;
-    }
+function toggleMenu() {
+	isMenuOpen = !isMenuOpen;
+}
 
-    async function handleLogout() {
-        try {
-            await authApi.logout();
-        } catch (e) {
-            toast.error("Gagal logout, coba lagi");
-        }
-        authStore.logout();
-        goto("/login");
-    }
+function closeMenu() {
+	isMenuOpen = false;
+}
+
+async function handleLogout() {
+	try {
+		await authApi.logout();
+	} catch (e) {
+		toast.error('Gagal logout, coba lagi');
+	}
+	authStore.logout();
+	goto('/login');
+}
 </script>
 
 <!-- Spacer to prevent content from being hidden behind nav -->

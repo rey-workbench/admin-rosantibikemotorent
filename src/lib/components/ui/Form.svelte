@@ -1,35 +1,28 @@
 <script lang="ts">
-  import { Save } from "@lucide/svelte";
-  import { Button, Card, CardBody } from "$lib/components/ui";
-  import type { Snippet } from "svelte";
-  import { PageHeader } from "../layout";
+import { Save } from '@lucide/svelte';
+import type { Snippet } from 'svelte';
+import { Button, Card, CardBody } from '$lib/components/ui';
+import { PageHeader } from '../layout';
 
-  interface ActionButton {
-    label: string;
-    variant?: "primary" | "secondary" | "danger";
-    type?: "button" | "submit";
-    loading?: boolean;
-    onclick?: () => void;
-    href?: string;
-  }
+interface ActionButton {
+	label: string;
+	variant?: 'primary' | 'secondary' | 'danger';
+	type?: 'button' | 'submit';
+	loading?: boolean;
+	onclick?: () => void;
+	href?: string;
+}
 
-  interface Props {
-    title: string;
-    backHref?: string;
-    actions?: ActionButton[];
-    isLoading?: boolean;
-    handleSubmit?: (e: Event) => void;
-    children: Snippet;
-  }
+interface Props {
+	title: string;
+	backHref?: string;
+	actions?: ActionButton[];
+	isLoading?: boolean;
+	handleSubmit?: (e: Event) => void;
+	children: Snippet;
+}
 
-  let {
-    title,
-    backHref,
-    actions = [],
-    isLoading = false,
-    handleSubmit,
-    children,
-  }: Props = $props();
+let { title, backHref, actions = [], isLoading = false, handleSubmit, children }: Props = $props();
 </script>
 
 <svelte:head>

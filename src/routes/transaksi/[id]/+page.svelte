@@ -1,61 +1,58 @@
 <script lang="ts">
-  import { toast } from '$lib/stores/toast';
-  import { onMount } from "svelte";
-  import { page } from "$app/state";
-  import { transaksiApi } from "$lib/api";
-  import { formatCurrency } from "$lib/utils/formatters";
-  import { format } from "date-fns";
-  import { id as idLocale } from "date-fns/locale";
-  import { Button } from "$lib/components/ui";
-  import { Printer, ArrowLeft } from "@lucide/svelte";
-  import type { Transaksi } from "$lib/types";
+import { ArrowLeft, Printer } from '@lucide/svelte';
+import { format } from 'date-fns';
+import { id as idLocale } from 'date-fns/locale';
+import { onMount } from 'svelte';
+import { page } from '$app/state';
+import { transaksiApi } from '$lib/api';
+import { Button } from '$lib/components/ui';
+import { toast } from '$lib/stores/toast';
+import type { Transaksi } from '$lib/types';
+import { formatCurrency } from '$lib/utils/formatters';
 
-  let transaction:
-    | (Transaksi & { qris?: { qrImage: string; nominal: string } })
-    | null = $state(null);
-  let isLoading = $state(true);
-  let error = $state<string | null>(null);
+let transaction: (Transaksi & { qris?: { qrImage: string; nominal: string } }) | null =
+	$state(null);
+let isLoading = $state(true);
+let error = $state<string | null>(null);
 
-  const id = page.params.id;
+const id = page.params.id;
 
-  onMount(async () => {
-    if (id) {
-      loadTransaction(id);
-    }
-  });
+onMount(async () => {
+	if (id) {
+		loadTransaction(id);
+	}
+});
 
-  async function loadTransaction(transaksiId: string) {
-    isLoading = true;
-    try {
-      const data = await transaksiApi.getById(transaksiId);
-      // Calculate duration if not provided by backend
-      const startDate = new Date(data.tanggalMulai);
-      const endDate = new Date(data.tanggalSelesai);
-      const duration =
-        Math.ceil(
-          (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
-        ) || 1;
+async function loadTransaction(transaksiId: string) {
+	isLoading = true;
+	try {
+		const data = await transaksiApi.getById(transaksiId);
+		// Calculate duration if not provided by backend
+		const startDate = new Date(data.tanggalMulai);
+		const endDate = new Date(data.tanggalSelesai);
+		const duration =
+			Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) || 1;
 
-      transaction = {
-        ...data,
-        durasiHari: data.durasiHari || duration,
-      };
-    } catch (err: any) {
-      toast.error(err);
-      error = err?.response?.data?.userErrorMsg || err?.response?.data?.message;
-    } finally {
-      isLoading = false;
-    }
-  }
+		transaction = {
+			...data,
+			durasiHari: data.durasiHari || duration
+		};
+	} catch (err: any) {
+		toast.error(err);
+		error = err?.response?.data?.userErrorMsg || err?.response?.data?.message;
+	} finally {
+		isLoading = false;
+	}
+}
 
-  function formatDate(date: string) {
-    if (!date) return "-";
-    return format(new Date(date), "dd MMMM yyyy", { locale: idLocale });
-  }
+function formatDate(date: string) {
+	if (!date) return '-';
+	return format(new Date(date), 'dd MMMM yyyy', { locale: idLocale });
+}
 
-  function handlePrint() {
-    window.print();
-  }
+function handlePrint() {
+	window.print();
+}
 </script>
 
 <svelte:head>

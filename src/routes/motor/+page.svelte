@@ -1,65 +1,65 @@
 <script lang="ts">
-  import { toast } from '$lib/stores/toast';
-    import { onMount } from "svelte";
-    import { Plus, Pencil, Trash2, Search, Bike } from "@lucide/svelte";
-    import { jenisMotorApi } from "$lib/api";
-    import type { JenisMotor } from "$lib/types";
-    import { Card, CardBody, Button, Input, DataTable, Loading, EmptyState } from "$lib/components/ui";
-    import { confirm } from "$lib/stores/confirm";
+import { Bike, Pencil, Plus, Search, Trash2 } from '@lucide/svelte';
+import { onMount } from 'svelte';
+import { jenisMotorApi } from '$lib/api';
+import { Button, Card, CardBody, DataTable, EmptyState, Input, Loading } from '$lib/components/ui';
+import { confirm } from '$lib/stores/confirm';
+import { toast } from '$lib/stores/toast';
+import type { JenisMotor } from '$lib/types';
 
-    let jenisMotors: JenisMotor[] = $state([]);
-    let isLoading = $state(true);
-    let search = $state("");
+let jenisMotors: JenisMotor[] = $state([]);
+let isLoading = $state(true);
+let search = $state('');
 
-    const columns = [
-        { key: "gambar", label: "Gambar" },
-        { key: "merk", label: "Merk" },
-        { key: "model", label: "Model" },
-        { key: "cc", label: "CC" },
-        { key: "harga", label: "Harga Sewa" },
-        { key: "aksi", label: "Aksi", class: "w-24" },
-    ];
+const columns = [
+	{ key: 'gambar', label: 'Gambar' },
+	{ key: 'merk', label: 'Merk' },
+	{ key: 'model', label: 'Model' },
+	{ key: 'cc', label: 'CC' },
+	{ key: 'harga', label: 'Harga Sewa' },
+	{ key: 'aksi', label: 'Aksi', class: 'w-24' }
+];
 
-    onMount(async () => {
-        await loadData();
-    });
+onMount(async () => {
+	await loadData();
+});
 
-    async function loadData() {
-        isLoading = true;
-        try {
-            const res = await jenisMotorApi.getAll({
-                limit: 100,
-                search: search || undefined,
-            });
-            jenisMotors = res.data || [];
-        } catch (error: any) {
-            toast.error("Error loading jenis motor:", error);
-        } finally {
-            isLoading = false;
-        }
-    }
+async function loadData() {
+	isLoading = true;
+	try {
+		const res = await jenisMotorApi.getAll({
+			limit: 100,
+			search: search || undefined
+		});
+		jenisMotors = res.data || [];
+	} catch (error: any) {
+		toast.error('Error loading jenis motor:', error);
+	} finally {
+		isLoading = false;
+	}
+}
 
-    async function handleDelete(id: string) {
-        const ok = await confirm.show({
-            title: "Hapus Jenis Motor",
-            message: "Apakah Anda yakin ingin menghapus jenis motor ini?",
-            type: "danger",
-            confirmText: "Ya, Hapus",
-        });
+async function handleDelete(id: string) {
+	const ok = await confirm.show({
+		title: 'Hapus Jenis Motor',
+		message: 'Apakah Anda yakin ingin menghapus jenis motor ini?',
+		type: 'danger',
+		confirmText: 'Ya, Hapus'
+	});
 
-        if (!ok) return;
+	if (!ok) return;
 
-        try {
-            await jenisMotorApi.delete(id);
-            await loadData();
-        } catch (error: any) {
-            toast.error("Error deleting:", error);
-        }
-    }
+	try {
+		await jenisMotorApi.delete(id);
+		await loadData();
+	} catch (error: any) {
+		toast.error('Error deleting:', error);
+	}
+}
 
-    function handleSearch() {
-        loadData();
-    }
+function handleSearch() {
+	loadData();
+}
 </script>
 
 <svelte:head>

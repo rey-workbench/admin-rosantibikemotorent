@@ -1,82 +1,77 @@
 <script lang="ts">
-  import { toast } from '$lib/stores/toast';
-  import { onMount } from "svelte";
-  import { Plus, Pencil, Trash2, Truck } from "@lucide/svelte";
-  import { formatCurrency } from "$lib/utils";
-  import { unitMotorApi } from "$lib/api";
-  import type { UnitMotor } from "$lib/types";
-  import {
-    Card,
-    CardBody,
-    Button,
-    DataTable,
-    Loading,
-    EmptyState,
-  } from "$lib/components/ui";
-  import { confirm } from "$lib/stores/confirm";
-  import { PageHeader } from "$lib/components";
+import { Pencil, Plus, Trash2, Truck } from '@lucide/svelte';
+import { onMount } from 'svelte';
+import { unitMotorApi } from '$lib/api';
+import { PageHeader } from '$lib/components';
+import { Button, Card, CardBody, DataTable, EmptyState, Loading } from '$lib/components/ui';
+import { confirm } from '$lib/stores/confirm';
+import { toast } from '$lib/stores/toast';
+import type { UnitMotor } from '$lib/types';
+import { formatCurrency } from '$lib/utils';
 
-  let units: UnitMotor[] = $state([]);
-  let isLoading = $state(true);
+let units: UnitMotor[] = $state([]);
+let isLoading = $state(true);
 
-  let groupedUnits = $derived.by(() => {
-    const groups: Record<string, { jenis: any; units: UnitMotor[] }> = {};
-    for (const unit of units) {
-      const key = unit.jenis?.id || "unknown";
-      if (!groups[key]) {
-        groups[key] = {
-          jenis: unit.jenis,
-          units: [],
-        };
-      }
-      groups[key].units.push(unit);
-    }
-    return Object.values(groups).sort((a, b) => 
-      `${a.jenis?.merk || ""} ${a.jenis?.model || ""}`.localeCompare(`${b.jenis?.merk || ""} ${b.jenis?.model || ""}`)
-    );
-  });
+let groupedUnits = $derived.by(() => {
+	const groups: Record<string, { jenis: any; units: UnitMotor[] }> = {};
+	for (const unit of units) {
+		const key = unit.jenis?.id || 'unknown';
+		if (!groups[key]) {
+			groups[key] = {
+				jenis: unit.jenis,
+				units: []
+			};
+		}
+		groups[key].units.push(unit);
+	}
+	return Object.values(groups).sort((a, b) =>
+		`${a.jenis?.merk || ''} ${a.jenis?.model || ''}`.localeCompare(
+			`${b.jenis?.merk || ''} ${b.jenis?.model || ''}`
+		)
+	);
+});
 
-  const columns = [
-    { key: "plat", label: "Plat Nomor" },
-    { key: "jenis", label: "Jenis Motor" },
-    { key: "harga", label: "Harga Sewa" },
-    { key: "tahun", label: "Tahun" },
-    { key: "aksi", label: "Aksi", class: "w-24" },
-  ];
+const columns = [
+	{ key: 'plat', label: 'Plat Nomor' },
+	{ key: 'jenis', label: 'Jenis Motor' },
+	{ key: 'harga', label: 'Harga Sewa' },
+	{ key: 'tahun', label: 'Tahun' },
+	{ key: 'aksi', label: 'Aksi', class: 'w-24' }
+];
 
-  onMount(async () => {
-    await loadData();
-  });
+onMount(async () => {
+	await loadData();
+});
 
-  async function loadData() {
-    isLoading = true;
-    try {
-      const res = await unitMotorApi.getAll({ limit: 100 });
-      units = res.data || [];
-    } catch (error: any) {
-      toast.error("Error loading unit motor:", error);
-    } finally {
-      isLoading = false;
-    }
-  }
+async function loadData() {
+	isLoading = true;
+	try {
+		const res = await unitMotorApi.getAll({ limit: 100 });
+		units = res.data || [];
+	} catch (error: any) {
+		toast.error('Error loading unit motor:', error);
+	} finally {
+		isLoading = false;
+	}
+}
 
-  async function handleDelete(id: string) {
-    const ok = await confirm.show({
-      title: "Hapus Unit Motor",
-      message: "Apakah Anda yakin ingin menghapus unit motor ini?",
-      type: "danger",
-      confirmText: "Ya, Hapus",
-    });
+async function handleDelete(id: string) {
+	const ok = await confirm.show({
+		title: 'Hapus Unit Motor',
+		message: 'Apakah Anda yakin ingin menghapus unit motor ini?',
+		type: 'danger',
+		confirmText: 'Ya, Hapus'
+	});
 
-    if (!ok) return;
+	if (!ok) return;
 
-    try {
-      await unitMotorApi.delete(id);
-      await loadData();
-    } catch (error: any) {
-      toast.error("Error deleting:", error);
-    }
-  }
+	try {
+		await unitMotorApi.delete(id);
+		await loadData();
+	} catch (error: any) {
+		toast.error('Error deleting:', error);
+	}
+}
 </script>
 
 <svelte:head>

@@ -1,32 +1,32 @@
 <script lang="ts">
-    interface Option {
-        value: string;
-        label: string;
-    }
+interface Option {
+	value: string;
+	label: string;
+}
 
-    interface Props {
-        id: string;
-        label: string;
-        value: string;
-        options: Option[];
-        placeholder?: string;
-        required?: boolean;
-        disabled?: boolean;
-        class?: string;
-        onchange?: (e: Event) => void;
-    }
+interface Props {
+	id: string;
+	label: string;
+	value: string;
+	options: Option[];
+	placeholder?: string;
+	required?: boolean;
+	disabled?: boolean;
+	class?: string;
+	onchange?: (e: Event) => void;
+}
 
-    let {
-        id,
-        label,
-        value = $bindable(),
-        options,
-        placeholder = "Pilih...",
-        required = false,
-        disabled = false,
-        class: className = "",
-        onchange,
-    }: Props = $props();
+let {
+	id,
+	label,
+	value = $bindable(),
+	options,
+	placeholder = 'Pilih...',
+	required = false,
+	disabled = false,
+	class: className = '',
+	onchange
+}: Props = $props();
 </script>
 
 <div class="flex flex-col gap-1.5 {className}">

@@ -1,55 +1,46 @@
 <script lang="ts">
-  import { toast } from '$lib/stores/toast';
-    import { goto } from "$app/navigation";
-    import { authApi } from "$lib/api";
-    import { authStore } from "$lib/stores/auth";
-    import {
-        LogIn,
-        Lock,
-        User,
-        Eye,
-        EyeOff,
-        ArrowLeft,
-        AlertCircle,
-    } from "@lucide/svelte";
-    import { fly } from "svelte/transition";
+import { AlertCircle, ArrowLeft, Eye, EyeOff, Lock, LogIn, User } from '@lucide/svelte';
+import { fly } from 'svelte/transition';
+import { goto } from '$app/navigation';
+import { authApi } from '$lib/api';
+import { authStore } from '$lib/stores/auth';
+import { toast } from '$lib/stores/toast';
 
-    let username = $state("");
-    let password = $state("");
-    let showPassword = $state(false);
-    let rememberMe = $state(true);
-    let isLoading = $state(false);
-    let errorMessage = $state("");
+let username = $state('');
+let password = $state('');
+let showPassword = $state(false);
+let rememberMe = $state(true);
+let isLoading = $state(false);
+let errorMessage = $state('');
 
-    async function handleLogin(e: Event) {
-        e.preventDefault();
-        isLoading = true;
-        errorMessage = "";
+async function handleLogin(e: Event) {
+	e.preventDefault();
+	isLoading = true;
+	errorMessage = '';
 
-        try {
-            const response = await authApi.login({ username, password });
-            authStore.login(response.admin, response.token);
-            goto("/");
-        } catch (err: any) {
-            toast.error("Login error:", err);
-            const status = err.response?.status;
-            const resMsg = err.response?.data?.message;
-            if (status === 429) {
-                errorMessage =
-                    "Terlalu banyak percobaan login. Silakan tunggu 15 menit.";
-            } else if (Array.isArray(resMsg)) {
-                errorMessage = resMsg.join(", ");
-            } else if (typeof resMsg === "string" && resMsg.trim()) {
-                errorMessage = resMsg;
-            } else if (err.message && !err.message.includes("status code")) {
-                errorMessage = err.message;
-            } else {
-                errorMessage = "Username atau password salah";
-            }
-        } finally {
-            isLoading = false;
-        }
-    }
+	try {
+		const response = await authApi.login({ username, password });
+		authStore.login(response.admin, response.token);
+		goto('/');
+	} catch (err: any) {
+		toast.error('Login error:', err);
+		const status = err.response?.status;
+		const resMsg = err.response?.data?.message;
+		if (status === 429) {
+			errorMessage = 'Terlalu banyak percobaan login. Silakan tunggu 15 menit.';
+		} else if (Array.isArray(resMsg)) {
+			errorMessage = resMsg.join(', ');
+		} else if (typeof resMsg === 'string' && resMsg.trim()) {
+			errorMessage = resMsg;
+		} else if (err.message && !err.message.includes('status code')) {
+			errorMessage = err.message;
+		} else {
+			errorMessage = 'Username atau password salah';
+		}
+	} finally {
+		isLoading = false;
+	}
+}
 </script>
 
 <svelte:head>

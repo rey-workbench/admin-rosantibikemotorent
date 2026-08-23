@@ -1,254 +1,269 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import {
-    Plus, Save, Trash2, Edit2, Zap, LayoutGrid, ListTree,
-    Bike, DollarSign, FileText, Search, CreditCard, Landmark, RefreshCw
-  } from "@lucide/svelte";
-  import { 
-    SvelteFlow, 
-    Background, 
-    Controls, 
-    type Node as FlowNode, 
-    type Edge as FlowEdge,
-    addEdge
-  } from "@xyflow/svelte";
-  import "@xyflow/svelte/dist/style.css";
+import {
+	Bike,
+	CreditCard,
+	DollarSign,
+	Edit2,
+	FileText,
+	Landmark,
+	LayoutGrid,
+	ListTree,
+	Plus,
+	RefreshCw,
+	Save,
+	Search,
+	Trash2,
+	Zap
+} from '@lucide/svelte';
+import {
+	addEdge,
+	Background,
+	Controls,
+	type Edge as FlowEdge,
+	type Node as FlowNode,
+	SvelteFlow
+} from '@xyflow/svelte';
+import { onMount } from 'svelte';
+import '@xyflow/svelte/dist/style.css';
 
-  import Button from "$lib/components/ui/Button.svelte";
-  import Input from "$lib/components/ui/Input.svelte";
-  import Modal from "$lib/components/ui/Modal.svelte";
-  import { whatsappApi } from "$lib/api";
-	import { toast } from "$lib/stores/toast";
-    import { confirm } from "$lib/stores/confirm";
-  
-  import TriggerNode from "./nodes/TriggerNode.svelte";
-  import ActionNode from "./nodes/ActionNode.svelte";
+import { whatsappApi } from '$lib/api';
+import Button from '$lib/components/ui/Button.svelte';
+import Input from '$lib/components/ui/Input.svelte';
+import Modal from '$lib/components/ui/Modal.svelte';
+import { confirm } from '$lib/stores/confirm';
+import { toast } from '$lib/stores/toast';
+import ActionNode from './nodes/ActionNode.svelte';
+import TriggerNode from './nodes/TriggerNode.svelte';
 
-  // ─── Constants ─────────────────────────────────────────────────────────────
-  const nodeTypes = {
-    trigger: TriggerNode,
-    action: ActionNode
-  };
+// ─── Constants ─────────────────────────────────────────────────────────────
+const nodeTypes = {
+	trigger: TriggerNode,
+	action: ActionNode
+};
 
-  const systemActions = [
-    { value: "action_motor_list", label: "Katalog Motor Tersedia", icon: Bike },
-    { value: "action_motor_pricing", label: "Cek Harga Sewa", icon: DollarSign },
-    { value: "action_booking_info", label: "Panduan Pemesanan", icon: FileText },
-    { value: "action_booking_status", label: "Cek Status Pesanan", icon: Search },
-    { value: "action_transaction_info", label: "Info Transaksi Aktif", icon: CreditCard },
-    { value: "action_payment_instructions", label: "Instruksi Bayar DP", icon: Landmark },
-    { value: "action_extension_info", label: "Cara Perpanjang Sewa", icon: RefreshCw },
-  ];
+const systemActions = [
+	{ value: 'action_motor_list', label: 'Katalog Motor Tersedia', icon: Bike },
+	{ value: 'action_motor_pricing', label: 'Cek Harga Sewa', icon: DollarSign },
+	{ value: 'action_booking_info', label: 'Panduan Pemesanan', icon: FileText },
+	{ value: 'action_booking_status', label: 'Cek Status Pesanan', icon: Search },
+	{ value: 'action_transaction_info', label: 'Info Transaksi Aktif', icon: CreditCard },
+	{ value: 'action_payment_instructions', label: 'Instruksi Bayar DP', icon: Landmark },
+	{ value: 'action_extension_info', label: 'Cara Perpanjang Sewa', icon: RefreshCw }
+];
 
-  // ─── State ──────────────────────────────────────────────────────────────────
-  let workflows: any[] = $state([]);
-  let templates: any[] = $state([]);
-  let selectedId: string | null = $state(null);
-  let isLoading = $state(false);
-  let isSaving = $state(false);
-  let showConfigModal = $state(false);
-  let isNewMode = $state(false);
+// ─── State ──────────────────────────────────────────────────────────────────
+let workflows: any[] = $state([]);
+let templates: any[] = $state([]);
+let selectedId: string | null = $state(null);
+let isLoading = $state(false);
+let isSaving = $state(false);
+let showConfigModal = $state(false);
+let isNewMode = $state(false);
 
-  // Flow State
-  let nodes: FlowNode[] = $state([]);
-  let edges: FlowEdge[] = $state([]);
+// Flow State
+let nodes: FlowNode[] = $state([]);
+let edges: FlowEdge[] = $state([]);
 
-  // Workflow Form (Meta info)
-  let flowMeta = $state({
-    name: "",
-    isActive: true
-  });
+// Workflow Form (Meta info)
+let flowMeta = $state({
+	name: '',
+	isActive: true
+});
 
-  // Derived selected workflow
-  
-  // ─── Initialization ────────────────────────────────────────────────────────
-  onMount(async () => {
-    isLoading = true;
-    await Promise.all([loadWorkflows(), loadTemplates()]);
-    isLoading = false;
-  });
+// Derived selected workflow
 
-  async function loadWorkflows() {
-    try {
-      const data = await whatsappApi.getAllWorkflows();
-      workflows = data;
-    } catch (err: any) {
-      toast.error(err);
-    }
-  }
+// ─── Initialization ────────────────────────────────────────────────────────
+onMount(async () => {
+	isLoading = true;
+	await Promise.all([loadWorkflows(), loadTemplates()]);
+	isLoading = false;
+});
 
-  async function loadTemplates() {
-    try {
-      templates = await whatsappApi.getAllTemplates();
-    } catch (err: any) {
-      toast.error("Gagal memuat templates", err);
-    }
-  }
+async function loadWorkflows() {
+	try {
+		const data = await whatsappApi.getAllWorkflows();
+		workflows = data;
+	} catch (err: any) {
+		toast.error(err);
+	}
+}
 
-  // ─── Actions ───────────────────────────────────────────────────────────────
-  function selectWorkflow(w: any) {
-    selectedId = w.id;
-    isNewMode = false;
-    flowMeta = {
-      name: w.name,
-      isActive: w.isActive ?? true
-    };
+async function loadTemplates() {
+	try {
+		templates = await whatsappApi.getAllTemplates();
+	} catch (err: any) {
+		toast.error('Gagal memuat templates', err);
+	}
+}
 
-    // Map backend nodes to Flow nodes
-    const rawNodes = w.nodes || [];
-    const mappedNodes: FlowNode[] = rawNodes.map((n: any, idx: number) => {
-      const isTrigger = n.type.startsWith("trigger");
-      return {
-        id: n.id,
-        type: isTrigger ? "trigger" : "action",
-        data: {
-          trigger: isTrigger ? (w.trigger || (n.type === "trigger_keyword" ? "keyword" : "fallback")) : null,
-          keyword: isTrigger ? (n.keyword || w.keyword || "") : "",
-          type: n.type,
-          data: n.data || {},
-          templates,
-          systemActions,
-          onDelete: removeNode
-        },
-        position: n.position || { x: 0, y: idx * 150 }
-      };
-    });
+// ─── Actions ───────────────────────────────────────────────────────────────
+function selectWorkflow(w: any) {
+	selectedId = w.id;
+	isNewMode = false;
+	flowMeta = {
+		name: w.name,
+		isActive: w.isActive ?? true
+	};
 
-    nodes = mappedNodes;
-    edges = w.edges || [];
-  }
+	// Map backend nodes to Flow nodes
+	const rawNodes = w.nodes || [];
+	const mappedNodes: FlowNode[] = rawNodes.map((n: any, idx: number) => {
+		const isTrigger = n.type.startsWith('trigger');
+		return {
+			id: n.id,
+			type: isTrigger ? 'trigger' : 'action',
+			data: {
+				trigger: isTrigger
+					? w.trigger || (n.type === 'trigger_keyword' ? 'keyword' : 'fallback')
+					: null,
+				keyword: isTrigger ? n.keyword || w.keyword || '' : '',
+				type: n.type,
+				data: n.data || {},
+				templates,
+				systemActions,
+				onDelete: removeNode
+			},
+			position: n.position || { x: 0, y: idx * 150 }
+		};
+	});
 
-  function openNew() {
-    selectedId = null;
-    isNewMode = true;
-    flowMeta = {
-      name: "New Workflow",
-      isActive: true
-    };
-    
-    // Initial nodes for a new workflow
-    const triggerId = `node_${Date.now()}`;
-    nodes = [{
-      id: triggerId,
-      type: "trigger",
-      position: { x: 0, y: 0 },
-      data: { 
-        trigger: "keyword", 
-        keyword: "", 
-        templates, 
-        systemActions,
-        onDelete: removeNode 
-      }
-    }];
-    edges = [];
-    showConfigModal = true;
-  }
+	nodes = mappedNodes;
+	edges = w.edges || [];
+}
 
-  function addActionNode() {
-    const lastNode = nodes[nodes.length - 1];
-    const newId = `node_${Date.now()}`;
-    const newNode: FlowNode = {
-      id: newId,
-      type: "action",
-      position: { x: 0, y: (lastNode?.position.y || 0) + 160 },
-      data: { 
-        type: "send_text", 
-        data: { text: "" }, 
-        templates, 
-        systemActions,
-        onDelete: removeNode 
-      }
-    };
+function openNew() {
+	selectedId = null;
+	isNewMode = true;
+	flowMeta = {
+		name: 'New Workflow',
+		isActive: true
+	};
 
-    nodes = [...nodes, newNode];
-    
-    if (lastNode) {
-      edges = addEdge({ 
-        id: `e_${lastNode.id}_${newId}`, 
-        source: lastNode.id, 
-        target: newId, 
-        animated: true 
-      }, edges);
-    }
-  }
+	// Initial nodes for a new workflow
+	const triggerId = `node_${Date.now()}`;
+	nodes = [
+		{
+			id: triggerId,
+			type: 'trigger',
+			position: { x: 0, y: 0 },
+			data: {
+				trigger: 'keyword',
+				keyword: '',
+				templates,
+				systemActions,
+				onDelete: removeNode
+			}
+		}
+	];
+	edges = [];
+	showConfigModal = true;
+}
 
-  // Svelte Flow 1.x with Svelte 5 handles node/edge changes automatically if they are $state
-  // We don't need explicit applyNodeChanges/applyEdgeChanges handlers.
+function addActionNode() {
+	const lastNode = nodes[nodes.length - 1];
+	const newId = `node_${Date.now()}`;
+	const newNode: FlowNode = {
+		id: newId,
+		type: 'action',
+		position: { x: 0, y: (lastNode?.position.y || 0) + 160 },
+		data: {
+			type: 'send_text',
+			data: { text: '' },
+			templates,
+			systemActions,
+			onDelete: removeNode
+		}
+	};
 
-  function removeNode(idToRemove: string) {
-    nodes = nodes.filter(n => n.id !== idToRemove);
-    edges = edges.filter(e => e.source !== idToRemove && e.target !== idToRemove);
-  }
+	nodes = [...nodes, newNode];
 
-  async function saveWorkflow() {
-    if (!flowMeta.name.trim()) return toast.warning("Nama workflow wajib diisi");
-    
-    // Validate trigger
-    const triggerNode = nodes.find(n => n.type === "trigger");
-    if (!triggerNode) return toast.warning("Workflow wajib memiliki trigger");
-    if (triggerNode.data.trigger === "keyword" && !(triggerNode.data.keyword as string)?.trim())
-      return toast.warning("Kata kunci trigger wajib diisi");
+	if (lastNode) {
+		edges = addEdge(
+			{
+				id: `e_${lastNode.id}_${newId}`,
+				source: lastNode.id,
+				target: newId,
+				animated: true
+			},
+			edges
+		);
+	}
+}
 
-    isSaving = true;
-    try {
-      // Map Flow nodes back to backend format
-      const finalNodes = nodes.map((n) => {
-        let type = n.type;
-        if (n.type === "trigger") {
-          type =
-            (n.data as any).trigger === "keyword"
-              ? "trigger_keyword"
-              : "trigger_fallback";
-        } else {
-          type = (n.data as any).type as string;
-        }
+// Svelte Flow 1.x with Svelte 5 handles node/edge changes automatically if they are $state
+// We don't need explicit applyNodeChanges/applyEdgeChanges handlers.
 
-        return {
-          id: n.id,
-          type,
-          data: (n.data as any).data || {},
-          keyword: (n.data as any).keyword as string | undefined,
-          position: n.position,
-        };
-      });
+function removeNode(idToRemove: string) {
+	nodes = nodes.filter((n) => n.id !== idToRemove);
+	edges = edges.filter((e) => e.source !== idToRemove && e.target !== idToRemove);
+}
 
-      const dto = {
-        name: flowMeta.name,
-        trigger: (triggerNode.data as any).trigger as string,
-        keyword: (triggerNode.data as any).keyword as string,
-        isActive: flowMeta.isActive,
-        nodes: finalNodes,
-        edges: edges.map((e) => ({ ...e, animated: true })),
-      };
+async function saveWorkflow() {
+	if (!flowMeta.name.trim()) return toast.warning('Nama workflow wajib diisi');
 
-      await whatsappApi.upsertWorkflow(selectedId, dto);
-      toast.success("Workflow berhasil disimpan!");
-      await loadWorkflows();
-      showConfigModal = false;
-    } catch (e: any) {
-      toast.error(e);
-    } finally {
-      isSaving = false;
-    }
-  }
+	// Validate trigger
+	const triggerNode = nodes.find((n) => n.type === 'trigger');
+	if (!triggerNode) return toast.warning('Workflow wajib memiliki trigger');
+	if (triggerNode.data.trigger === 'keyword' && !(triggerNode.data.keyword as string)?.trim())
+		return toast.warning('Kata kunci trigger wajib diisi');
 
-  async function deleteWorkflow() {
-    if (!selectedId) return;
-    const ok = await confirm.show({
-      title: "Hapus Workflow",
-      message: `Hapus workflow "${flowMeta.name}"?`,
-      type: "danger",
-    });
-    if (!ok) return;
-    try {
-      await whatsappApi.deleteWorkflow(selectedId);
-      toast.success("Workflow dihapus");
-      selectedId = null;
-      await loadWorkflows();
-    } catch (err: any) {
-      toast.error(err);
-    }
-  }
+	isSaving = true;
+	try {
+		// Map Flow nodes back to backend format
+		const finalNodes = nodes.map((n) => {
+			let type = n.type;
+			if (n.type === 'trigger') {
+				type = (n.data as any).trigger === 'keyword' ? 'trigger_keyword' : 'trigger_fallback';
+			} else {
+				type = (n.data as any).type as string;
+			}
+
+			return {
+				id: n.id,
+				type,
+				data: (n.data as any).data || {},
+				keyword: (n.data as any).keyword as string | undefined,
+				position: n.position
+			};
+		});
+
+		const dto = {
+			name: flowMeta.name,
+			trigger: (triggerNode.data as any).trigger as string,
+			keyword: (triggerNode.data as any).keyword as string,
+			isActive: flowMeta.isActive,
+			nodes: finalNodes,
+			edges: edges.map((e) => ({ ...e, animated: true }))
+		};
+
+		await whatsappApi.upsertWorkflow(selectedId, dto);
+		toast.success('Workflow berhasil disimpan!');
+		await loadWorkflows();
+		showConfigModal = false;
+	} catch (e: any) {
+		toast.error(e);
+	} finally {
+		isSaving = false;
+	}
+}
+
+async function deleteWorkflow() {
+	if (!selectedId) return;
+	const ok = await confirm.show({
+		title: 'Hapus Workflow',
+		message: `Hapus workflow "${flowMeta.name}"?`,
+		type: 'danger'
+	});
+	if (!ok) return;
+	try {
+		await whatsappApi.deleteWorkflow(selectedId);
+		toast.success('Workflow dihapus');
+		selectedId = null;
+		await loadWorkflows();
+	} catch (err: any) {
+		toast.error(err);
+	}
+}
 </script>
 
 <div class="flex h-[calc(100vh-140px)] gap-0 overflow-hidden bg-white border border-slate-200 rounded-xl shadow-sm">

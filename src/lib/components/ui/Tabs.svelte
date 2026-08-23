@@ -1,19 +1,19 @@
 <script lang="ts">
-    import type { Snippet } from "svelte";
+import type { Snippet } from 'svelte';
 
-    interface Tab {
-        id: string;
-        label: string;
-    }
+interface Tab {
+	id: string;
+	label: string;
+}
 
-    interface Props {
-        tabs: Tab[];
-        activeTab: string;
-        onchange?: (tabId: string) => void;
-        children?: Snippet;
-    }
+interface Props {
+	tabs: Tab[];
+	activeTab: string;
+	onchange?: (tabId: string) => void;
+	children?: Snippet;
+}
 
-    let { tabs, activeTab, onchange, children }: Props = $props();
+let { tabs, activeTab, onchange, children }: Props = $props();
 </script>
 
 <div class="flex gap-2">

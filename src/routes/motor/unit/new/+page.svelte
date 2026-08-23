@@ -1,30 +1,33 @@
 <script lang="ts">
-  import { toast } from '$lib/stores/toast';
-    import { goto } from "$app/navigation";
-    import { onMount } from "svelte";
-    import { unitMotorApi, jenisMotorApi } from "$lib/api";
-    import type { JenisMotor } from "$lib/types";
-    import { Form, Input, Select } from "$lib/components/ui";
+import { onMount } from 'svelte';
+import { goto } from '$app/navigation';
+import { jenisMotorApi, unitMotorApi } from '$lib/api';
+import { Form, Input, Select } from '$lib/components/ui';
+import { toast } from '$lib/stores/toast';
+import type { JenisMotor } from '$lib/types';
 
-    let platNomor = $state("");
-    let jenisId = $state("");
-    let jenisMotors: JenisMotor[] = $state([]);
-    let isSaving = $state(false);
+let platNomor = $state('');
+let jenisId = $state('');
+let jenisMotors: JenisMotor[] = $state([]);
+let isSaving = $state(false);
 
-    onMount(async () => {
-        const res = await jenisMotorApi.getAll({ limit: 100 });
-        jenisMotors = res.data || [];
-    });
+onMount(async () => {
+	const res = await jenisMotorApi.getAll({ limit: 100 });
+	jenisMotors = res.data || [];
+});
 
-    async function handleSubmit(e: Event) {
-        e.preventDefault();
-        isSaving = true;
-        try {
-            await unitMotorApi.create({ platNomor, jenisId });
-            goto("/motor/unit");
-        } catch (err: any) { toast.error(err); }
-        finally { isSaving = false; }
-    }
+async function handleSubmit(e: Event) {
+	e.preventDefault();
+	isSaving = true;
+	try {
+		await unitMotorApi.create({ platNomor, jenisId });
+		goto('/motor/unit');
+	} catch (err: any) {
+		toast.error(err);
+	} finally {
+		isSaving = false;
+	}
+}
 </script>
 
 <Form title="Tambah Unit Motor" backHref="/motor/unit" isLoading={isSaving} {handleSubmit}>

@@ -1,121 +1,119 @@
 <script lang="ts">
-    import { onMount } from "svelte";
-    import { whatsappApi } from "$lib/api";
-	import { toast } from "$lib/stores/toast";
-    import {
-        Card,
-        CardBody,
-        CardHeader,
-        Button,
-        Badge,
-        Modal,
-        Input,
-        Textarea,
-    } from "$lib/components/ui";
-    import { Plus, Pencil, Trash2, RefreshCw } from "@lucide/svelte";
-        import { confirm } from "$lib/stores/confirm";
+import { Pencil, Plus, RefreshCw, Trash2 } from '@lucide/svelte';
+import { onMount } from 'svelte';
+import { whatsappApi } from '$lib/api';
+import {
+	Badge,
+	Button,
+	Card,
+	CardBody,
+	CardHeader,
+	Input,
+	Modal,
+	Textarea
+} from '$lib/components/ui';
+import { confirm } from '$lib/stores/confirm';
+import { toast } from '$lib/stores/toast';
 
-    let templates: any[] = $state([]);
-    let isLoading = $state(false);
-    let showModal = $state(false);
-    let isSaving = $state(false);
+let templates: any[] = $state([]);
+let isLoading = $state(false);
+let showModal = $state(false);
+let isSaving = $state(false);
 
-    // Form State
-    let formId = "";
-    let formKey = $state("");
-    let formTitle = $state("");
-    let formContent = $state("");
-    let formCategory = $state("");
-    let isEditing = $state(false);
+// Form State
+let formId = '';
+let formKey = $state('');
+let formTitle = $state('');
+let formContent = $state('');
+let formCategory = $state('');
+let isEditing = $state(false);
 
-    onMount(() => {
-        loadTemplates();
-    });
+onMount(() => {
+	loadTemplates();
+});
 
-    async function loadTemplates() {
-        isLoading = true;
-        try {
-            templates = await whatsappApi.getAllTemplates();
-        } catch (error: any) {
-            toast.error("Error loading templates:", error);
-        } finally {
-            isLoading = false;
-        }
-    }
+async function loadTemplates() {
+	isLoading = true;
+	try {
+		templates = await whatsappApi.getAllTemplates();
+	} catch (error: any) {
+		toast.error('Error loading templates:', error);
+	} finally {
+		isLoading = false;
+	}
+}
 
-    function openCreateModal() {
-        isEditing = false;
-        formId = "";
-        formKey = "";
-        formTitle = "";
-        formContent = "";
-        formCategory = "";
-        showModal = true;
-    }
+function openCreateModal() {
+	isEditing = false;
+	formId = '';
+	formKey = '';
+	formTitle = '';
+	formContent = '';
+	formCategory = '';
+	showModal = true;
+}
 
-    function openEditModal(template: any) {
-        isEditing = true;
-        formId = template.id;
-        formKey = template.key;
-        formTitle = template.title || "";
-        formContent = template.content || "";
-        formCategory = template.category || "";
-        showModal = true;
-    }
+function openEditModal(template: any) {
+	isEditing = true;
+	formId = template.id;
+	formKey = template.key;
+	formTitle = template.title || '';
+	formContent = template.content || '';
+	formCategory = template.category || '';
+	showModal = true;
+}
 
-    async function handleSave() {
-        if (!formKey || !formContent) {
-            toast.warning("Key dan Content wajib diisi");
-            return;
-        }
+async function handleSave() {
+	if (!formKey || !formContent) {
+		toast.warning('Key dan Content wajib diisi');
+		return;
+	}
 
-        isSaving = true;
-        try {
-            if (isEditing) {
-                await whatsappApi.updateTemplate(formId, {
-                    key: formKey,
-                    title: formTitle,
-                    content: formContent,
-                    category: formCategory,
-                });
-            } else {
-                await whatsappApi.createTemplate({
-                    key: formKey,
-                    title: formTitle,
-                    content: formContent,
-                    category: formCategory,
-                });
-            }
-            toast.success(
-                isEditing ? "Template diperbarui" : "Template dibuat",
-            );
-            showModal = false;
-            loadTemplates();
-        } catch (error: any) {
-            toast.error("Error saving template:", error);
-        } finally {
-            isSaving = false;
-        }
-    }
+	isSaving = true;
+	try {
+		if (isEditing) {
+			await whatsappApi.updateTemplate(formId, {
+				key: formKey,
+				title: formTitle,
+				content: formContent,
+				category: formCategory
+			});
+		} else {
+			await whatsappApi.createTemplate({
+				key: formKey,
+				title: formTitle,
+				content: formContent,
+				category: formCategory
+			});
+		}
+		toast.success(isEditing ? 'Template diperbarui' : 'Template dibuat');
+		showModal = false;
+		loadTemplates();
+	} catch (error: any) {
+		toast.error('Error saving template:', error);
+	} finally {
+		isSaving = false;
+	}
+}
 
-    async function handleDelete(id: string, key: string) {
-        const ok = await confirm.show({
-            title: "Hapus Template",
-            message: `Apakah Anda yakin ingin menghapus template "${key}"?`,
-            type: "danger",
-            confirmText: "Hapus",
-        });
+async function handleDelete(id: string, key: string) {
+	const ok = await confirm.show({
+		title: 'Hapus Template',
+		message: `Apakah Anda yakin ingin menghapus template "${key}"?`,
+		type: 'danger',
+		confirmText: 'Hapus'
+	});
 
-        if (!ok) return;
+	if (!ok) return;
 
-        try {
-            await whatsappApi.deleteTemplate(id);
-            toast.success("Template dihapus");
-            loadTemplates();
-        } catch (error: any) {
-            toast.error("Error deleting template:", error);
-        }
-    }
+	try {
+		await whatsappApi.deleteTemplate(id);
+		toast.success('Template dihapus');
+		loadTemplates();
+	} catch (error: any) {
+		toast.error('Error deleting template:', error);
+	}
+}
 </script>
 
 <Card>

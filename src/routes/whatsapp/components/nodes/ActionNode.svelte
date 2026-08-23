@@ -1,52 +1,62 @@
 <script lang="ts">
-  import { Handle, Position } from "@xyflow/svelte";
-  import {
-    MessageSquare, Zap, RefreshCw, Trash2,
-    ChevronDown, AlignLeft, Database
-  } from "@lucide/svelte";
+import {
+	AlignLeft,
+	ChevronDown,
+	Database,
+	MessageSquare,
+	RefreshCw,
+	Trash2,
+	Zap
+} from '@lucide/svelte';
+import { Handle, Position } from '@xyflow/svelte';
 
-  interface SystemAction { value: string; label: string; icon?: any }
-  interface Template { key: string; title?: string }
+interface SystemAction {
+	value: string;
+	label: string;
+	icon?: any;
+}
+interface Template {
+	key: string;
+	title?: string;
+}
 
-  interface Props {
-    id: string;
-    data: {
-      type?: string;
-      data?: { text?: string; templateKey?: string; delayMs?: number };
-      systemActions?: SystemAction[];
-      templates?: Template[];
-      onDelete?: (id: string) => void;
-    };
-  }
+interface Props {
+	id: string;
+	data: {
+		type?: string;
+		data?: { text?: string; templateKey?: string; delayMs?: number };
+		systemActions?: SystemAction[];
+		templates?: Template[];
+		onDelete?: (id: string) => void;
+	};
+}
 
-  let { data, id }: Props = $props();
+let { data, id }: Props = $props();
 
-  const categories = [
-    { value: 'message', icon: MessageSquare, color: 'from-blue-400 to-blue-600', label: 'Message' },
-    { value: 'action',  icon: Zap,           color: 'from-emerald-400 to-emerald-600', label: 'Action' },
-    { value: 'delay',   icon: RefreshCw,     color: 'from-amber-400 to-amber-600', label: 'Wait' }
-  ];
+const categories = [
+	{ value: 'message', icon: MessageSquare, color: 'from-blue-400 to-blue-600', label: 'Message' },
+	{ value: 'action', icon: Zap, color: 'from-emerald-400 to-emerald-600', label: 'Action' },
+	{ value: 'delay', icon: RefreshCw, color: 'from-amber-400 to-amber-600', label: 'Wait' }
+];
 
-  const currentCategory = $derived(
-    data.type === 'delay' ? 'delay'
-    : data.type?.startsWith('action_') ? 'action'
-    : 'message'
-  );
+const currentCategory = $derived(
+	data.type === 'delay' ? 'delay' : data.type?.startsWith('action_') ? 'action' : 'message'
+);
 
-  const currentCategoryMeta = $derived(categories.find(c => c.value === currentCategory));
-  const matchedAction = $derived(data.systemActions?.find(a => a.value === data.type));
+const currentCategoryMeta = $derived(categories.find((c) => c.value === currentCategory));
+const matchedAction = $derived(data.systemActions?.find((a) => a.value === data.type));
 
-  function setCategory(cat: string) {
-    if (cat === 'delay') {
-      data.type = 'delay';
-      if (data.data) data.data.delayMs = 1000;
-    } else if (cat === 'action') {
-      data.type = data.systemActions?.[0]?.value ?? 'action_motor_list';
-    } else {
-      data.type = 'send_text';
-      if (data.data) data.data.text = '';
-    }
-  }
+function setCategory(cat: string) {
+	if (cat === 'delay') {
+		data.type = 'delay';
+		if (data.data) data.data.delayMs = 1000;
+	} else if (cat === 'action') {
+		data.type = data.systemActions?.[0]?.value ?? 'action_motor_list';
+	} else {
+		data.type = 'send_text';
+		if (data.data) data.data.text = '';
+	}
+}
 </script>
 
 <div class="w-72 bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden group hover:border-primary/50 transition-all duration-300">

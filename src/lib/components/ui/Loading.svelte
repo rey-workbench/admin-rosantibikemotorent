@@ -1,9 +1,9 @@
 <script lang="ts">
-    interface Props {
-        text?: string;
-    }
+interface Props {
+	text?: string;
+}
 
-    let { text = "Memuat data..." }: Props = $props();
+let { text = 'Memuat data...' }: Props = $props();
 </script>
 
 <div class="loading-page">

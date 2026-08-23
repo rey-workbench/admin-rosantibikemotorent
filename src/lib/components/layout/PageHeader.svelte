@@ -1,16 +1,16 @@
 <script lang="ts">
-    import type { Snippet } from 'svelte';
-    import { ArrowLeft } from '@lucide/svelte';
-    import { Button } from '../ui';
+import { ArrowLeft } from '@lucide/svelte';
+import type { Snippet } from 'svelte';
+import { Button } from '../ui';
 
-    interface Props {
-        title: string;
-        subtitle?: string;
-        backHref?: string;
-        children?: Snippet;
-    }
+interface Props {
+	title: string;
+	subtitle?: string;
+	backHref?: string;
+	children?: Snippet;
+}
 
-    let { title, subtitle, backHref, children }: Props = $props();
+let { title, subtitle, backHref, children }: Props = $props();
 </script>
 
 <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">

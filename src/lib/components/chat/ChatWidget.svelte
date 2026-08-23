@@ -1,395 +1,374 @@
 <script lang="ts">
-  import { MessageSquare, X } from "@lucide/svelte";
-  import { onMount, onDestroy } from "svelte";
-  import { transaksiApi, whatsappApi } from "$lib/api";
-    import { fade, fly, slide } from "svelte/transition";
-  import { websocketService } from "$lib/services/websocket";
-  import { toast } from "$lib/stores/toast";
+import { MessageSquare, X } from '@lucide/svelte';
+import { onDestroy, onMount } from 'svelte';
+import { fade, fly, slide } from 'svelte/transition';
+import { transaksiApi, whatsappApi } from '$lib/api';
+import { websocketService } from '$lib/services/websocket';
+import { toast } from '$lib/stores/toast';
 
-  // UI Components
-  import ChatHeader from "./ui/ChatHeader.svelte";
-  import ChatInput from "./ui/ChatInput.svelte";
-  import MessageList from "./ui/MessageList.svelte";
-  import ContactList from "./ui/ContactList.svelte";
+// UI Components
+import ChatHeader from './ui/ChatHeader.svelte';
+import ChatInput from './ui/ChatInput.svelte';
+import ContactList from './ui/ContactList.svelte';
+import MessageList from './ui/MessageList.svelte';
 
-  // --- State ---
-  let isOpen = $state(false);
-  let isFullscreen = $state(false);
-  let contacts = $state<any[]>([]);
-  let chatMessages = $state<any[]>([]);
-  let currentView = $state<"main" | "chat-detail">("main");
-  let selectedContact = $state<any>(null);
-  let message = $state("");
-  let isSending = $state(false);
-  let isLoadingMessages = $state(false);
-  let replyMessage = $state<any>(null);
-  let sessionStatus = $state<string>("disconnected");
-    let qrCode = $state<string | null>(null);
-  let qrAttemptInfo = $state<string>(""); // e.g. "1/3"
-  let isRequestingQr = $state(false);
+// --- State ---
+let isOpen = $state(false);
+let isFullscreen = $state(false);
+let contacts = $state<any[]>([]);
+let chatMessages = $state<any[]>([]);
+let currentView = $state<'main' | 'chat-detail'>('main');
+let selectedContact = $state<any>(null);
+let message = $state('');
+let isSending = $state(false);
+let isLoadingMessages = $state(false);
+let replyMessage = $state<any>(null);
+let sessionStatus = $state<string>('disconnected');
+let qrCode = $state<string | null>(null);
+let qrAttemptInfo = $state<string>(''); // e.g. "1/3"
+let isRequestingQr = $state(false);
 
-  // Media/Location State
-  let selectedFile = $state<File | null>(null);
-  let showLocationPicker = $state(false);
-  let locationLatitude = $state("");
-  let locationLongitude = $state("");
+// Media/Location State
+let selectedFile = $state<File | null>(null);
+let showLocationPicker = $state(false);
+let locationLatitude = $state('');
+let locationLongitude = $state('');
 
-  // --- WebSocket ---
-  let unsubscribes: (() => void)[] = [];
+// --- WebSocket ---
+let unsubscribes: (() => void)[] = [];
 
-  function setupWebSocket() {
-    // Updated logic: combine listeners or use a cleaner approach
-    unsubscribes.push(
-      websocketService.onWhatsAppMessageSent((data: any) => {
-        const targetId =
-          selectedContact?.id?._serialized || selectedContact?.phone;
-        if (targetId && (data as any).chatId?.includes(targetId.split("@")[0])) {
-          // Update optimistic message with real ID and status
-          // Find the optimistic message (assuming it's the last one with a temp id or we match body)
-          const index = chatMessages.findIndex(
-            (m) =>
-              ((typeof m.id === "object" && m.id?._serialized?.startsWith("temp_")) ||
-                (typeof m.id === "string" && m.id.startsWith("temp_"))) &&
-              m.body === (data as any).body,
-          );
-          if (index !== -1) {
-            const updated = { ...chatMessages[index] };
-            updated.id = {
-              _serialized: (data as any).messageId,
-              fromMe: true,
-              user: (data as any).chatId.split("@")[0],
-            };
-            updated.ack = 1; // Sent
-            updated.t = Math.floor(Date.now() / 1000);
-            chatMessages[index] = updated;
-          } else {
-          }
-          loadContacts();
-        }
-      }),
-      websocketService.onWhatsAppMessage((data: any) => {
-        const fromId = data.from?.split("@")[0];
-        const selectedId = selectedContact?.phone;
+function setupWebSocket() {
+	// Updated logic: combine listeners or use a cleaner approach
+	unsubscribes.push(
+		websocketService.onWhatsAppMessageSent((data: any) => {
+			const targetId = selectedContact?.id?._serialized || selectedContact?.phone;
+			if (targetId && (data as any).chatId?.includes(targetId.split('@')[0])) {
+				// Update optimistic message with real ID and status
+				// Find the optimistic message (assuming it's the last one with a temp id or we match body)
+				const index = chatMessages.findIndex(
+					(m) =>
+						((typeof m.id === 'object' && m.id?._serialized?.startsWith('temp_')) ||
+							(typeof m.id === 'string' && m.id.startsWith('temp_'))) &&
+						m.body === (data as any).body
+				);
+				if (index !== -1) {
+					const updated = { ...chatMessages[index] };
+					updated.id = {
+						_serialized: (data as any).messageId,
+						fromMe: true,
+						user: (data as any).chatId.split('@')[0]
+					};
+					updated.ack = 1; // Sent
+					updated.t = Math.floor(Date.now() / 1000);
+					chatMessages[index] = updated;
+				} else {
+				}
+				loadContacts();
+			}
+		}),
+		websocketService.onWhatsAppMessage((data: any) => {
+			const fromId = data.from?.split('@')[0];
+			const selectedId = selectedContact?.phone;
 
-        // If message is for current chat, append it
-        if (selectedId && fromId === selectedId) {
-          // Avoid duplicates
-            const targetMsgId = (data as any).id?._serialized || (data as any).id;
-            if (
-              !chatMessages.some((m) => {
-                const currentId = m.id?._serialized || m.id;
-                return currentId === targetMsgId;
-              })
-            ) {
-            chatMessages = [...chatMessages, data];
-            whatsappApi.sendSeen(data.from);
-          }
-        }
+			// If message is for current chat, append it
+			if (selectedId && fromId === selectedId) {
+				// Avoid duplicates
+				const targetMsgId = (data as any).id?._serialized || (data as any).id;
+				if (
+					!chatMessages.some((m) => {
+						const currentId = m.id?._serialized || m.id;
+						return currentId === targetMsgId;
+					})
+				) {
+					chatMessages = [...chatMessages, data];
+					whatsappApi.sendSeen(data.from);
+				}
+			}
 
-        if (data.type === "incoming") {
-          loadContacts();
-          if (!isOpen) {
-            toast.info(`Pesan dari ${(data as any).notifyName || fromId}`);
-            if ("Notification" in window && Notification.permission === "granted") {
-              new Notification((data as any).notifyName || fromId, {
-                body: (data as any).body,
-                icon: "/favicon.png",
-              });
-            }
-          }
-        }
-      }),
-      websocketService.onWhatsAppStatus((data: any) => {
-        sessionStatus = (data as any).status;
-                const match = (data as any).message?.match(/(\d+\/\d+)/);
-        if (match) qrAttemptInfo = match[1];
-        if ((data as any).status === "disconnected") {
-          toast.warning("WhatsApp Terputus");
-        }
-        if ((data as any).status === "qr_timeout") {
-          qrCode = null;
-          qrAttemptInfo = "";
-          toast.warning(
-            "QR Code tidak di-scan. Klik tombol untuk mencoba lagi.",
-          );
-        }
-      }),
-      websocketService.onWhatsAppQrCode((data: any) => {
-        qrCode = data.qrCode;
-        if (qrCode) sessionStatus = "connecting";
-      }),
-    );
-  }
+			if (data.type === 'incoming') {
+				loadContacts();
+				if (!isOpen) {
+					toast.info(`Pesan dari ${(data as any).notifyName || fromId}`);
+					if ('Notification' in window && Notification.permission === 'granted') {
+						new Notification((data as any).notifyName || fromId, {
+							body: (data as any).body,
+							icon: '/favicon.png'
+						});
+					}
+				}
+			}
+		}),
+		websocketService.onWhatsAppStatus((data: any) => {
+			sessionStatus = (data as any).status;
+			const match = (data as any).message?.match(/(\d+\/\d+)/);
+			if (match) qrAttemptInfo = match[1];
+			if ((data as any).status === 'disconnected') {
+				toast.warning('WhatsApp Terputus');
+			}
+			if ((data as any).status === 'qr_timeout') {
+				qrCode = null;
+				qrAttemptInfo = '';
+				toast.warning('QR Code tidak di-scan. Klik tombol untuk mencoba lagi.');
+			}
+		}),
+		websocketService.onWhatsAppQrCode((data: any) => {
+			qrCode = data.qrCode;
+			if (qrCode) sessionStatus = 'connecting';
+		})
+	);
+}
 
-  // --- Lifecycle ---
-  onMount(async () => {
-    setupWebSocket();
-    if ("Notification" in window && Notification.permission === "default") {
-      Notification.requestPermission();
-    }
-    if (isOpen) {
-      loadContacts();
-      const status = await whatsappApi.getStatus();
-      sessionStatus = status.status;
-      if (status.qrCode) qrCode = status.qrCode;
-    }
-  });
+// --- Lifecycle ---
+onMount(async () => {
+	setupWebSocket();
+	if ('Notification' in window && Notification.permission === 'default') {
+		Notification.requestPermission();
+	}
+	if (isOpen) {
+		loadContacts();
+		const status = await whatsappApi.getStatus();
+		sessionStatus = status.status;
+		if (status.qrCode) qrCode = status.qrCode;
+	}
+});
 
-  onDestroy(() => unsubscribes.forEach((un) => un()));
+onDestroy(() => unsubscribes.forEach((un) => un()));
 
-  // --- Actions ---
-  async function loadContacts() {
-    try {
-      const [chats, activeRes] = await Promise.all([
-        whatsappApi.getChats(),
-        transaksiApi.getAll({ limit: 500 }),
-      ]);
+// --- Actions ---
+async function loadContacts() {
+	try {
+		const [chats, activeRes] = await Promise.all([
+			whatsappApi.getChats(),
+			transaksiApi.getAll({ limit: 500 })
+		]);
 
-      const customerMap = new Map();
-      (activeRes.data || []).forEach((t: any) => {
-        if (t.noWhatsapp) customerMap.set(t.noWhatsapp, t.namaPenyewa);
-      });
+		const customerMap = new Map();
+		(activeRes.data || []).forEach((t: any) => {
+			if (t.noWhatsapp) customerMap.set(t.noWhatsapp, t.namaPenyewa);
+		});
 
-      contacts = chats
-        .filter((chat: any) => chat.id.user !== "0") // Filter "ghost" numbers
-        .map((chat: any) => {
-          const phone = chat.id.user;
-          const dbName =
-            customerMap.get(phone) ||
-            customerMap.get("0" + phone.slice(2)) ||
-            customerMap.get("62" + phone.slice(1));
+		contacts = chats
+			.filter((chat: any) => chat.id.user !== '0') // Filter "ghost" numbers
+			.map((chat: any) => {
+				const phone = chat.id.user;
+				const dbName =
+					customerMap.get(phone) ||
+					customerMap.get('0' + phone.slice(2)) ||
+					customerMap.get('62' + phone.slice(1));
 
-          // Priority: Saved Contact Name (WA) > Database Name > Pushname > Formatted Name > Phone
-          const name =
-            chat.contact?.name ||
-            dbName ||
-            chat.name ||
-            chat.contact?.pushname ||
-            chat.contact?.formattedName ||
-            phone;
+				// Priority: Saved Contact Name (WA) > Database Name > Pushname > Formatted Name > Phone
+				const name =
+					chat.contact?.name ||
+					dbName ||
+					chat.name ||
+					chat.contact?.pushname ||
+					chat.contact?.formattedName ||
+					phone;
 
-          return {
-            ...chat,
-            phone,
-            name,
-            profilePicUrl:
-              chat.contact?.profilePicThumbObj?.img ||
-              chat.contact?.profilePicThumbObj?.eurl,
-            avatarColor: `bg-slate-${(phone.slice(-1) % 6) * 100 + 400}`, // Simple deterministic color
-            lastMessagePreview: chat.typing
-              ? "Sedang mengetik..."
-              : chat.lastMessage?.body || chat.lastMessage?.type || "",
-            lastMessageTime: chat.t,
-            lastMessageFromMe: chat.lastMessage?.fromMe,
-            lastMessageStatus: chat.lastMessage?.ack >= 3 ? "read" : "sent",
-          };
-        });
-    } catch (e) {
-      toast.error(e);
-    }
-  }
+				return {
+					...chat,
+					phone,
+					name,
+					profilePicUrl:
+						chat.contact?.profilePicThumbObj?.img || chat.contact?.profilePicThumbObj?.eurl,
+					avatarColor: `bg-slate-${(phone.slice(-1) % 6) * 100 + 400}`, // Simple deterministic color
+					lastMessagePreview: chat.typing
+						? 'Sedang mengetik...'
+						: chat.lastMessage?.body || chat.lastMessage?.type || '',
+					lastMessageTime: chat.t,
+					lastMessageFromMe: chat.lastMessage?.fromMe,
+					lastMessageStatus: chat.lastMessage?.ack >= 3 ? 'read' : 'sent'
+				};
+			});
+	} catch (e) {
+		toast.error(e);
+	}
+}
 
-  async function loadMessages(phone: string, isBackground = false) {
-    if (!isBackground) isLoadingMessages = true;
-    try {
-      const res = await whatsappApi.getMessages(phone);
-      // Handle both array response and wrapped data property
-      const messagesData = Array.isArray(res)
-        ? res
-        : res && typeof res === "object" && "data" in res
-          ? (res as any).data
-          : [];
+async function loadMessages(phone: string, isBackground = false) {
+	if (!isBackground) isLoadingMessages = true;
+	try {
+		const res = await whatsappApi.getMessages(phone);
+		// Handle both array response and wrapped data property
+		const messagesData = Array.isArray(res)
+			? res
+			: res && typeof res === 'object' && 'data' in res
+				? (res as any).data
+				: [];
 
-      chatMessages = Array.isArray(messagesData) ? messagesData : [];
-      await whatsappApi.sendSeen(phone);
-    } catch (e) {
-      toast.error("[ChatWidget] Error loading messages:", e);
-      chatMessages = [];
-    } finally {
-      if (!isBackground) isLoadingMessages = false;
-    }
-  }
+		chatMessages = Array.isArray(messagesData) ? messagesData : [];
+		await whatsappApi.sendSeen(phone);
+	} catch (e) {
+		toast.error('[ChatWidget] Error loading messages:', e);
+		chatMessages = [];
+	} finally {
+		if (!isBackground) isLoadingMessages = false;
+	}
+}
 
-  async function handleSend() {
-    if (
-      !selectedContact?.phone ||
-      (!message && !selectedFile && !showLocationPicker)
-    )
-      return;
+async function handleSend() {
+	if (!selectedContact?.phone || (!message && !selectedFile && !showLocationPicker)) return;
 
-    const currentMessage = message;
-    const currentFile = selectedFile;
-    // Optimistic UI Update
-    const tempId = "temp_" + Date.now();
-    const optimisticMsg = {
-      id: { _serialized: tempId, fromMe: true },
-      body: currentMessage,
-      type: currentFile
-        ? currentFile.type.startsWith("image")
-          ? "image"
-          : "document"
-        : "chat",
-      t: Math.floor(Date.now() / 1000),
-      fromMe: true,
-      ack: 0, // clock
-      timestamp: Math.floor(Date.now() / 1000),
-    };
+	const currentMessage = message;
+	const currentFile = selectedFile;
+	// Optimistic UI Update
+	const tempId = 'temp_' + Date.now();
+	const optimisticMsg = {
+		id: { _serialized: tempId, fromMe: true },
+		body: currentMessage,
+		type: currentFile ? (currentFile.type.startsWith('image') ? 'image' : 'document') : 'chat',
+		t: Math.floor(Date.now() / 1000),
+		fromMe: true,
+		ack: 0, // clock
+		timestamp: Math.floor(Date.now() / 1000)
+	};
 
-    if (currentFile && currentFile.type.startsWith("image/")) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        optimisticMsg.body = e.target?.result as string;
-        chatMessages = [...chatMessages, optimisticMsg];
-      };
-      reader.readAsDataURL(currentFile);
-    } else {
-      chatMessages = [...chatMessages, optimisticMsg];
-    }
+	if (currentFile && currentFile.type.startsWith('image/')) {
+		const reader = new FileReader();
+		reader.onload = (e) => {
+			optimisticMsg.body = e.target?.result as string;
+			chatMessages = [...chatMessages, optimisticMsg];
+		};
+		reader.readAsDataURL(currentFile);
+	} else {
+		chatMessages = [...chatMessages, optimisticMsg];
+	}
 
-    isSending = true;
-    try {
-      const to = selectedContact.phone;
-      if (showLocationPicker && locationLatitude && locationLongitude) {
-        await whatsappApi.sendLocation(
-          to,
-          locationLatitude,
-          locationLongitude,
-          "",
-        );
-        showLocationPicker = false;
-      } else if (selectedFile) {
-        const base64 = await new Promise<string>((r) => {
-          const reader = new FileReader();
-          reader.onload = () => r(reader.result as string);
-          reader.readAsDataURL(selectedFile!);
-        });
-        selectedFile.type.startsWith("image/")
-          ? await whatsappApi.sendImage(to, base64, message)
-          : await whatsappApi.sendFile(to, base64, selectedFile.name, message);
-        selectedFile = null;
-      } else if (message) {
-        const rawId = replyMessage?.id;
-        const replyId =
-          typeof rawId === "object"
-            ? rawId?._serialized
-            : typeof rawId === "string"
-              ? rawId
-              : null;
+	isSending = true;
+	try {
+		const to = selectedContact.phone;
+		if (showLocationPicker && locationLatitude && locationLongitude) {
+			await whatsappApi.sendLocation(to, locationLatitude, locationLongitude, '');
+			showLocationPicker = false;
+		} else if (selectedFile) {
+			const base64 = await new Promise<string>((r) => {
+				const reader = new FileReader();
+				reader.onload = () => r(reader.result as string);
+				reader.readAsDataURL(selectedFile!);
+			});
+			selectedFile.type.startsWith('image/')
+				? await whatsappApi.sendImage(to, base64, message)
+				: await whatsappApi.sendFile(to, base64, selectedFile.name, message);
+			selectedFile = null;
+		} else if (message) {
+			const rawId = replyMessage?.id;
+			const replyId =
+				typeof rawId === 'object' ? rawId?._serialized : typeof rawId === 'string' ? rawId : null;
 
-        replyId
-          ? await whatsappApi.reply(to, message, replyId)
-          : await whatsappApi.sendMessage(to, message);
-      }
-      message = "";
-      replyMessage = null;
+			replyId
+				? await whatsappApi.reply(to, message, replyId)
+				: await whatsappApi.sendMessage(to, message);
+		}
+		message = '';
+		replyMessage = null;
 
-      // Background refresh to get real ID and status
-      loadContacts();
-      // Don't full reload messages to avoid flicker, just wait for socket or do background
-      // loadMessages(to, true);
-    } catch (e) {
-      toast.error("Gagal mengirim");
-      // Remove optimistic message on failure?
-      chatMessages = chatMessages.filter((m) => m.id._serialized !== tempId);
-    } finally {
-      isSending = false;
-    }
-  }
+		// Background refresh to get real ID and status
+		loadContacts();
+		// Don't full reload messages to avoid flicker, just wait for socket or do background
+		// loadMessages(to, true);
+	} catch (e) {
+		toast.error('Gagal mengirim');
+		// Remove optimistic message on failure?
+		chatMessages = chatMessages.filter((m) => m.id._serialized !== tempId);
+	} finally {
+		isSending = false;
+	}
+}
 
-  async function handleSendSticker(file: File) {
-    if (!selectedContact?.phone) return;
-    isSending = true;
-    try {
-      const to = selectedContact.phone;
-      const base64 = await new Promise<string>((r) => {
-        const reader = new FileReader();
-        reader.onload = () => r(reader.result as string);
-        reader.readAsDataURL(file);
-      });
-      await whatsappApi.sendImageAsSticker(to, base64);
-      toast.success("Sticker terkirim");
-    } catch (e) {
-      toast.error("Gagal mengirim sticker");
-    } finally {
-      isSending = false;
-    }
-  }
+async function handleSendSticker(file: File) {
+	if (!selectedContact?.phone) return;
+	isSending = true;
+	try {
+		const to = selectedContact.phone;
+		const base64 = await new Promise<string>((r) => {
+			const reader = new FileReader();
+			reader.onload = () => r(reader.result as string);
+			reader.readAsDataURL(file);
+		});
+		await whatsappApi.sendImageAsSticker(to, base64);
+		toast.success('Sticker terkirim');
+	} catch (e) {
+		toast.error('Gagal mengirim sticker');
+	} finally {
+		isSending = false;
+	}
+}
 
-  async function handleSendContact(name: string, number: string) {
-    if (!selectedContact?.phone) return;
-    isSending = true;
-    try {
-      const to = selectedContact.phone;
-      await whatsappApi.sendContactVcard(to, number, name);
-      toast.success("Kontak terkirim");
-    } catch (e) {
-      toast.error("Gagal mengirim kontak");
-    } finally {
-      isSending = false;
-    }
-  }
+async function handleSendContact(name: string, number: string) {
+	if (!selectedContact?.phone) return;
+	isSending = true;
+	try {
+		const to = selectedContact.phone;
+		await whatsappApi.sendContactVcard(to, number, name);
+		toast.success('Kontak terkirim');
+	} catch (e) {
+		toast.error('Gagal mengirim kontak');
+	} finally {
+		isSending = false;
+	}
+}
 
-  async function handleLogout() {
-    if (!confirm("Yakin ingin logout dari WhatsApp?")) return;
-    try {
-      await whatsappApi.logout();
-      toast.success("Berhasil logout");
-      isOpen = false;
-    } catch (e) {
-      toast.error("Gagal logout");
-    }
-  }
+async function handleLogout() {
+	if (!confirm('Yakin ingin logout dari WhatsApp?')) return;
+	try {
+		await whatsappApi.logout();
+		toast.success('Berhasil logout');
+		isOpen = false;
+	} catch (e) {
+		toast.error('Gagal logout');
+	}
+}
 
-  async function handleReset() {
-    if (!confirm("Reset koneksi WhatsApp? Ini akan membersihkan sesi.")) return;
-    try {
-      await whatsappApi.resetSession();
-      toast.success("Sesi sedang direset...");
-      loadContacts();
-    } catch (e) {
-      toast.error("Gagal reset");
-    }
-  }
+async function handleReset() {
+	if (!confirm('Reset koneksi WhatsApp? Ini akan membersihkan sesi.')) return;
+	try {
+		await whatsappApi.resetSession();
+		toast.success('Sesi sedang direset...');
+		loadContacts();
+	} catch (e) {
+		toast.error('Gagal reset');
+	}
+}
 
-  // New Chat Modal State
-  let showNewChatModal = $state(false);
-  let newChatPhone = $state("");
+// New Chat Modal State
+let showNewChatModal = $state(false);
+let newChatPhone = $state('');
 
-  function handleDirectMessage() {
-    showNewChatModal = true;
-    newChatPhone = "";
-    // Focus logic could go here depending on implementation
-  }
+function handleDirectMessage() {
+	showNewChatModal = true;
+	newChatPhone = '';
+	// Focus logic could go here depending on implementation
+}
 
-  async function submitNewChat() {
-    if (!newChatPhone) return;
+async function submitNewChat() {
+	if (!newChatPhone) return;
 
-    let phone = newChatPhone.replace(/\D/g, "");
+	let phone = newChatPhone.replace(/\D/g, '');
 
-    if (phone.startsWith("08")) {
-      phone = "62" + phone.slice(1);
-    }
+	if (phone.startsWith('08')) {
+		phone = '62' + phone.slice(1);
+	}
 
-    if (phone.length < 10) {
-      toast.error("Nomor telepon tidak valid");
-      return;
-    }
+	if (phone.length < 10) {
+		toast.error('Nomor telepon tidak valid');
+		return;
+	}
 
-    // Create temp contact
-    const newContact = {
-      id: { _serialized: `${phone}@c.us`, user: phone },
-      phone: phone,
-      name: phone,
-      avatarColor: `bg-slate-${(parseInt(phone.slice(-1)) % 6) * 100 + 400}`,
-      lastMessageTime: Date.now() / 1000,
-      unreadCount: 0,
-    };
+	// Create temp contact
+	const newContact = {
+		id: { _serialized: `${phone}@c.us`, user: phone },
+		phone: phone,
+		name: phone,
+		avatarColor: `bg-slate-${(parseInt(phone.slice(-1)) % 6) * 100 + 400}`,
+		lastMessageTime: Date.now() / 1000,
+		unreadCount: 0
+	};
 
-    selectedContact = newContact;
-    currentView = "chat-detail";
-    showNewChatModal = false;
-    loadMessages(phone);
-  }
+	selectedContact = newContact;
+	currentView = 'chat-detail';
+	showNewChatModal = false;
+	loadMessages(phone);
+}
 </script>
 
 <div
