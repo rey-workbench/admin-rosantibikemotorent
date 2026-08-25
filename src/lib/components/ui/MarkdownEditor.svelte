@@ -67,7 +67,13 @@ let wordCount = $derived((value || '').trim() ? (value || '').trim().split(/\s+/
 			? 'border-danger'
 			: ''} {disabled ? 'opacity-60 pointer-events-none' : ''}"
 	>
-		<MarkdownEditor {carta} bind:value {placeholder} mode="tabs" />
+		<MarkdownEditor
+			{carta}
+			bind:value
+			{placeholder}
+			mode="tabs"
+			userLabels={{ writeTab: 'Tulis', previewTab: 'Pratinjau' }}
+		/>
 
 		<!-- Editor Footer / Status Bar -->
 		<div
