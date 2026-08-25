@@ -4,6 +4,7 @@ import { code } from '@cartamd/plugin-code';
 import { slash } from '@cartamd/plugin-slash';
 import { attachment } from '@cartamd/plugin-attachment';
 import { blogApi } from '$lib/api';
+import { toast } from '$lib/stores/toast';
 import 'carta-md/default.css';
 import '@cartamd/plugin-code/default.css';
 import '@cartamd/plugin-slash/default.css';
@@ -49,9 +50,11 @@ const carta = new Carta({
 				}
 				try {
 					const url = await blogApi.uploadImage(file, blogId);
+					toast.success('Gambar berhasil diunggah');
 					return url;
 				} catch (err: any) {
-					console.error('Upload image failed:', err);
+					const msg = err?.response?.data?.message || err?.message || 'Gagal mengunggah gambar';
+					toast.error(msg);
 					return null;
 				}
 			}
