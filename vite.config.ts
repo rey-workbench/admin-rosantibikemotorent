@@ -20,17 +20,32 @@ export default defineConfig({
 	},
 	// Optimasi agar browser tidak "bengong" saat pertama dibuka
 	optimizeDeps: {
-		include: ['@lucide/svelte', 'clsx', 'tailwind-merge'] // Tambahkan library UI rentalmu di sini
+		include: ['@lucide/svelte', 'clsx', 'tailwind-merge', 'libphonenumber-js']
 	},
 	build: {
 		sourcemap: false,
+		chunkSizeWarningLimit: 1000,
 		rollupOptions: {
 			external: ['canvas', 'bufferutil', 'utf-8-validate'],
 			output: {
 				manualChunks: (id) => {
 					if (id.includes('node_modules')) {
-						if (id.includes('@tiptap') || id.includes('prosemirror')) {
+						if (
+							id.includes('carta-md') ||
+							id.includes('@cartamd') ||
+							id.includes('shiki') ||
+							id.includes('vscode-oniguruma')
+						) {
 							return 'vendor-editor';
+						}
+						if (id.includes('libphonenumber-js') || id.includes('flag-icons')) {
+							return 'vendor-phone';
+						}
+						if (id.includes('lucide-svelte') || id.includes('@tabler')) {
+							return 'vendor-icons';
+						}
+						if (id.includes('socket.io-client')) {
+							return 'vendor-socket';
 						}
 						if (id.includes('svelte')) {
 							return 'vendor-svelte';

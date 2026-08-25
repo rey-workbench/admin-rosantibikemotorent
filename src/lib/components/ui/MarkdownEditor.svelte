@@ -4,7 +4,6 @@ import { code } from '@cartamd/plugin-code';
 import { slash } from '@cartamd/plugin-slash';
 import { attachment } from '@cartamd/plugin-attachment';
 import { blogApi } from '$lib/api';
-import { toast } from '$lib/stores/toast';
 import 'carta-md/default.css';
 import '@cartamd/plugin-code/default.css';
 import '@cartamd/plugin-slash/default.css';
@@ -50,10 +49,9 @@ const carta = new Carta({
 				}
 				try {
 					const url = await blogApi.uploadImage(file, blogId);
-					toast.success('Gambar berhasil diunggah ke Cloudinary');
 					return url;
 				} catch (err: any) {
-					toast.error(err?.message || 'Gagal mengunggah gambar ke Cloudinary');
+					console.error('Upload image failed:', err);
 					return null;
 				}
 			}
