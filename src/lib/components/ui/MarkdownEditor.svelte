@@ -3,6 +3,8 @@ import { Carta, MarkdownEditor } from 'carta-md';
 import { code } from '@cartamd/plugin-code';
 import { slash } from '@cartamd/plugin-slash';
 import { attachment } from '@cartamd/plugin-attachment';
+import { blogApi } from '$lib/api';
+import { toast } from '$lib/stores/toast';
 import 'carta-md/default.css';
 import '@cartamd/plugin-code/default.css';
 import '@cartamd/plugin-slash/default.css';
@@ -18,6 +20,7 @@ interface Props {
 	error?: string;
 	hint?: string;
 	class?: string;
+	blogId?: string;
 	onUpload?: (file: File) => Promise<string | null>;
 }
 
@@ -31,6 +34,7 @@ let {
 	error = '',
 	hint = '',
 	class: className = '',
+	blogId,
 	onUpload
 }: Props = $props();
 
@@ -44,7 +48,14 @@ const carta = new Carta({
 				if (onUpload) {
 					return onUpload(file);
 				}
-				return URL.createObjectURL(file);
+				try {
+					const url = await blogApi.uploadImage(file, blogId);
+					toast.success('Gambar berhasil diunggah ke Cloudinary');
+					return url;
+				} catch (err: any) {
+					toast.error(err?.message || 'Gagal mengunggah gambar ke Cloudinary');
+					return null;
+				}
 			}
 		})
 	]

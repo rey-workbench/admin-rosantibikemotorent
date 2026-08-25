@@ -16,18 +16,22 @@ export const blogApi = {
 		return data.data;
 	},
 	create: async (blog: FormData): Promise<BlogPost> => {
-		const { data } = await api.post('/blog', blog, {
-			headers: { 'Content-Type': 'multipart/form-data' }
-		});
+		const { data } = await api.post('/blog', blog);
 		return data.data;
 	},
 	update: async (id: string, blog: FormData): Promise<BlogPost> => {
-		const { data } = await api.patch(`/blog/${id}`, blog, {
-			headers: { 'Content-Type': 'multipart/form-data' }
-		});
+		const { data } = await api.patch(`/blog/${id}`, blog);
 		return data.data;
 	},
 	delete: async (id: string): Promise<void> => {
 		await api.delete(`/blog/${id}`);
+	},
+	uploadImage: async (file: File, blogId?: string): Promise<string> => {
+		const formData = new FormData();
+		formData.append('files', file);
+		const { data } = await api.post('/blog/upload', formData, {
+			params: blogId ? { blogId } : undefined
+		});
+		return data.data.url;
 	}
 };
