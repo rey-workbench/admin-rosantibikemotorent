@@ -2,7 +2,7 @@
 import { onMount } from 'svelte';
 import { goto } from '$app/navigation';
 import { transaksiApi, unitMotorApi } from '$lib/api';
-import { Form, Input, Select } from '$lib/components/ui';
+import { Form, Input, PhoneInput, Select } from '$lib/components/ui';
 import { toast } from '$lib/stores/toast';
 import type { StatusTransaksi, UnitMotor } from '$lib/types';
 import { formatCurrency } from '$lib/utils/formatters';
@@ -52,7 +52,6 @@ async function handleCalculate() {
 		toast.error(err);
 		estimasiBiaya = null;
 		rincian = null;
-	} finally {
 	}
 }
 
@@ -100,6 +99,7 @@ async function handleSubmit(e: Event) {
       {errorMsg}
     </div>
   {/if}
+
   <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
     <div class="col-span-1 md:col-span-2">
       <h3 class="text-lg font-semibold mb-3">Data Penyewa</h3>
@@ -111,11 +111,11 @@ async function handleSubmit(e: Event) {
       placeholder="Masukkan nama lengkap"
       required
     />
-    <Input
+    <PhoneInput
       id="noWhatsapp"
       label="Nomor WhatsApp"
       bind:value={noWhatsapp}
-      placeholder="08xxxxxxxxxx"
+      placeholder="812-3456-7890"
       required
     />
     <Select

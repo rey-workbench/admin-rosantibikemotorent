@@ -3,7 +3,7 @@ import { onMount } from 'svelte';
 import { goto } from '$app/navigation';
 import { page } from '$app/state';
 import { blogApi } from '$lib/api';
-import { Form, Input, Textarea } from '$lib/components/ui';
+import { Form, Input, MarkdownEditor } from '$lib/components/ui';
 import { toast } from '$lib/stores/toast';
 import type { BlogPost } from '$lib/types';
 
@@ -58,12 +58,11 @@ async function handleSubmit(e: Event) {
       placeholder="Judul artikel"
       required
     />
-    <Textarea
+    <MarkdownEditor
       id="konten"
-      label="Konten"
+      label="Konten Artikel"
       bind:value={konten}
-      placeholder="Konten artikel..."
-      rows={10}
+      placeholder="Tulis konten artikel markdown di sini (gunakan '/' untuk menu cepat)..."
       required
     />
   </div>

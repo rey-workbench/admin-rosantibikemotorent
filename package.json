@@ -29,9 +29,15 @@
 		"vite-plugin-compression": "^0.5.1"
 	},
 	"dependencies": {
+		"@cartamd/plugin-attachment": "^4.2.0",
+		"@cartamd/plugin-code": "^4.2.0",
+		"@cartamd/plugin-slash": "^4.2.0",
 		"@xyflow/svelte": "^1.6.3",
+		"carta-md": "^4.11.2",
 		"date-fns": "^4.4.0",
+		"flag-icons": "^7.5.0",
 		"flowbite-typography": "^1.0.5",
+		"libphonenumber-js": "^1.13.11",
 		"socket.io-client": "^4.8.3"
 	}
 }
