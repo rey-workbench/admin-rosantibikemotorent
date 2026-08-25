@@ -49,6 +49,9 @@ const carta = new Carta({
 		})
 	]
 });
+
+let charCount = $derived((value || '').length);
+let wordCount = $derived((value || '').trim() ? (value || '').trim().split(/\s+/).length : 0);
 </script>
 
 <div class="flex flex-col gap-1.5 {className}">
@@ -60,11 +63,26 @@ const carta = new Carta({
 	{/if}
 
 	<div
-		class="carta-theme-container rounded-xl border border-border bg-bg-secondary shadow-xs focus-within:ring-4 focus-within:ring-primary/10 focus-within:border-primary transition-all {error
+		class="carta-theme-container rounded-xl border border-black/10 bg-bg-secondary shadow-xs focus-within:ring-4 focus-within:ring-primary/10 focus-within:border-primary transition-all overflow-hidden {error
 			? 'border-danger'
 			: ''} {disabled ? 'opacity-60 pointer-events-none' : ''}"
 	>
 		<MarkdownEditor {carta} bind:value {placeholder} mode="tabs" />
+
+		<!-- Editor Footer / Status Bar -->
+		<div
+			class="flex items-center justify-between px-4 py-2 border-t border-black/5 bg-bg-primary/50 text-xs text-text-secondary select-none"
+		>
+			<span class="flex items-center gap-1.5">
+				<svg class="w-3.5 h-3.5 text-primary shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+					<path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 1118 0z" />
+				</svg>
+				<span>Markdown didukung &bull; Ketik <kbd class="px-1 py-0.5 bg-bg-secondary border border-black/10 rounded text-[10px] font-mono font-semibold text-text-primary">/</kbd> untuk menu cepat</span>
+			</span>
+			<span class="font-medium font-mono text-[11px] text-text-secondary">
+				{wordCount} kata &bull; {charCount} karakter
+			</span>
+		</div>
 	</div>
 
 	{#if error}
