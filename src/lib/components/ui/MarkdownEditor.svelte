@@ -1,4 +1,5 @@
 <script lang="ts">
+import { onMount } from 'svelte';
 import { Carta, MarkdownEditor } from 'carta-md';
 import { code } from '@cartamd/plugin-code';
 import { slash } from '@cartamd/plugin-slash';
@@ -38,6 +39,8 @@ let {
 	onUpload
 }: Props = $props();
 
+let isMounted = $state(false);
+
 const carta = new Carta({
 	sanitizer: false,
 	extensions: [
@@ -62,6 +65,10 @@ const carta = new Carta({
 	]
 });
 
+onMount(() => {
+	isMounted = true;
+});
+
 let charCount = $derived((value || '').length);
 let wordCount = $derived((value || '').trim() ? (value || '').trim().split(/\s+/).length : 0);
 </script>
@@ -79,13 +86,19 @@ let wordCount = $derived((value || '').trim() ? (value || '').trim().split(/\s+/
 			? 'border-danger'
 			: ''} {disabled ? 'opacity-60 pointer-events-none' : ''}"
 	>
-		<MarkdownEditor
-			{carta}
-			bind:value
-			{placeholder}
-			mode="tabs"
-			userLabels={{ writeTab: 'Tulis', previewTab: 'Pratinjau' }}
-		/>
+		{#if isMounted}
+			<MarkdownEditor
+				{carta}
+				bind:value
+				{placeholder}
+				mode="tabs"
+				userLabels={{ writeTab: 'Tulis', previewTab: 'Pratinjau' }}
+			/>
+		{:else}
+			<div class="min-h-48 p-4 text-xs text-text-secondary animate-pulse flex items-center justify-center">
+				Memuat editor...
+			</div>
+		{/if}
 
 		<!-- Editor Footer / Status Bar -->
 		<div
