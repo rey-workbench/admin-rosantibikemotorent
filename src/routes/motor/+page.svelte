@@ -1,7 +1,8 @@
 <script lang="ts">
 import { Bike, Pencil, Plus, Search, Trash2 } from '@lucide/svelte';
-import { onMount } from 'svelte';
+import { onDestroy, onMount } from 'svelte';
 import { jenisMotorApi } from '$lib/api';
+import { websocketService } from '$lib/services/websocket';
 import { Button, Card, CardBody, DataTable, EmptyState, Input, Loading } from '$lib/components/ui';
 import { confirm } from '$lib/stores/confirm';
 import { toast } from '$lib/stores/toast';
@@ -20,8 +21,15 @@ const columns = [
 	{ key: 'aksi', label: 'Aksi', class: 'w-24' }
 ];
 
+let unsubscribe: (() => void) | undefined;
+
 onMount(async () => {
 	await loadData();
+	unsubscribe = websocketService.onJenisMotorUpdate(() => loadData());
+});
+
+onDestroy(() => {
+	unsubscribe?.();
 });
 
 async function loadData() {

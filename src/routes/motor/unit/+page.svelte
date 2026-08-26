@@ -1,7 +1,8 @@
 <script lang="ts">
 import { Pencil, Plus, Trash2, Truck } from '@lucide/svelte';
-import { onMount } from 'svelte';
+import { onDestroy, onMount } from 'svelte';
 import { unitMotorApi } from '$lib/api';
+import { websocketService } from '$lib/services/websocket';
 import { PageHeader } from '$lib/components';
 import { Button, Card, CardBody, DataTable, EmptyState, Loading } from '$lib/components/ui';
 import { confirm } from '$lib/stores/confirm';
@@ -39,8 +40,15 @@ const columns = [
 	{ key: 'aksi', label: 'Aksi', class: 'w-24' }
 ];
 
+let unsubscribe: (() => void) | undefined;
+
 onMount(async () => {
 	await loadData();
+	unsubscribe = websocketService.onUnitMotorUpdate(() => loadData());
+});
+
+onDestroy(() => {
+	unsubscribe?.();
 });
 
 async function loadData() {

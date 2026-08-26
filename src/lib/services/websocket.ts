@@ -13,6 +13,7 @@ const WS_CHANNELS = {
 	TRANSAKSI_SELESAI: 'transaksi:selesai',
 	MOTOR_STATUS_UPDATE: 'motor-status:update',
 	UNIT_MOTOR_UPDATE: 'unit-motor:update',
+	JENIS_MOTOR_UPDATE: 'jenis-motor:update',
 	DENDA_NOTIFICATION: 'denda:notification'
 } as const;
 
@@ -48,6 +49,7 @@ type TransaksiDeletedHandler = (data: { id: string }) => void;
 type TransaksiSelesaiHandler = (data: TransaksiEvent) => void;
 type MotorStatusUpdateHandler = (data: MotorStatusUpdate) => void;
 type UnitMotorUpdateHandler = (data: UnitMotorUpdate) => void;
+type JenisMotorUpdateHandler = (data: { action: string; data?: unknown; id?: string }) => void;
 type DendaNotificationHandler = (data: DendaNotification) => void;
 
 class WebSocketService {
@@ -67,6 +69,7 @@ class WebSocketService {
 	private transaksiSelesaiHandlers = new Set<TransaksiSelesaiHandler>();
 	private motorStatusUpdateHandlers = new Set<MotorStatusUpdateHandler>();
 	private unitMotorUpdateHandlers = new Set<UnitMotorUpdateHandler>();
+	private jenisMotorUpdateHandlers = new Set<JenisMotorUpdateHandler>();
 	private dendaNotificationHandlers = new Set<DendaNotificationHandler>();
 
 	connect(): void {
@@ -236,6 +239,10 @@ class WebSocketService {
 			this.unitMotorUpdateHandlers.forEach((handler) => handler(data));
 		});
 
+		this.socket.on(WS_CHANNELS.JENIS_MOTOR_UPDATE, (data: { action: string; data?: unknown; id?: string }) => {
+			this.jenisMotorUpdateHandlers.forEach((handler) => handler(data));
+		});
+
 		this.socket.on(WS_CHANNELS.DENDA_NOTIFICATION, (data: DendaNotification) => {
 			this.dendaNotificationHandlers.forEach((handler) => handler(data));
 		});
@@ -299,6 +306,11 @@ class WebSocketService {
 	onUnitMotorUpdate(h: UnitMotorUpdateHandler): () => void {
 		this.unitMotorUpdateHandlers.add(h);
 		return () => this.unitMotorUpdateHandlers.delete(h);
+	}
+
+	onJenisMotorUpdate(h: JenisMotorUpdateHandler): () => void {
+		this.jenisMotorUpdateHandlers.add(h);
+		return () => this.jenisMotorUpdateHandlers.delete(h);
 	}
 
 	onDendaNotification(h: DendaNotificationHandler): () => void {
