@@ -33,5 +33,8 @@ export const blogApi = {
 			params: blogId ? { blogId } : undefined
 		});
 		return data.data.url;
+	},
+	deleteImage: async (url: string): Promise<void> => {
+		await api.delete('/blog/upload', { data: { url } });
 	}
 };
