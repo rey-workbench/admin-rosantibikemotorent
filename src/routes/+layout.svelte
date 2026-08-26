@@ -9,15 +9,25 @@ import { ConfirmModal, Toast } from '$lib/components/ui';
 import { websocketService } from '$lib/services/websocket';
 import { authStore } from '$lib/stores/auth';
 import { confirm } from '$lib/stores/confirm';
+import { toast } from '$lib/stores/toast';
+import { formatCurrency } from '$lib/utils';
+
+let unsubscribeDenda: (() => void) | undefined;
 
 let { children } = $props();
 
 onMount(() => {
 	authStore.init();
 	websocketService.connect();
+	unsubscribeDenda = websocketService.onDendaNotification((data) => {
+		toast.warning(
+			`Denda baru — ${data.namaPenyewa}: ${formatCurrency(Number(data.biayaDenda))}`
+		);
+	});
 });
 
 onDestroy(() => {
+	unsubscribeDenda?.();
 	websocketService.disconnect();
 });
 

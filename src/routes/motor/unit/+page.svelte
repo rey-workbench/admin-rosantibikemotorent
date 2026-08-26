@@ -40,15 +40,18 @@ const columns = [
 	{ key: 'aksi', label: 'Aksi', class: 'w-24' }
 ];
 
-let unsubscribe: (() => void) | undefined;
+let unsubscribes: (() => void)[] = [];
 
 onMount(async () => {
 	await loadData();
-	unsubscribe = websocketService.onUnitMotorUpdate(() => loadData());
+	unsubscribes = [
+		websocketService.onUnitMotorUpdate(() => loadData()),
+		websocketService.onMotorStatusUpdate(() => loadData())
+	];
 });
 
 onDestroy(() => {
-	unsubscribe?.();
+	unsubscribes.forEach((unsubscribe) => unsubscribe());
 });
 
 async function loadData() {

@@ -4,7 +4,9 @@ import {
 	Calendar as CalendarIcon,
 	CheckCircle2,
 	ChevronDown,
+	ChevronRight,
 	Clock,
+	Coins,
 	MoreHorizontal,
 	Truck
 } from '@lucide/svelte';
@@ -14,8 +16,9 @@ import { Loading } from '$lib/components/ui';
 import { STATUS_TRANSAKSI } from '$lib/constants';
 import { authStore } from '$lib/stores/auth';
 import { toast } from '$lib/stores/toast';
+import { dendaNotifications } from '$lib/stores/websocket';
 import type { Transaksi, UnitMotor } from '$lib/types';
-import { formatDateShort, getStatusColor, getStatusDot } from '$lib/utils';
+import { formatCurrency, formatDateShort, getStatusColor, getStatusDot } from '$lib/utils';
 
 let units: UnitMotor[] = $state([]);
 let transaksis: Transaksi[] = $state([]);
@@ -38,6 +41,8 @@ onMount(async () => {
 		isLoading = false;
 	}
 });
+
+const dendaList = $derived($dendaNotifications);
 
 const completed = $derived(
 	historyTransaksis.filter((t) => t.status === STATUS_TRANSAKSI.SELESAI).length
@@ -290,6 +295,82 @@ const chartPath = $derived.by(() => {
                     <span>{label}</span>
                 {/each}
             </div>
+        </div>
+
+        <!-- Denda Terbaru -->
+        <div
+            class="bg-bg-secondary rounded-3xl shadow-sm border border-border/40 p-8 pb-4"
+        >
+            <div class="flex justify-between items-center mb-6">
+                <div class="flex items-center gap-4">
+                    <h3 class="text-xl font-bold text-text-primary">
+                        Denda Terbaru
+                    </h3>
+                    {#if dendaList.length > 0}
+                        <div
+                            class="bg-warning/10 px-3 py-1 rounded-full text-xs font-semibold text-warning"
+                        >
+                            {dendaList.length}
+                        </div>
+                    {/if}
+                </div>
+                <span
+                    class="text-xs font-medium text-text-muted hidden sm:block"
+                >
+                    Update realtime dari server
+                </span>
+            </div>
+
+            {#if dendaList.length === 0}
+                <div class="text-center py-10 text-text-muted">
+                    Belum ada denda — semua pengembalian tepat waktu 🎉
+                </div>
+            {:else}
+                <div class="space-y-4">
+                    {#each dendaList as denda}
+                        <div
+                            class="flex items-center gap-4 p-4 hover:bg-bg-primary/50 rounded-2xl transition-colors group"
+                        >
+                            <div
+                                class="w-10 h-10 rounded-full bg-warning/10 flex items-center justify-center text-warning shrink-0"
+                            >
+                                <Coins size={18} />
+                            </div>
+
+                            <div
+                                class="flex-1 min-w-0 grid grid-cols-1 md:grid-cols-12 gap-4 items-center"
+                            >
+                                <div
+                                    class="md:col-span-5 font-semibold text-text-primary truncate"
+                                >
+                                    {denda.namaPenyewa}
+                                </div>
+
+                                <div
+                                    class="md:col-span-3 text-sm font-bold text-warning"
+                                >
+                                    {formatCurrency(Number(denda.biayaDenda))}
+                                </div>
+
+                                <div
+                                    class="md:col-span-3 flex items-center gap-2 text-text-muted text-sm"
+                                >
+                                    <Clock size={14} />
+                                    <span>Keterlambatan</span>
+                                </div>
+                            </div>
+
+                            <a
+                                href="/transaksi/{denda.id}"
+                                class="p-1.5 text-text-muted hover:text-primary hover:bg-bg-tertiary rounded-lg transition-colors shrink-0"
+                                aria-label="Lihat invoice {denda.namaPenyewa}"
+                            >
+                                <ChevronRight size={18} />
+                            </a>
+                        </div>
+                    {/each}
+                </div>
+            {/if}
         </div>
 
         <!-- Current Tasks / Transactions -->

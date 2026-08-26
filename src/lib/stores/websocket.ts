@@ -1,6 +1,7 @@
 import { writable } from 'svelte/store';
 import type {
 	ConnectionState,
+	DendaNotification,
 	MotorStatusUpdate,
 	QueueUpdate,
 	TransaksiEvent,
@@ -20,6 +21,7 @@ export const whatsappStatus = writable<WhatsappStatus>({
 export const queueUpdates = writable<QueueUpdate | null>(null);
 export const transaksiNotifications = writable<TransaksiEvent[]>([]);
 export const motorStatusUpdates = writable<MotorStatusUpdate | null>(null);
+export const dendaNotifications = writable<DendaNotification[]>([]);
 
 export const connectionState = writable<ConnectionState>({
 	isConnected: false,

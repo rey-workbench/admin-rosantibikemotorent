@@ -20,6 +20,7 @@ const columns = [
 	{ key: 'motor', label: 'Motor' },
 	{ key: 'tanggal', label: 'Tanggal' },
 	{ key: 'total', label: 'Total' },
+	{ key: 'denda', label: 'Denda' },
 	{ key: 'status', label: 'Status' },
 	{ key: 'aksi', label: 'Aksi', class: 'w-32' }
 ];
@@ -152,6 +153,16 @@ $effect(() => {
             <td class="px-4 py-3 font-medium text-sm"
               >{formatCurrency(t.totalBiaya || 0)}</td
             >
+            <td class="px-4 py-3">
+              {#if Number(t.biayaDenda) > 0}
+                <Badge
+                  variant="warning"
+                  text={formatCurrency(Number(t.biayaDenda))}
+                />
+              {:else}
+                <span class="text-sm text-text-muted">-</span>
+              {/if}
+            </td>
             <td class="px-4 py-3">
               <Badge variant={getStatusVariant(t.status)} text={t.status} />
             </td>

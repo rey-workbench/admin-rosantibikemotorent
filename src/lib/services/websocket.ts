@@ -19,6 +19,7 @@ const WS_CHANNELS = {
 
 import {
 	connectionState,
+	dendaNotifications,
 	motorStatusUpdates,
 	queueUpdates,
 	socketConnected,
@@ -42,7 +43,6 @@ type WhatsAppMessageSentHandler = (data: WhatsAppMessageSent) => void;
 type WhatsAppStatusHandler = (data: WhatsappStatus) => void;
 type WhatsAppQrCodeHandler = (data: { qrCode: string | null; timestamp: Date }) => void;
 type QueueUpdateHandler = (data: QueueUpdate) => void;
-type HttpCompleteHandler = (data: { requestId: string; timestamp: Date; result: unknown }) => void;
 type TransaksiCreatedHandler = (data: TransaksiEvent) => void;
 type TransaksiUpdatedHandler = (data: TransaksiEvent) => void;
 type TransaksiDeletedHandler = (data: { id: string }) => void;
@@ -62,7 +62,6 @@ class WebSocketService {
 	private whatsappStatusHandlers = new Set<WhatsAppStatusHandler>();
 	private whatsappQrCodeHandlers = new Set<WhatsAppQrCodeHandler>();
 	private queueUpdateHandlers = new Set<QueueUpdateHandler>();
-	private httpCompleteHandlers = new Set<HttpCompleteHandler>();
 	private transaksiCreatedHandlers = new Set<TransaksiCreatedHandler>();
 	private transaksiUpdatedHandlers = new Set<TransaksiUpdatedHandler>();
 	private transaksiDeletedHandlers = new Set<TransaksiDeletedHandler>();
@@ -206,13 +205,6 @@ class WebSocketService {
 			this.queueUpdateHandlers.forEach((handler) => handler(data));
 		});
 
-		this.socket.on(
-			'http:complete',
-			(data: { requestId: string; timestamp: Date; result: unknown }) => {
-				this.httpCompleteHandlers.forEach((handler) => handler(data));
-			}
-		);
-
 		this.socket.on(WS_CHANNELS.TRANSAKSI_CREATED, (data: TransaksiEvent) => {
 			transaksiNotifications.update((list) => [data, ...list].slice(0, 50));
 			this.transaksiCreatedHandlers.forEach((handler) => handler(data));
@@ -244,6 +236,9 @@ class WebSocketService {
 		});
 
 		this.socket.on(WS_CHANNELS.DENDA_NOTIFICATION, (data: DendaNotification) => {
+			dendaNotifications.update((list) =>
+				[data, ...list.filter((n) => n.id !== data.id)].slice(0, 20)
+			);
 			this.dendaNotificationHandlers.forEach((handler) => handler(data));
 		});
 	}
@@ -271,11 +266,6 @@ class WebSocketService {
 	onQueueUpdate(h: QueueUpdateHandler): () => void {
 		this.queueUpdateHandlers.add(h);
 		return () => this.queueUpdateHandlers.delete(h);
-	}
-
-	onHttpComplete(h: HttpCompleteHandler): () => void {
-		this.httpCompleteHandlers.add(h);
-		return () => this.httpCompleteHandlers.delete(h);
 	}
 
 	onTransaksiCreated(h: TransaksiCreatedHandler): () => void {
