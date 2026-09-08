@@ -57,6 +57,7 @@ function buildHeadersAndBody(data?: any, customHeaders?: any) {
 	let body: BodyInit | undefined;
 	if (data !== undefined && data !== null) {
 		if (data instanceof FormData) {
+			delete headers['Content-Type'];
 			body = data;
 		} else {
 			if (!headers['Content-Type']) {

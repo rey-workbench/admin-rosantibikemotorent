@@ -15,15 +15,11 @@ export const jenisMotorApi = {
 		return body.data;
 	},
 	create: async (jenisMotor: FormData): Promise<JenisMotor> => {
-		const { data: body } = await api.post('/jenis-motor', jenisMotor, {
-			headers: { 'Content-Type': 'multipart/form-data' }
-		});
+		const { data: body } = await api.post('/jenis-motor', jenisMotor);
 		return body.data;
 	},
 	update: async (id: string, jenisMotor: FormData): Promise<JenisMotor> => {
-		const { data: body } = await api.patch(`/jenis-motor/${id}`, jenisMotor, {
-			headers: { 'Content-Type': 'multipart/form-data' }
-		});
+		const { data: body } = await api.patch(`/jenis-motor/${id}`, jenisMotor);
 		return body.data;
 	},
 	delete: async (id: string): Promise<void> => {
